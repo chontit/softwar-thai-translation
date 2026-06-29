@@ -1,0 +1,2363 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Softwar | ทฤษฎีใหม่ว่าด้วยการแผ่ขยายอำนาจ และแสนยานุภาพของบิตคอยน์ต่อยุทธศาสตร์ชาติ</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230f1117'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='%234f7fd4' font-family='Arial,sans-serif' font-weight='bold'%3E%E2%82%BF%3C/text%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Thai:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ─── TOKENS ──────────────────────────────────────────── */
+    :root {
+      --font-body: 'Noto Serif Thai', Georgia, serif;
+      --font-ui:   'Sarabun', sans-serif;
+      --fs-body: 19px;
+      --lh: 2.0;
+      --radius: 6px;
+      --nav-w: 292px;
+      --transition: 0.22s ease;
+    }
+
+    /* Light theme */
+    [data-theme="light"] {
+      --bg:          #f5f4f0;
+      --bg-card:     #ffffff;
+      --bg-nav:      #eeecea;
+      --bg-code:     #ebe9e5;
+      --border:      #d4d0ca;
+      --text:        #1e2433;
+      --text-muted:  #64707a;
+      --text-faint:  #9aa3ad;
+      --accent:      #1b3a6b;
+      --accent-light:#2a5298;
+      --accent-glow: rgba(27, 58, 107, 0.12);
+      --progress-bg: #d4d0ca;
+      --done:        #1a6b3a;
+      --wip:         #7a4a0f;
+      --reading-bar: #1b3a6b;
+    }
+
+    /* Dark theme (default) */
+    [data-theme="dark"] {
+      --bg:          #0f1117;
+      --bg-card:     #161b27;
+      --bg-nav:      #131720;
+      --bg-code:     #1c2133;
+      --border:      #252d40;
+      --text:        #dde3ee;
+      --text-muted:  #8e9ab5;
+      --text-faint:  #505d7a;
+      --accent:      #4f7fd4;
+      --accent-light:#7aa3e8;
+      --accent-glow: rgba(79, 127, 212, 0.15);
+      --progress-bg: #252d40;
+      --done:        #34a85a;
+      --wip:         #e0912a;
+      --reading-bar: #4f7fd4;
+    }
+
+    /* ─── RESET ───────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; font-size: var(--fs-body); }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      line-height: var(--lh);
+      transition: background var(--transition), color var(--transition);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      text-rendering: optimizeLegibility;
+    }
+    a { color: var(--accent-light); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ─── READING PROGRESS BAR ────────────────────────────── */
+    #reading-progress {
+      position: fixed;
+      top: 0; left: 0;
+      width: 0%;
+      height: 3px;
+      background: var(--reading-bar);
+      z-index: 9999;
+      transition: width 0.1s linear;
+      box-shadow: 0 0 8px var(--reading-bar);
+    }
+
+    /* ─── TOP BAR ─────────────────────────────────────────── */
+    #topbar {
+      position: fixed;
+      top: 3px; left: 0; right: 0;
+      height: 52px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 12px;
+      z-index: 900;
+      transition: background var(--transition), border-color var(--transition);
+      font-family: var(--font-ui);
+    }
+    #topbar-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.03em;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #menu-toggle, #theme-toggle {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: var(--radius);
+      padding: 5px 10px;
+      font-size: 13px;
+      transition: all var(--transition);
+      font-family: var(--font-ui);
+      white-space: nowrap;
+    }
+    #menu-toggle:hover, #theme-toggle:hover, .font-btn:hover {
+      background: var(--accent-glow);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+    #font-select {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: var(--radius);
+      padding: 5px 8px;
+      font-size: 13px;
+      font-family: var(--font-ui);
+      transition: all var(--transition);
+      outline: none;
+    }
+    #font-select:hover, #font-select:focus {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    #menu-toggle { display: none; }
+
+    /* ─── LAYOUT ──────────────────────────────────────────── */
+    #layout {
+      display: flex;
+      min-height: 100vh;
+      padding-top: 55px;
+    }
+
+    /* ─── SIDEBAR ─────────────────────────────────────────── */
+    #sidebar {
+      position: sticky;
+      top: 55px;
+      width: var(--nav-w);
+      height: calc(100vh - 55px);
+      overflow-y: auto;
+      background: var(--bg-nav);
+      border-right: 1px solid var(--border);
+      padding: 20px 0 32px;
+      flex-shrink: 0;
+      transition: background var(--transition), border-color var(--transition), transform var(--transition);
+      font-family: var(--font-ui);
+    }
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-track { background: transparent; }
+    #sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+    /* Section group label */
+    .nav-group-label {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-faint);
+      padding: 14px 18px 6px;
+    }
+
+    /* Top-level nav item */
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 18px;
+      font-size: 13px;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+      line-height: 1.45;
+      text-decoration: none;
+    }
+    .nav-item:hover { background: var(--accent-glow); color: var(--text); text-decoration: none; }
+    .nav-item.active {
+      color: var(--accent-light);
+      border-left-color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    /* Chapter parent row (collapsible) */
+    .nav-chapter {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+      line-height: 1.45;
+      user-select: none;
+    }
+    .nav-chapter:hover { background: var(--accent-glow); color: var(--text); }
+    .nav-chapter.active {
+      color: var(--accent-light);
+      border-left-color: var(--accent);
+      background: var(--accent-glow);
+    }
+    .nav-chapter-link { flex: 1; color: inherit; text-decoration: none; }
+    .nav-chapter-link:hover { text-decoration: none; }
+
+    /* Chevron toggle */
+    .nav-chevron {
+      font-size: 10px;
+      color: var(--text-faint);
+      transition: transform 0.2s;
+      flex-shrink: 0;
+      margin-left: auto;
+    }
+    .nav-chevron.open { transform: rotate(90deg); }
+
+    /* Sub-items */
+    .nav-sub {
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease;
+    }
+    .nav-sub.open { max-height: 800px; }
+
+    .nav-sub-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 5px 18px 5px 34px;
+      font-size: 12px;
+      color: var(--text-faint);
+      cursor: pointer;
+      border-left: 2px solid transparent;
+      transition: all 0.15s;
+      line-height: 1.4;
+      text-decoration: none;
+    }
+    .nav-sub-item:hover { background: var(--accent-glow); color: var(--text-muted); text-decoration: none; }
+    .nav-sub-item.active {
+      color: var(--accent-light);
+      border-left-color: var(--accent);
+      background: var(--accent-glow);
+    }
+
+    /* Status dot */
+    .nav-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+    .dot-done { background: var(--done); }
+    .dot-wip  { background: var(--wip); }
+    .dot-todo { background: var(--border); }
+
+    .nav-badge {
+      font-size: 10px;
+      padding: 1px 5px;
+      border-radius: 8px;
+      font-weight: 600;
+      margin-left: auto;
+      flex-shrink: 0;
+    }
+    .badge-done { background: rgba(52,168,90,0.15); color: var(--done); }
+    .badge-wip  { background: rgba(224,145,42,0.15); color: var(--wip); }
+
+    .nav-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 10px 18px;
+    }
+
+    /* ─── MAIN ────────────────────────────────────────────── */
+    #main {
+      flex: 1;
+      min-width: 0;
+      max-width: 820px;
+      margin: 0 auto;
+      padding: 0 32px 80px;
+    }
+
+    /* ─── HERO ────────────────────────────────────────────── */
+    #hero {
+      padding: 52px 0 44px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 52px;
+    }
+    .hero-kicker {
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 18px;
+      font-family: var(--font-ui);
+    }
+    .hero-title {
+      font-size: clamp(36px, 5vw, 56px);
+      font-weight: 700;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 10px;
+      letter-spacing: -0.01em;
+      font-family: var(--font-ui);
+    }
+    .hero-subtitle {
+      font-size: clamp(16px, 2vw, 19px);
+      color: var(--text-muted);
+      font-weight: 400;
+      margin-bottom: 30px;
+      line-height: 1.8;
+      max-width: 600px;
+      font-family: var(--font-ui);
+      text-align: left;
+      text-indent: 0;
+    }
+    .hero-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px 24px;
+      font-size: 14px;
+      color: var(--text-muted);
+      margin-bottom: 36px;
+      padding-bottom: 28px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-ui);
+    }
+    .hero-meta span { display: flex; align-items: center; gap: 7px; }
+    .hero-meta strong { color: var(--text); }
+
+    /* Progress */
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .progress-label strong { color: var(--accent-light); }
+    .progress-track {
+      height: 7px;
+      background: var(--progress-bg);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent-light));
+      border-radius: 99px;
+      transition: width 1.2s cubic-bezier(0.4,0,0.2,1);
+    }
+    .progress-chapters {
+      display: flex;
+      gap: 3px;
+      margin-top: 9px;
+    }
+    .chapter-pip {
+      flex: 1;
+      height: 3px;
+      border-radius: 2px;
+      background: var(--border);
+    }
+    .chapter-pip.done { background: var(--done); }
+    .chapter-pip.wip  { background: var(--wip); }
+
+    /* ─── CONTENT SECTIONS ────────────────────────────────── */
+    .chapter-section {
+      margin-bottom: 64px;
+      scroll-margin-top: 70px;
+    }
+    .chapter-section + .chapter-section {
+      border-top: 1px solid var(--border);
+      padding-top: 40px;
+    }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .section-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-family: var(--font-ui);
+    }
+    .status-badge {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 600;
+      font-family: var(--font-ui);
+    }
+    .status-badge.done { background: rgba(52,168,90,0.15); color: var(--done); }
+    .status-badge.wip  { background: rgba(224,145,42,0.15); color: var(--wip); }
+    .status-badge.todo { background: var(--bg-code); color: var(--text-faint); }
+
+    .section-title {
+      font-size: clamp(22px, 3vw, 28px);
+      font-weight: 700;
+      line-height: 1.3;
+      color: var(--text);
+      margin-bottom: 4px;
+      font-family: var(--font-ui);
+    }
+    .section-title-en {
+      font-size: 14px;
+      color: var(--text-faint);
+      font-style: italic;
+      margin-bottom: 22px;
+      font-family: var(--font-ui);
+    }
+    .section-rule {
+      width: 36px;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 1px;
+      margin-bottom: 26px;
+    }
+
+    /* Subsection heading */
+    .subsection {
+      scroll-margin-top: 70px;
+      margin-bottom: 40px;
+    }
+    .subsection-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 14px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      font-family: var(--font-ui);
+    }
+
+    /* Body copy */
+    .content p, .subsection p {
+      margin-bottom: 2em;
+      text-indent: 2em;
+      text-align: justify;
+      text-justify: inter-character;
+      word-spacing: 0.04em;
+      letter-spacing: 0.01em;
+      overflow-wrap: break-word;
+    }
+    /* กล่อง/card ที่ซ้อนอยู่ใน content — ไม่ต้องย่อหน้า */
+    .content > div:not(.subsection):not(.chapter-summaries) p,
+    .content blockquote p {
+      text-indent: 0;
+      text-align: left;
+      margin-bottom: 0;
+    }
+    /* กล่องภาพรวมแต่ละบท — มีย่อหน้าตามปกติ */
+    .chapter-summaries p {
+      text-indent: 2em;
+      text-align: justify;
+      text-justify: inter-character;
+      word-spacing: 0.04em;
+      letter-spacing: 0.01em;
+    }
+    /* ข้อความ subtitle ตัวเอียงในกล่อง — ชิดซ้าย ไม่ย่อหน้า */
+    .chapter-summaries p[style*="italic"] {
+      text-indent: 0;
+      text-align: left;
+    }
+    .content h3 { font-size: 18px; font-weight: 600; color: var(--text); margin: 2em 0 0.6em; font-family: var(--font-ui); }
+    .content blockquote, .subsection blockquote {
+      border-left: none;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      border-radius: 0;
+      background: transparent;
+      margin: 1.8em auto;
+      padding: 20px 40px;
+      max-width: 680px;
+      text-align: center;
+      color: var(--text-muted);
+      font-style: italic;
+      line-height: 2;
+    }
+    .content strong { color: var(--text); font-weight: 600; }
+    .content em { color: var(--accent-light); }
+
+    /* Placeholder */
+    .placeholder {
+      border: 2px dashed var(--border);
+      border-radius: 8px;
+      padding: 36px 28px;
+      text-align: center;
+      color: var(--text-faint);
+    }
+    .placeholder .icon { font-size: 28px; margin-bottom: 10px; }
+    .placeholder p { font-size: 14px; margin: 0; line-height: 1.6; }
+    .placeholder strong { color: var(--text-muted); }
+
+    /* ─── FOOTER ──────────────────────────────────────────── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0 24px;
+      font-size: 13px;
+      color: var(--text-faint);
+      line-height: 1.7;
+      font-family: var(--font-ui);
+    }
+    .footer-inner {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 24px;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+    .footer-block strong { color: var(--text-muted); display: block; margin-bottom: 3px; }
+    .footer-copy {
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    /* ─── MOBILE ──────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      :root { --fs-body: 16px; }
+      #menu-toggle { display: block; }
+      #sidebar {
+        position: fixed;
+        top: 55px; left: 0;
+        height: calc(100vh - 55px);
+        z-index: 800;
+        transform: translateX(-100%);
+        box-shadow: 4px 0 24px rgba(0,0,0,0.35);
+      }
+      #sidebar.open { transform: translateX(0); }
+      #main { padding: 0 18px 64px; }
+      #hero { padding: 32px 0 28px; }
+    }
+    @media (max-width: 480px) {
+      .hero-meta { gap: 10px 16px; font-size: 13px; }
+    }
+
+    /* Mobile: ปิด justify เพราะหน้าจอแคบทำให้ช่องไฟถ่างผิดปกติ */
+    @media (max-width: 900px) {
+      .content p, .subsection p {
+        text-align: left;
+        text-justify: auto;
+        word-spacing: normal;
+        letter-spacing: 0.01em;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<div id="reading-progress"></div>
+
+<!-- Top bar -->
+<header id="topbar">
+  <button id="menu-toggle" onclick="toggleSidebar()" aria-label="เมนู">☰ เมนู</button>
+  <span id="topbar-title">Softwar | ทฤษฎีใหม่ว่าด้วยการแผ่ขยายอำนาจ และแสนยานุภาพของบิตคอยน์ต่อยุทธศาสตร์ชาติ</span>
+  <label for="font-select" style="font-size:13px; color:var(--text-muted); font-family:var(--font-ui); white-space:nowrap;">ขนาดตัวอักษร</label>
+  <select id="font-select" onchange="changeFontSize(this.value)" aria-label="ขนาดตัวอักษร">
+    <option value="14">เล็กที่สุด</option>
+    <option value="16">เล็กมาก</option>
+    <option value="17">เล็ก</option>
+    <option value="19" selected>ปกติ</option>
+    <option value="21">ใหญ่</option>
+    <option value="23">ใหญ่มาก</option>
+    <option value="26">ใหญ่ที่สุด</option>
+  </select>
+  <button id="theme-toggle" onclick="toggleTheme()" aria-label="สลับธีม">☀ Light</button>
+</header>
+
+<div id="layout">
+
+  <!-- ══════════════ SIDEBAR NAV ══════════════ -->
+  <nav id="sidebar" role="navigation" aria-label="สารบัญ">
+
+    <!-- Preliminary sections -->
+    <div class="nav-group-label">บทนำและส่วนเบื้องต้น</div>
+
+    <a class="nav-item" href="#overview" onclick="closeSidebarMobile()">
+      <span class="nav-dot dot-done"></span>สรุปภาพรวมหนังสือ
+      <span class="nav-badge badge-done" style="margin-left:auto;">✓</span>
+    </a>
+    <a class="nav-item" href="#abstract" onclick="closeSidebarMobile()">
+      <span class="nav-dot dot-done"></span>บทคัดย่อ
+      <span class="nav-badge badge-done" style="margin-left:auto;">✓</span>
+    </a>
+    <a class="nav-item" href="#acknowledgements" onclick="closeSidebarMobile()">
+      <span class="nav-dot dot-done"></span>กิตติกรรมประกาศ
+      <span class="nav-badge badge-done" style="margin-left:auto;">✓</span>
+    </a>
+    <a class="nav-item" href="#biography" onclick="closeSidebarMobile()">
+      <span class="nav-dot dot-done"></span>ประวัติผู้เขียน
+      <span class="nav-badge badge-done" style="margin-left:auto;">✓</span>
+    </a>
+    <a class="nav-item" href="#acronyms" onclick="closeSidebarMobile()">
+      <span class="nav-dot dot-done"></span>อักษรย่อ
+      <span class="nav-badge badge-done" style="margin-left:auto;">✓</span>
+    </a>
+    <a class="nav-item" href="#executive-summary" onclick="closeSidebarMobile()">
+      <span class="nav-dot dot-done"></span>บทสรุปผู้บริหาร
+      <span class="nav-badge badge-done" style="margin-left:auto;">✓</span>
+    </a>
+
+    <div class="nav-divider"></div>
+    <div class="nav-group-label">เนื้อหาหลัก</div>
+
+    <!-- Chapter 1 -->
+    <div class="nav-chapter" onclick="toggleChapter('ch1')">
+      <span class="nav-dot dot-done"></span>
+      <a class="nav-chapter-link" href="#chapter1" onclick="closeSidebarMobile(); event.stopPropagation()">บทที่ 1: บทนำ</a>
+      <span class="nav-chevron" id="chevron-ch1">▶</span>
+    </div>
+    <div class="nav-sub" id="sub-ch1">
+      <a class="nav-sub-item" href="#s1-1" onclick="closeSidebarMobile()">1.1 แรงบันดาลใจ</a>
+      <a class="nav-sub-item" href="#s1-2" onclick="closeSidebarMobile()">1.2 เหตุผลและความจำเป็น</a>
+      <a class="nav-sub-item" href="#s1-3" onclick="closeSidebarMobile()">1.3 ภูมิหลัง</a>
+      <a class="nav-sub-item" href="#s1-4" onclick="closeSidebarMobile()">1.4 วัตถุประสงค์</a>
+      <a class="nav-sub-item" href="#s1-5" onclick="closeSidebarMobile()">1.5 โครงสร้างวิทยานิพนธ์</a>
+    </div>
+
+    <!-- Chapter 2 -->
+    <div class="nav-chapter" onclick="toggleChapter('ch2')">
+      <span class="nav-dot dot-todo"></span>
+      <a class="nav-chapter-link" href="#chapter2" onclick="closeSidebarMobile(); event.stopPropagation()">บทที่ 2: ระเบียบวิธีวิจัย</a>
+      <span class="nav-chevron" id="chevron-ch2">▶</span>
+    </div>
+    <div class="nav-sub" id="sub-ch2">
+      <a class="nav-sub-item" href="#s2-1" onclick="closeSidebarMobile()">2.1 เหตุผลสี่ประการในการเลือกใช้ทฤษฎีฐานราก</a>
+      <a class="nav-sub-item" href="#s2-2" onclick="closeSidebarMobile()">2.2 ภาพรวม</a>
+      <a class="nav-sub-item" href="#s2-3" onclick="closeSidebarMobile()">2.3 กระบวนการวิจัย</a>
+      <a class="nav-sub-item" href="#s2-4" onclick="closeSidebarMobile()">2.4 ข้อเสียและข้อดี</a>
+      <a class="nav-sub-item" href="#s2-5" onclick="closeSidebarMobile()">2.5 บทเรียนที่ได้รับ</a>
+    </div>
+
+    <!-- Chapter 3 -->
+    <div class="nav-chapter" onclick="toggleChapter('ch3')">
+      <span class="nav-dot dot-todo"></span>
+      <a class="nav-chapter-link" href="#chapter3" onclick="closeSidebarMobile(); event.stopPropagation()">บทที่ 3: ยุทธวิธีการแผ่ขยายอำนาจในธรรมชาติ</a>
+      <span class="nav-chevron" id="chevron-ch3">▶</span>
+    </div>
+    <div class="nav-sub" id="sub-ch3">
+      <a class="nav-sub-item" href="#s3-1" onclick="closeSidebarMobile()">3.1 บทนำสู่ทฤษฎีการแผ่ขยายอำนาจ</a>
+      <a class="nav-sub-item" href="#s3-2" onclick="closeSidebarMobile()">3.2 อำนาจทางกายภาพและความเป็นเจ้าของทรัพยากร</a>
+      <a class="nav-sub-item" href="#s3-3" onclick="closeSidebarMobile()">3.3 สงครามของสิ่งมีชีวิตต่อเอนโทรปี</a>
+      <a class="nav-sub-item" href="#s3-4" onclick="closeSidebarMobile()">3.4 เศรษฐศาสตร์ดึกดำบรรพ์</a>
+      <a class="nav-sub-item" href="#s3-5" onclick="closeSidebarMobile()">3.5 พัฒนาหรือสูญพันธุ์</a>
+      <a class="nav-sub-item" href="#s3-6" onclick="closeSidebarMobile()">3.6 ภาวะกลืนไม่เข้าคายไม่ออกของผู้รอดชีวิต</a>
+      <a class="nav-sub-item" href="#s3-7" onclick="closeSidebarMobile()">3.7 การไล่ตามความเจริญรุ่งเรืองอันไม่มีสิ้นสุด</a>
+      <a class="nav-sub-item" href="#s3-8" onclick="closeSidebarMobile()">3.8 การรวมกลุ่มกัน</a>
+      <a class="nav-sub-item" href="#s3-9" onclick="closeSidebarMobile()">3.9 สัตว์ฝูง</a>
+      <a class="nav-sub-item" href="#s3-10" onclick="closeSidebarMobile()">3.10 การถูกทำให้เชื่อง</a>
+      <a class="nav-sub-item" href="#s3-11" onclick="closeSidebarMobile()">3.11 การควบคุมทรัพยากรด้วยอำนาจทางกายภาพ</a>
+      <a class="nav-sub-item" href="#s3-12" onclick="closeSidebarMobile()">3.12 ความงดงามของเขากวาง</a>
+    </div>
+
+    <!-- Chapter 4 -->
+    <div class="nav-chapter" onclick="toggleChapter('ch4')">
+      <span class="nav-dot dot-todo"></span>
+      <a class="nav-chapter-link" href="#chapter4" onclick="closeSidebarMobile(); event.stopPropagation()">บทที่ 4: ยุทธวิธีการแผ่ขยายอำนาจในสังคมมนุษย์</a>
+      <span class="nav-chevron" id="chevron-ch4">▶</span>
+    </div>
+    <div class="nav-sub" id="sub-ch4">
+      <a class="nav-sub-item" href="#s4-1" onclick="closeSidebarMobile()">4.1 บทนำ</a>
+      <a class="nav-sub-item" href="#s4-2" onclick="closeSidebarMobile()">4.2 โลกใบใหม่ที่แตกต่างโดยสิ้นเชิง</a>
+      <a class="nav-sub-item" href="#s4-3" onclick="closeSidebarMobile()">4.3 วิธีตรวจสอบว่าสิ่งใดเป็นจริง</a>
+      <a class="nav-sub-item" href="#s4-4" onclick="closeSidebarMobile()">4.4 วิวัฒนาการของการคิดเชิงนามธรรม</a>
+      <a class="nav-sub-item" href="#s4-5" onclick="closeSidebarMobile()">4.5 ทำความเข้าใจอำนาจเชิงนามธรรม</a>
+      <a class="nav-sub-item" href="#s4-6" onclick="closeSidebarMobile()">4.6 การสร้างอำนาจเชิงนามธรรม</a>
+      <a class="nav-sub-item" href="#s4-7" onclick="closeSidebarMobile()">4.7 ลำดับชั้นอำนาจเชิงนามธรรม</a>
+      <a class="nav-sub-item" href="#s4-8" onclick="closeSidebarMobile()">4.8 ความผิดปกติของอำนาจเชิงนามธรรม</a>
+      <a class="nav-sub-item" href="#s4-9" onclick="closeSidebarMobile()">4.9 ประโยชน์ที่เกิดขึ้นจากการทำสงคราม</a>
+      <a class="nav-sub-item" href="#s4-10" onclick="closeSidebarMobile()">4.10 ความมั่นคงเชิงยุทธศาสตร์แห่งชาติ</a>
+      <a class="nav-sub-item" href="#s4-11" onclick="closeSidebarMobile()">4.11 หลักประกันการทำลายล้างซึ่งกันและกัน</a>
+      <a class="nav-sub-item" href="#s4-12" onclick="closeSidebarMobile()">4.12 มนุษย์ต้องการเขากวาง</a>
+    </div>
+
+    <!-- Chapter 5 -->
+    <div class="nav-chapter" onclick="toggleChapter('ch5')">
+      <span class="nav-dot dot-todo"></span>
+      <a class="nav-chapter-link" href="#chapter5" onclick="closeSidebarMobile(); event.stopPropagation()">บทที่ 5: ยุทธวิธีการแผ่ขยายอำนาจในพื้นที่ไซเบอร์</a>
+      <span class="nav-chevron" id="chevron-ch5">▶</span>
+    </div>
+    <div class="nav-sub" id="sub-ch5">
+      <a class="nav-sub-item" href="#s5-1" onclick="closeSidebarMobile()">5.1 บทนำ</a>
+      <a class="nav-sub-item" href="#s5-2" onclick="closeSidebarMobile()">5.2 เครื่องจักรที่คิดได้</a>
+      <a class="nav-sub-item" href="#s5-3" onclick="closeSidebarMobile()">5.3 ระบบความเชื่อใหม่ที่เปราะบาง</a>
+      <a class="nav-sub-item" href="#s5-4" onclick="closeSidebarMobile()">5.4 ความท้าทายด้านความมั่นคงของซอฟต์แวร์</a>
+      <a class="nav-sub-item" href="#s5-5" onclick="closeSidebarMobile()">5.5 การสร้างลำดับชั้นอำนาจด้วยซอฟต์แวร์</a>
+      <a class="nav-sub-item" href="#s5-6" onclick="closeSidebarMobile()">5.6 การต่อต้านราชาเทพเจ้าแห่งเทคโนโลยี</a>
+      <a class="nav-sub-item" href="#s5-7" onclick="closeSidebarMobile()">5.7 การแผ่ขยายอำนาจในพื้นที่ไซเบอร์</a>
+      <a class="nav-sub-item" href="#s5-8" onclick="closeSidebarMobile()">5.8 แนวคิดโดมป้องกันไซเบอร์</a>
+      <a class="nav-sub-item" href="#s5-9" onclick="closeSidebarMobile()">5.9 ทฤษฎีคอมพิวเตอร์ใหม่ว่าด้วยบิตคอยน์</a>
+      <a class="nav-sub-item" href="#s5-10" onclick="closeSidebarMobile()">5.10 ไม่มีอันดับสอง</a>
+      <a class="nav-sub-item" href="#s5-11" onclick="closeSidebarMobile()">5.11 ซอฟต์วอร์</a>
+      <a class="nav-sub-item" href="#s5-12" onclick="closeSidebarMobile()">5.12 หลักประกันการรักษาไว้ซึ่งกันและกัน</a>
+    </div>
+
+    <!-- Chapter 6 -->
+    <div class="nav-chapter" onclick="toggleChapter('ch6')">
+      <span class="nav-dot dot-todo"></span>
+      <a class="nav-chapter-link" href="#chapter6" onclick="closeSidebarMobile(); event.stopPropagation()">บทที่ 6: ข้อเสนอแนะและบทสรุป</a>
+      <span class="nav-chevron" id="chevron-ch6">▶</span>
+    </div>
+    <div class="nav-sub" id="sub-ch6">
+      <a class="nav-sub-item" href="#s6-1" onclick="closeSidebarMobile()">6.1 ประเด็นสำคัญที่ได้เรียนรู้</a>
+      <a class="nav-sub-item" href="#s6-2" onclick="closeSidebarMobile()">6.2 ข้อเสนอแนะสำหรับการวิจัยในอนาคต</a>
+      <a class="nav-sub-item" href="#s6-3" onclick="closeSidebarMobile()">6.3 ข้อเสนอแนะสำหรับการกำหนดนโยบาย</a>
+      <a class="nav-sub-item" href="#s6-4" onclick="closeSidebarMobile()">6.4 ความคิดสุดท้าย</a>
+    </div>
+
+    <div class="nav-divider"></div>
+
+    <a class="nav-item" href="#bibliography" onclick="closeSidebarMobile()">
+      <span class="nav-dot dot-todo"></span>บรรณานุกรม
+    </a>
+
+    <div class="nav-divider"></div>
+    <div style="padding: 0 18px;">
+      <div style="font-size:11px; color:var(--text-faint); margin-bottom:6px;">ความคืบหน้าการแปล</div>
+      <div class="progress-track" style="height:4px;">
+        <div class="progress-fill" style="width:17%"></div>
+      </div>
+      <div style="font-size:11px; color:var(--text-faint); margin-top:6px;">1 / 6 บท · บทที่ 1 เสร็จสมบูรณ์</div>
+    </div>
+
+  </nav>
+
+  <!-- ══════════════ MAIN CONTENT ══════════════ -->
+  <main id="main">
+
+    <!-- HERO -->
+    <section id="hero">
+      <div class="hero-kicker">Jason P. Lowery · MIT Thesis, 2023</div>
+      <h1 class="hero-title">Softwar</h1>
+      <p class="hero-subtitle">
+        ทฤษฎีใหม่ว่าด้วยการแผ่ขยายอำนาจ<br>
+        และแสนยานุภาพของบิตคอยน์ต่อยุทธศาสตร์ชาติ
+      </p>
+      <div class="hero-meta">
+        <span>✍️ <strong>Jason P. Lowery</strong></span>
+        <span>🎓 <strong>MIT, 2023</strong></span>
+        <span>🌐 <strong>แปลโดย Chollatis Bitcoiner</strong></span>
+        <span>🗓️ อัปเดต: <strong>มิถุนายน 2569</strong></span>
+      </div>
+
+      <div class="progress-label">
+        <span>ความคืบหน้าการแปล</span>
+        <strong>17% · บทที่ 1 เสร็จสมบูรณ์</strong>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" style="width:17%"></div>
+      </div>
+      <div class="progress-chapters">
+        <div class="chapter-pip done" title="บทที่ 1 — แปลแล้ว"></div>
+        <div class="chapter-pip" title="บทที่ 2"></div>
+        <div class="chapter-pip" title="บทที่ 3"></div>
+        <div class="chapter-pip" title="บทที่ 4"></div>
+        <div class="chapter-pip" title="บทที่ 5"></div>
+        <div class="chapter-pip" title="บทที่ 6"></div>
+      </div>
+    </section>
+
+    <!-- ────────────────────────────────────────── -->
+    <!-- PRELIMINARY SECTIONS                       -->
+    <!-- ────────────────────────────────────────── -->
+
+    <article class="chapter-section" id="overview">
+      <div class="section-header">
+        <span class="section-num">ภาพรวม</span>
+        
+      </div>
+      <h2 class="section-title">สรุปภาพรวมหนังสือ</h2>
+      <p class="section-title-en">Softwar: A Novel Theory on Power Projection and the National Strategic Significance of Bitcoin</p>
+      <div class="section-rule"></div>
+
+      <div class="content">
+
+        <!-- Book cover + author credit -->
+        <div style="display:flex; gap:32px; align-items:flex-start; margin-bottom:2.4em; flex-wrap:wrap;">
+
+          <!-- Cover image -->
+          <div style="flex-shrink:0;">
+            <div style="
+              width:180px;
+              border-radius:4px 8px 8px 4px;
+              overflow:hidden;
+              box-shadow:
+                -4px 0 6px rgba(0,0,0,0.25),
+                4px 6px 20px rgba(0,0,0,0.45),
+                8px 10px 30px rgba(0,0,0,0.25);
+              position:relative;
+            ">
+              <img
+                src="cover.jpg"
+                alt="ปกหนังสือ Softwar — Jason P. Lowery"
+                style="width:100%; display:block;"
+                onerror="this.parentElement.parentElement.style.display='none'"
+              />
+              <!-- Book spine effect -->
+              <div style="
+                position:absolute; top:0; left:0; bottom:0;
+                width:6px;
+                background:linear-gradient(to right, rgba(0,0,0,0.35), rgba(0,0,0,0.05), transparent);
+                pointer-events:none;
+              "></div>
+            </div>
+          </div>
+
+          <!-- Author credit -->
+          <div style="flex:1; min-width:200px; padding-top:6px;">
+            <p style="font-size:22px; font-weight:700; color:var(--text); margin-bottom:6px; font-family:var(--font-ui); line-height:1.3; text-indent:0; text-align:left;">Softwar</p>
+            <p style="font-size:14px; color:var(--text-muted); margin-bottom:16px; line-height:1.7; font-family:var(--font-ui); text-align:left; text-indent:0;">ทฤษฎีใหม่ว่าด้วยการแผ่ขยายอำนาจ<br>และแสนยานุภาพของบิตคอยน์ต่อยุทธศาสตร์ชาติ</p>
+            <div style="display:flex; flex-direction:column; gap:6px; font-size:13.5px; color:var(--text-muted); font-family:var(--font-ui);">
+              <span>✍️ <strong style="color:var(--text);">Jason P. Lowery</strong></span>
+              <span>🎓 <strong style="color:var(--text);">MIT</strong> — วิทยานิพนธ์ระดับปริญญาโท</span>
+              <span>📅 <strong style="color:var(--text);">กุมภาพันธ์ 2023</strong></span>
+              <span>🛡️ สนับสนุนโดย <strong style="color:var(--text);">กระทรวงกลาโหมสหรัฐ (DoD)</strong></span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- ── หนังสือเล่มนี้คืออะไร ── -->
+        <h3>วิทยานิพนธ์เล่มนี้คืออะไร</h3>
+
+        <p>
+          หนังสือเล่มนี้<strong>ไม่ใช่หนังสือทางการเงิน ไม่ใช่คู่มือการลงทุน และมิใช่บทวิเคราะห์ราคาสินทรัพย์ดิจิทัลแต่อย่างใด</strong>
+          ทว่า <em>Softwar</em> คือวิทยานิพนธ์ระดับปริญญาโทด้านวิศวกรรมและการจัดการระบบ
+          ซึ่งได้รับการสนับสนุนจาก<strong>กระทรวงกลาโหมสหรัฐอเมริกา (DoD)</strong>
+          เขียนโดยนายทหารประจำการแห่งกองกำลังอวกาศสหรัฐอเมริกา (<strong>USSF</strong>)
+          ผู้ปฏิบัติหน้าที่ในฐานะ <em>National Defense Fellow</em> ประจำสถาบัน MIT
+        </p>
+        <p>โจทย์หลักของวิทยานิพนธ์เล่มนี้ตั้งอยู่บนคำถามเพียงข้อเดียว นั่นคือ</p>
+
+        <blockquote>
+          "บิตคอยน์คืออะไรกันแน่ — <strong>หากเราไม่มองมันผ่านเลนส์ทางการเงิน?</strong>"
+        </blockquote>
+
+        <p>
+          คำตอบที่ Lowery นำเสนอนั้น<strong>ลึกซึ้งและส่งแรงสั่นสะเทือนกว่าที่เคยมีมา</strong>
+          โดยเขาเสนอว่าบิตคอยน์ไม่ใช่เพียงเงินดิจิทัล แต่เป็น
+          <strong>โปรโตคอลการแผ่ขยายอำนาจทางไซเบอร์เชิงพลังงานไฟฟ้ารูปแบบแรกของโลก</strong>
+          ซึ่งมีนัยสำคัญต่อ<strong>ความมั่นคงเชิงยุทธศาสตร์แห่งชาติ</strong>ในระดับที่โลกยังไม่เข้าใจอย่างแท้จริง
+        </p>
+
+        <!-- ── แก่นความคิดหลัก ── -->
+        <h3>แก่นความคิดหลัก</h3>
+
+        <p>
+          Lowery ได้สร้าง<strong>ทฤษฎีการแผ่ขยายอำนาจ</strong> (<em>Power Projection Theory</em>)
+          ขึ้นโดยบูรณาการองค์ความรู้จากหลากหลายสาขาวิชา อาทิ
+          ชีววิทยาวิวัฒนาการ จิตวิทยา มานุษยวิทยา รัฐศาสตร์ วิทยาการคอมพิวเตอร์
+          และทฤษฎียุทธศาสตร์การทหารสมัยใหม่
+          เพื่อมุ่งพิสูจน์ข้อเสนอสำคัญสองประการ ได้แก่
+        </p>
+
+        <div style="background:var(--bg-code); border-radius:8px; padding:20px 24px; margin:1.4em 0; display:flex; flex-direction:column; gap:12px;">
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <span style="color:var(--accent); font-weight:700; flex-shrink:0; margin-top:2px;">①</span>
+            <p style="margin:0; text-indent:0;">
+              <strong>อำนาจทางกายภาพ</strong> (<em>Physical Power</em>)
+              คือ<strong>รากฐานของระเบียบโลกทุกรูปแบบ</strong>
+              ไม่ว่าจะเป็นในธรรมชาติ ในสังคมมนุษย์ หรือแม้กระทั่งในพื้นที่ไซเบอร์ปัจจุบัน
+            </p>
+          </div>
+          <div style="display:flex; gap:12px; align-items:flex-start;">
+            <span style="color:var(--accent); font-weight:700; flex-shrink:0; margin-top:2px;">②</span>
+            <p style="margin:0; text-indent:0;">บิตคอยน์คือ<strong>เทคโนโลยีแรกในประวัติศาสตร์มนุษยชาติ</strong>
+              ที่สามารถนำอำนาจทางกายภาพซึ่งอยู่ในรูปแบบของ<strong>พลังงานไฟฟ้า (วัตต์)</strong>
+              เข้าสู่พื้นที่ไซเบอร์ได้อย่างแท้จริง
+            </p>
+          </div>
+        </div>
+
+        <!-- ── ภาพรวมแต่ละบท ── -->
+        <h3>ภาพรวมเนื้อหาในแต่ละบท</h3>
+
+        <div class="chapter-summaries">
+        <!-- Executive Summary -->
+        <div style="border:1px solid var(--border); border-radius:8px; padding:18px 20px; margin-bottom:16px;">
+          <div style="font-size:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:6px;">บทสรุปผู้บริหาร</div>
+          <p style="font-size:14px; color:var(--text-muted); font-style:italic; margin-bottom:10px;">ก่อนเปิดอ่านบทแรก ต้องเข้าใจสิ่งนี้ก่อน</p>
+          <p style="margin:0;">
+            Lowery เปิดเรื่องด้วยภาพเปรียบเทียบที่ทรงพลังเกี่ยวกับการใช้เครื่องจักรทางทหาร
+            เพื่อบังคับใช้อำนาจในห้าโดเมนปฏิบัติการ ได้แก่
+            <strong>ทางบก ทางทะเล ทางอากาศ ทางอวกาศ และพื้นที่ไซเบอร์</strong>
+            จากนั้นชี้ให้เห็นว่า<strong>เครื่องขุดบิตคอยน์ก็คือเครื่องจักรที่ทำหน้าที่เดียวกันในโดเมนที่ห้า</strong>
+            บทนี้ได้วางข้อสรุปไว้ล่วงหน้าว่า บิตคอยน์อาจเป็น
+            <strong>เทคโนโลยีด้านความมั่นคงแห่งชาติที่สำคัญที่สุดในยุคดิจิทัล</strong>
+            และการที่สหรัฐอเมริกายังคงมองบิตคอยน์ผ่านกรอบการเงินเพียงอย่างเดียวนั้น
+            อาจกลายเป็น<strong>ความผิดพลาดเชิงยุทธศาสตร์ที่มีราคาแพงมหาศาล</strong>
+          </p>
+        </div>
+
+        <!-- Chapter 1 -->
+        <div style="border:1px solid var(--border); border-radius:8px; padding:18px 20px; margin-bottom:16px;">
+          <div style="font-size:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:6px;">บทที่ 1: บทนำ</div>
+          <p style="font-size:14px; color:var(--text-muted); font-style:italic; margin-bottom:10px;">ทำไมจึงต้องมีวิทยานิพนธ์เล่มนี้</p>
+          <p style="margin:0;">
+            วิทยานิพนธ์เริ่มต้นด้วยบทเรียนจากประวัติศาสตร์ที่ชี้ให้เห็นว่า
+            <strong>จักรวรรดิและรัฐชาติมักล่มสลายลงเพราะความล้มเหลวในการมองเห็นเทคโนโลยีการแผ่ขยายอำนาจรูปแบบใหม่</strong>ที่อยู่ตรงหน้า
+            ดังเช่นกรณีที่จีนเคยมองว่าดินปืนเป็นเพียงยารักษาโรค
+            การที่จักรพรรดิคอนสแตนตินที่ 11 ทรงปฏิเสธปืนใหญ่จนทำให้กรุงคอนสแตนติโนเปิลต้องแตกพ่าย
+            หรือการที่นายพล Billy Mitchell ถูกศาลทหารตัดสินจำคุกเรื่องวิสัยทัศน์ด้านเครื่องบินรบ
+            ก่อนที่เหตุการณ์เพิร์ลฮาร์เบอร์จะพิสูจน์ความจริง
+            Lowery ตั้งคำถามว่า<strong>สหรัฐอเมริกากำลังทำผิดพลาดในลักษณะเดียวกันกับบิตคอยน์หรือไม่</strong>
+            พร้อมทั้งระบุอุปสรรคสี่ประการที่ขัดขวางไม่ให้สังคมมองเห็นเทคโนโลยีอำนาจรูปแบบใหม่นี้ ได้แก่
+            การขาดความเข้าใจในเรื่องการสงคราม อุดมการณ์สันติวิธี อคติทางการวิเคราะห์
+            และความไม่ลงรอยกันทางความคิด (<em>Cognitive Dissonance</em>)
+          </p>
+        </div>
+
+        <!-- Chapter 2 -->
+        <div style="border:1px solid var(--border); border-radius:8px; padding:18px 20px; margin-bottom:16px;">
+          <div style="font-size:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:6px;">บทที่ 2: ระเบียบวิธีวิจัย</div>
+          <p style="font-size:14px; color:var(--text-muted); font-style:italic; margin-bottom:10px;">วิทยานิพนธ์นี้สร้างขึ้นอย่างไร</p>
+          <p style="margin:0;">
+            บทนี้อธิบายเหตุผลที่ Lowery เลือกใช้
+            <strong>ระเบียบวิธีทฤษฎีฐานราก</strong> (<em>Grounded Theory</em>)
+            แทนการวิเคราะห์แบบสมมติฐาน-อนุมาน (<em>Hypothetico-Deductive</em>)
+            ซึ่งใช้กันโดยทั่วไปในงานวิจัยเกี่ยวกับบิตคอยน์
+            เหตุผลสำคัญคือ หากผู้วิจัยเริ่มต้นด้วยกรอบทฤษฎีทางการเงินหรือเศรษฐศาสตร์ที่มีอยู่เดิม
+            ผลลัพธ์ที่ได้ก็จะถูกจำกัดอยู่เพียงในกรอบนั้น
+            <strong>การสร้างทฤษฎีใหม่จากศูนย์</strong>โดยอาศัยการผสมผสานข้อมูลจากหลายสาขาวิชา
+            จึงเป็นหนทางเดียวที่จะขจัดอคติเชิงระบบและเปิดรับมุมมองใหม่ที่แท้จริงได้
+          </p>
+        </div>
+
+        <!-- Chapter 3 -->
+        <div style="border:1px solid var(--border); border-radius:8px; padding:18px 20px; margin-bottom:16px;">
+          <div style="font-size:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:6px;">บทที่ 3: ยุทธวิธีการแผ่ขยายอำนาจในธรรมชาติ</div>
+          <p style="font-size:14px; color:var(--text-muted); font-style:italic; margin-bottom:10px;">รากฐานทุกอย่างอยู่ที่ฟิสิกส์</p>
+          <p style="margin:0;">
+            ถือเป็น<strong>บทรากฐานที่สำคัญที่สุดของทฤษฎีทั้งหมด</strong>
+            โดย Lowery ได้พาผู้อ่านย้อนกลับไปถึงจุดกำเนิดของสิ่งมีชีวิตบนโลกเมื่อสี่พันล้านปีก่อน
+            เพื่อพิสูจน์ว่า "ความเป็นเจ้าของทรัพยากร" นั้นมีรากฐานมาจาก<strong>อำนาจทางกายภาพ มิใช่กฎหมายหรือความเชื่อ</strong>
+            ตั้งแต่แบคทีเรียกลุ่มแรกที่สร้างเยื่อหุ้มเซลล์เพื่อป้องกันตนเอง ไปจนถึงหมาป่าที่แยกเขี้ยวเพื่อปกป้องเหยื่อ
+            ล้วนใช้หลักการเดียวกัน คือการฉายพลังงาน (วัตต์) เพื่อส่งสัญญาณถึงความเป็นเจ้าของ
+            Lowery เรียกกลไกนี้ว่า <strong><em>Proof-of-Power Protocol</em></strong>
+            พร้อมทั้งนำเสนอแนวคิด<strong>อัตราส่วนผลประโยชน์ต่อต้นทุนการโจมตี</strong>
+            (<em>Benefit-to-Cost Ratio of Attack — BCRA</em>)
+            ซึ่งเป็นกฎเกณฑ์พื้นฐานที่ควบคุมพฤติกรรมของสิ่งมีชีวิตทุกชนิด รวมถึงรัฐชาติในยุคปัจจุบัน
+          </p>
+        </div>
+
+        <!-- Chapter 4 -->
+        <div style="border:1px solid var(--border); border-radius:8px; padding:18px 20px; margin-bottom:16px;">
+          <div style="font-size:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:6px;">บทที่ 4: ยุทธวิธีการแผ่ขยายอำนาจในสังคมมนุษย์</div>
+          <p style="font-size:14px; color:var(--text-muted); font-style:italic; margin-bottom:10px;">เมื่อมนุษย์สร้างอำนาจจากความเชื่อ</p>
+          <p style="margin:0;">
+            มนุษย์เป็นสัตว์เพียงชนิดเดียวบนโลกที่พัฒนาระบบ
+            <strong>อำนาจเชิงนามธรรม</strong> (<em>Abstract Power</em>) ขึ้นมาใช้
+            ไม่ว่าจะเป็น กฎหมาย ตำแหน่ง ศาสนา สกุลเงิน หรือสิทธิในทรัพย์สิน
+            <strong>สิ่งเหล่านี้ดำรงอยู่ได้เพราะความเชื่อร่วมกันของสังคม ไม่ใช่เพราะกฎเกณฑ์ทางฟิสิกส์บังคับ</strong>
+            Lowery อธิบายว่า แม้ลำดับชั้นอำนาจเชิงนามธรรม (<em>Abstract Power Hierarchy</em>)
+            จะมีประสิทธิภาพสูงในการจัดระเบียบสังคม แต่มีจุดอ่อนร้ายแรงที่หลีกเลี่ยงไม่ได้
+            นั่นคือ<strong>ระบบนี้ต้องอาศัยความไว้วางใจ</strong> และทำให้เกิดชนชั้นปกครองที่กุมอำนาจสมมติเอาไว้
+            ประวัติศาสตร์ที่ถูกบันทึกไว้กว่า 5,000 ปี แสดงให้เห็นว่าระบบเหล่านี้ล่มสลายลงซ้ำแล้วซ้ำเล่า
+            เมื่อชนชั้นปกครองเริ่มใช้อำนาจเพื่อประโยชน์ส่วนตน
+            โดยมีสงครามเป็นกลไกทางธรรมชาติที่เข้ามาจัดระเบียบความไม่สมดุลนั้นใหม่
+            บทนี้ปิดท้ายด้วยการวิเคราะห์ถึง
+            <strong>หลักประกันการทำลายล้างซึ่งกันและกันอย่างแน่นอน</strong>
+            (<em>Mutually Assured Destruction — MAD</em>)
+            ซึ่งแม้จะสร้างสันติภาพให้เกิดขึ้นได้ แต่ก็สร้างทางตันควบคู่กันไป
+            เนื่องจากมหาอำนาจไม่สามารถใช้อำนาจจลนศาสตร์ได้อย่างเสรีโดยปราศจากความเสี่ยงที่จะทำลายล้างตนเอง
+          </p>
+        </div>
+
+        <!-- Chapter 5 -->
+        <div style="border:1px solid var(--border); border-radius:8px; padding:18px 20px; margin-bottom:16px;">
+          <div style="font-size:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:6px;">บทที่ 5: ยุทธวิธีการแผ่ขยายอำนาจในพื้นที่ไซเบอร์</div>
+          <p style="font-size:14px; color:var(--text-muted); font-style:italic; margin-bottom:10px;">บิตคอยน์คืออาวุธ ไม่ใช่เงิน</p>
+          <p style="margin:0;">
+            นี่คือ<strong>หัวใจสำคัญของวิทยานิพนธ์ทั้งเล่ม</strong>
+            โดย Lowery ได้เชื่อมโยงแนวคิดทั้งหมดที่กล่าวมาเข้าสู่โลกดิจิทัล
+            ครึ่งแรกของบทนี้ชี้ให้เห็นว่า<strong>ซอฟต์แวร์คือระบบความเชื่อรูปแบบใหม่</strong>
+            และผู้ที่ควบคุมซอฟต์แวร์ก็คือชนชั้นปกครองในยุคดิจิทัล
+            ไม่ว่าจะเป็น บริษัทเทคโนโลยี แพลตฟอร์มโซเชียลมีเดีย หรือรัฐบาล
+            ต่างก็สร้างลำดับชั้นอำนาจเชิงนามธรรมผ่านชุดคำสั่ง (Code)
+            ซึ่งมีจุดอ่อนเหมือนกับระบบอำนาจนามธรรมในอดีตทุกประการ
+            ส่วนครึ่งหลังเป็นการนำเสนอทฤษฎีคอมพิวเตอร์ที่ปฏิวัติวงการ โดย Lowery เสนอว่า
+            บิตคอยน์ไม่ใช่เพียงซอฟต์แวร์ธรรมดา แต่เป็น
+            <strong>คอมพิวเตอร์ระดับโลก</strong> (<em>Planetary-Scale Computer</em>) ชนิดแรก
+            ที่ใช้โครงข่ายไฟฟ้าทั่วโลกเป็นแผงวงจรหลัก
+            และสามารถแปลงพลังงานจริง (วัตต์) ให้เป็น <em>Bitpower</em>
+            เพื่อนำมาใช้<strong>บังคับอำนาจทางกายภาพในพื้นที่ไซเบอร์ได้เป็นครั้งแรกในประวัติศาสตร์</strong>
+            ยุทธวิธีนี้คือ <strong><em>ซอฟต์วอร์ (Softwar)</em></strong>
+            อันเป็นสงครามรูปแบบใหม่ที่ปราศจากผู้บาดเจ็บ ไม่มีการทำลายล้าง
+            แต่มีประสิทธิภาพในการปกป้องสิทธิและทรัพยากรของรัฐชาติได้อย่างเทียบเท่าสงครามจลนศาสตร์ใดๆ
+            บทนี้ปิดท้ายด้วย
+            <strong>หลักประกันการรักษาไว้ซึ่งกันและกันอย่างแน่นอน</strong>
+            (<em>Mutually Assured Preservation — MAP</em>)
+            ซึ่งถือเป็นสมดุลเชิงยุทธศาสตร์ใหม่ระดับโลกที่บิตคอยน์ได้สร้างขึ้น
+          </p>
+        </div>
+
+        <!-- Chapter 6 -->
+        <div style="border:1px solid var(--border); border-radius:8px; padding:18px 20px; margin-bottom:28px;">
+          <div style="font-size:12px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); margin-bottom:6px;">บทที่ 6: ข้อเสนอแนะและบทสรุป</div>
+          <p style="font-size:14px; color:var(--text-muted); font-style:italic; margin-bottom:10px;">สหรัฐอเมริกาต้องทำอะไร และเพราะเหตุใด</p>
+          <p style="margin-bottom:14px; text-indent:0;">Lowery ปิดท้ายวิทยานิพนธ์ด้วยข้อเสนอแนะที่ตรงไปตรงมาสำหรับสามกลุ่มเป้าหมาย</p>
+          <div style="display:grid; grid-template-columns:max-content 1fr; gap:10px 16px; align-items:start;">
+            <span style="color:var(--accent); font-weight:700; font-size:13px; padding-top:3px; white-space:nowrap;">🔬 นักวิจัย</span>
+            <p style="margin:0; font-size:15px; text-indent:0; line-height:1.8;">เขาเรียกร้องให้ยุติการวิเคราะห์บิตคอยน์ผ่านกรอบการเงินและเศรษฐศาสตร์เพียงอย่างเดียว และให้เริ่มสร้างกรอบทฤษฎีทางเลือกที่มองบิตคอยน์ในฐานะ<strong>เทคโนโลยีความมั่นคงไซเบอร์และการแผ่ขยายอำนาจ</strong></p>
+            <span style="color:var(--accent); font-weight:700; font-size:13px; padding-top:3px; white-space:nowrap;">🏛️ ผู้กำหนดนโยบาย</span>
+            <p style="margin:0; font-size:15px; text-indent:0; line-height:1.8;">เขาเสนอให้ยุติการมอบอำนาจหลักในการกำหนดนโยบายบิตคอยน์แก่ผู้เชี่ยวชาญทางการเงิน เนื่องจากความเชี่ยวชาญทางการเงิน<strong>ไม่ครอบคลุมถึงทฤษฎีคอมพิวเตอร์ ยุทธศาสตร์การทหาร หรือความมั่นคงแห่งชาติ</strong></p>
+            <span style="color:var(--accent); font-weight:700; font-size:13px; padding-top:3px; white-space:nowrap;">🇺🇸 สหรัฐอเมริกา</span>
+            <p style="margin:0; font-size:15px; text-indent:0; line-height:1.8;">เขาเตือนว่าหากไม่เริ่มสะสมบิตคอยน์ไว้ในคลังสำรองเชิงยุทธศาสตร์ ไม่สนับสนุนอุตสาหกรรมการขุดบิตคอยน์ภายในประเทศ และไม่ให้ความคุ้มครองโครงสร้างพื้นฐานที่เกี่ยวข้อง สหรัฐอเมริกาอาจกำลัง<strong>ทำผิดพลาดซ้ำรอยจักรพรรดิคอนสแตนตินที่ 11 ก่อนที่กรุงคอนสแตนติโนเปิลจะแตกพ่ายในปี ค.ศ. 1453</strong></p>
+          </div>
+        </div>
+
+        </div><!-- /chapter-summaries -->
+
+        <!-- สรุปในสามประโยค -->
+        <h3>สรุปในสามประโยค (The Bottom Line)</h3>
+
+        <blockquote style="border-left-color:var(--accent); font-style:normal; line-height:2;">
+          <strong>บิตคอยน์ไม่ใช่เงิน</strong> —
+          แต่เป็นโปรโตคอลการแผ่ขยายอำนาจทางไซเบอร์รูปแบบแรกของโลก
+          ที่ใช้พลังงานไฟฟ้าจริงมาเป็นกำลังรบแทนกระสุนปืน
+          <br><br>
+          <strong>ชาติใดที่ทำความเข้าใจและยอมรับเทคโนโลยีนี้ได้ก่อน</strong>
+          ย่อมได้เปรียบเชิงยุทธศาสตร์เหนือชาติที่ยังติดอยู่กับกรอบคิดแบบเดิม
+          <br><br>
+          เฉกเช่นเดียวกับที่ชาติมหาอำนาจทางอากาศเคยได้เปรียบเหนือชาติที่พึ่งพาแต่กองทัพเรือ
+          <strong>ในสงครามโลกครั้งที่สอง</strong>
+        </blockquote>
+
+      </div>
+    </article>
+
+    <article class="chapter-section" id="abstract">
+      <div class="section-header">
+        <span class="section-num">Abstract</span>
+        
+      </div>
+      <h2 class="section-title">บทคัดย่อ</h2>
+      <div class="section-rule"></div>
+      <div class="content">
+        <p>
+          ปัจจุบัน การวิเคราะห์เทคโนโลยี <strong>Proof-of-Work</strong> ซึ่งเป็นรากฐานของบิตคอยน์
+          มักถูกจำกัดอยู่ภายใต้กรอบทฤษฎีทางการเงิน การเงินมหภาค หรือเศรษฐศาสตร์แทบทั้งสิ้น
+          การใช้กรอบทฤษฎีเดิมซ้ำ ๆ เพื่อวิเคราะห์บิตคอยน์แบบ<strong>สมมติฐาน-อนุมาน</strong>
+          (<em>Hypothetico-Deductive</em>) อาจก่อให้เกิด
+          <strong>อคติเชิงการวิเคราะห์ในระดับโครงสร้าง</strong> (<em>Systemic-Level Analytical Bias</em>)
+          ซึ่งไม่เพียงส่งผลเสียต่อกระบวนการกำหนดนโยบายสาธารณะ
+          แต่ยังอาจลุกลามเป็น<strong>ภัยคุกคามต่อความมั่นคงแห่งชาติของสหรัฐอเมริกา</strong>ได้
+        </p>
+        <p>
+          วิทยานิพนธ์ฉบับนี้จึงขอนำเสนอ<strong>กรอบทฤษฎีใหม่</strong>
+          เพื่อวิเคราะห์ผลกระทบเชิงยุทธศาสตร์ระดับชาติของบิตคอยน์
+          ในฐานะ<strong>เทคโนโลยีความมั่นคงไซเบอร์เชิงพลังงานไฟฟ้า</strong>
+          (<em>Electro-Cyber Security Technology</em>)
+          แทนที่จะมองเป็นเพียงระบบการชำระเงินแบบเพียร์ทูเพียร์ (<em>Peer-to-Peer Cash System</em>)
+          เป้าหมายหลักคือการมอบกรอบอ้างอิงทางเลือกให้แก่ชุมชนนักวิจัย
+          เพื่อนำไปใช้ตั้งสมมติฐานและวิเคราะห์เชิงอนุมานถึงความเสี่ยงตลอดจนผลตอบแทนของเทคโนโลยี Proof-of-Work
+          ในมิติที่กว้างกว่าเทคโนโลยีทางการเงิน
+        </p>
+        <p>
+          ผู้เขียนเชื่อว่าจะเป็นประโยชน์อย่างยิ่งหากนักวิจัยจะร่วมกันสำรวจขีดความสามารถด้านอื่น ๆ
+          ของเทคโนโลยี Proof-of-Work เพื่อขจัดจุดบอดที่อาจเกิดขึ้น
+          และช่วยให้เกิดความเข้าใจที่รอบด้านยิ่งขึ้นเกี่ยวกับความเสี่ยงและผลตอบแทนของโปรโตคอลอย่างบิตคอยน์
+          นอกจากนี้ ยังเป็นการสนับสนุนการพัฒนานโยบายสาธารณะให้มีฐานข้อมูลรองรับที่ครบถ้วน
+          สอดคล้องกับ<strong>คำสั่งฝ่ายบริหาร</strong> (<em>Executive Order</em>) ของประธานาธิบดีสหรัฐฯ
+          ทั้งในเรื่องการพัฒนาสินทรัพย์ดิจิทัลอย่างรับผิดชอบ (มีนาคม 2022)
+          และการเสริมสร้างความมั่นคงไซเบอร์ของชาติ (พฤษภาคม 2022)
+        </p>
+        <p>
+          ด้วยการประยุกต์ใช้<strong>ระเบียบวิธีวิจัยแบบทฤษฎีฐานราก</strong> (<em>Grounded Theory</em>)
+          ผู้เขียนได้บูรณาการแนวคิดจากหลากหลายสาขาวิชา อาทิ
+          ชีววิทยา จิตวิทยา มานุษยวิทยา รัฐศาสตร์ วิทยาการคอมพิวเตอร์ ความมั่นคงของระบบ
+          และทฤษฎียุทธศาสตร์การทหารยุคใหม่
+          เพื่อสร้างสรรค์กรอบแนวคิดใหม่ในชื่อ
+          <strong>"ทฤษฎีการแผ่ขยายอำนาจ" (<em>Power Projection Theory</em>)</strong>
+        </p>
+        <p>
+          เมื่อพิจารณาจากแนวคิดหลักของทฤษฎีดังกล่าว ผู้เขียนได้ให้เหตุผลเชิงอุปนัยว่า
+          เทคโนโลยี Proof-of-Work อย่างบิตคอยน์ไม่ได้เป็นเพียงเทคโนโลยีทางการเงิน
+          แต่อาจมีบทบาทสำคัญยิ่งกว่าในฐานะ
+          <strong>เทคโนโลยีการแผ่ขยายอำนาจไซเบอร์เชิงพลังงานไฟฟ้ารูปแบบใหม่</strong>
+          เทคโนโลยีนี้ช่วยเสริมศักยภาพให้รัฐชาติต่าง ๆ สามารถปกป้องข้อมูลที่ล้ำค่าที่สุดของตน
+          (ซึ่งไม่จำกัดเพียงข้อมูลทางการเงิน) จากผู้กระทำการอันเป็นปรปักษ์
+          โดยสร้างขีดความสามารถในการ<strong>บังคับใช้ต้นทุนทางกายภาพอย่างหนักหน่วง</strong>
+          ต่อประเทศอื่น ๆ ทั้งในพื้นที่ จากพื้นที่ และผ่านพื้นที่ไซเบอร์
+        </p>
+        <p>
+          ผู้เขียนเรียกยุทธวิธีการแผ่ขยายอำนาจแนวใหม่นี้ว่า
+          <strong>"ซอฟต์วอร์" (<em>Softwar</em>)</strong>
+          พร้อมทั้งศึกษาผลกระทบที่อาจเกิดขึ้นต่อความมั่นคงเชิงยุทธศาสตร์แห่งชาติในศตวรรษที่ 21
+          ทั้งนี้ เช่นเดียวกับงานวิจัยทฤษฎีฐานรากทั่วไป
+          ผลลัพธ์หลักของวิทยานิพนธ์ฉบับนี้คือ<strong>การนำเสนอทฤษฎีใหม่</strong>
+          มากกว่าการเป็นเพียงการวิเคราะห์เชิงนิรนัยเพื่อพิสูจน์สมมติฐานที่สืบเนื่องจากทฤษฎีเดิมที่มีอยู่
+        </p>
+        <p style="font-size:14px; color:var(--text-faint); border-top:1px solid var(--border); padding-top:14px; margin-top:2em; font-family:var(--font-ui);">
+          ที่ปรึกษาวิทยานิพนธ์: <em>Joan Rubin</em> — ผู้อำนวยการบริหาร โครงการออกแบบและการจัดการระบบ
+        </p>
+      </div>
+    </article>
+
+    <article class="chapter-section" id="acknowledgements">
+      <div class="section-header">
+        <span class="section-num">Acknowledgements</span>
+        
+      </div>
+      <h2 class="section-title">กิตติกรรมประกาศ</h2>
+      <div class="section-rule"></div>
+      <div class="content">
+        <p>
+          ก่อนอื่น ผู้เขียนขอแสดงความขอบคุณ <strong>พลเอก C.Q. Brown</strong>
+          ที่ได้มอบความกล้าหาญและให้การสนับสนุนอย่างเต็มที่
+          เพื่อให้ผู้เขียนสามารถอุทิศตนให้กับการศึกษาวิจัยในหัวข้อนี้
+          ตลอดจนขอขอบคุณ<strong>ทบวงทหารอากาศสหรัฐฯ</strong> (<em>Department of the Air Force</em>)
+          ที่ไว้วางใจและมอบหมายภารกิจนี้แก่ผู้เขียน
+        </p>
+        <p>
+          ผู้เขียนขอขอบคุณครอบครัวและคนใกล้ชิดทุกท่าน
+          ที่คอยสนับสนุนและมอบความเชื่อมั่นให้อย่างต่อเนื่อง
+          แม้ความพยายามในครั้งนี้จะท้าทายและเต็มไปด้วยอุปสรรคที่ไม่อาจคาดคิดมาก่อน
+          แต่ความเสียสละและการสนับสนุนของทุกท่านคือปัจจัยสำคัญยิ่งที่ช่วยให้งานวิจัยนี้สำเร็จลุล่วงไปได้
+        </p>
+        <p>
+          นอกจากนี้ ผู้เขียนขอขอบคุณทุกท่านที่มีส่วนช่วยขัดเกลาทฤษฎีฐานรากนี้ให้สมบูรณ์
+          ในช่วงเริ่มต้น ผู้เขียนไม่คาดคิดว่าจะได้รับข้อเสนอแนะที่หลากหลายและกว้างขวางเช่นนี้
+          จึงขอซาบซึ้งใจทุกท่านที่สละเวลารับฟังและตั้งคำถามท้าทาย
+          ซึ่งช่วยให้ผู้เขียนได้ทบทวนอคติของตนเอง
+          และเป็นแรงผลักดันให้สามารถกำหนดโครงสร้างของทฤษฎีได้ดังที่ปรากฏ
+          ความสำเร็จครั้งนี้เกิดจากการมีส่วนร่วมของทุกท่านอย่างแท้จริง
+          และผู้เขียนตั้งตารอที่จะได้ร่วมถกเถียงแลกเปลี่ยนความคิดเห็นกันต่อไปในอนาคต
+        </p>
+        <p>
+          แม้ไม่อาจเอ่ยนามทุกท่านได้ครบถ้วน
+          แต่ผู้เขียนขอขอบคุณบุคคลสำคัญต่อไปนี้เป็นพิเศษ ได้แก่
+          Adam Back, Greg Foss, Robert Breedlove, Jeff Booth, Preston Pysh, Level39,
+          Michael Saylor, Natalie Smolenski, Asher68W, Mike Alfred, Dennis Porter,
+          Jason Williams, Luke Gromen, Jim O'Flaherty, SusieB, Max และ Stacie Keiser,
+          Peter McCormack, Anthony, Joe และ John Pompliano, Natalie Brunell, Ben Prentice,
+          Joe Burnett, Matthew Pines, Erin Malone, Brandon Quittem, Brian Harrington,
+          Tomer Strolight, George Peacock, Nathan Perry, Cory Swan, Dylan LeClair,
+          Tuur Demeester, MarbellaHODL, Bobby von Hodlwitz, Ck_SNARKs, Mike Hobart,
+          Wealth Theory, Alex Gladstein, Joseph Aguirre, Ghazaleh Victoria, Tarun Chattoraj,
+          Eric Hart, Samson Mow, Phil Dubois, Jimmy Song, Nik Bhatia, Kelly Lannan,
+          Dan Held, Poens, w_s_bitcoin, Mark Moss และอีกมากมาย
+          การได้มีปฏิสัมพันธ์และแลกเปลี่ยนทรรศนะกับทุกท่านถือเป็นเกียรติอย่างแท้จริง
+        </p>
+        <p>
+          ท้ายนี้ ผู้เขียนขอขอบคุณ <strong>Rebecca</strong> เป็นพิเศษ
+          สำหรับ<strong>ภาพประกอบที่วาดขึ้นอย่างพิถีพิถันเพื่อวิทยานิพนธ์ฉบับนี้โดยเฉพาะ</strong>
+        </p>
+      </div>
+    </article>
+
+    <article class="chapter-section" id="biography">
+      <div class="section-header">
+        <span class="section-num">Biography</span>
+        
+      </div>
+      <h2 class="section-title">ประวัติผู้เขียน</h2>
+      <div class="section-rule"></div>
+      <div class="content">
+
+        <div style="display:flex; align-items:center; gap:14px; margin-bottom:1.8em; padding:16px 20px; background:var(--bg-code); border-radius:8px; font-family:var(--font-ui);">
+          <div style="font-size:36px; flex-shrink:0;">🪖</div>
+          <div>
+            <div style="font-size:17px; font-weight:700; color:var(--text);">พันตรี Jason "Spook" Lowery</div>
+            <div style="font-size:13px; color:var(--text-muted); margin-top:3px;">
+              National Defense Fellow · กองกำลังอวกาศสหรัฐอเมริกา (USSF) · MIT SDM Fellow
+            </div>
+          </div>
+        </div>
+
+        <p>
+          พันตรี Jason "Spook" Lowery เป็น<strong>นักวิจัยความมั่นคงแห่งชาติ</strong> (<em>National Defense Fellow</em>)
+          ภายใต้การสนับสนุนของกระทรวงกลาโหมสหรัฐฯ (<em>DoD</em>)
+          โดยเป็นนักวิจัยทั้งในสังกัดทบวงทหารอากาศสหรัฐฯ
+          และโครงการออกแบบและการจัดการระบบของสถาบัน MIT
+          เขายังเป็น<strong>วิศวกรอวกาศยาน</strong> (<em>Astronautical Engineer</em>)
+          และนายทหารประจำการด้านเทคโนโลยีและนวัตกรรม
+          สังกัด<strong>กองกำลังอวกาศแห่งสหรัฐอเมริกา</strong> (<em>USSF</em>)
+        </p>
+        <p>
+          ก่อนเข้าศึกษาที่สถาบัน MIT พันตรี Lowery เคยดำรงตำแหน่ง
+          <strong>ผู้อำนวยการปฏิบัติการของฝูงปล่อยยานอวกาศที่ 2 แห่งกองกำลังอวกาศสหรัฐฯ</strong>
+          นอกจากนี้ เขายังเป็นหนึ่งใน<strong>คณะนายทหารผู้ร่วมก่อตั้งกองกำลัง USSF</strong>
+          โดยทำหน้าที่เป็นรองหัวหน้าคณะปฏิบัติงานของผู้บัญชาการประจำกองบัญชาการยุทธการอวกาศ
+          กองบัญชาการอวกาศสหรัฐฯ (<em>USSPACECOM</em>)
+          และกองบัญชาการองค์ประกอบอวกาศกำลังรบผสม (<em>CFSCC</em>)
+        </p>
+        <p>
+          พันตรี Lowery โอนย้ายเข้าสู่กองกำลังอวกาศจากกองทัพอากาศสหรัฐฯ (<em>USAF</em>)
+          ซึ่งในขณะนั้น เขาปฏิบัติหน้าที่เป็น<strong>นักวิเคราะห์ข่าวกรองรอบด้าน</strong>
+          (<em>All-Source Intelligence Analyst</em>)
+          และเป็นผู้เชี่ยวชาญเฉพาะทางด้าน<strong>สงครามอิเล็กทรอนิกส์</strong>
+          ผลกระทบจากแรงระเบิดและขีปนาวุธ ตลอดจนการออกแบบระบบอาวุธอวกาศ
+        </p>
+        <p>
+          เขามีประสบการณ์ยาวนาน<strong>กว่าหนึ่งทศวรรษในการเป็นที่ปรึกษาด้านเทคนิค</strong>
+          ให้แก่เจ้าหน้าที่ระดับสูงของสหรัฐฯ
+          ทั้งในสำนักงานประธานาธิบดี (<em>OPOTUS</em>)
+          สำนักงานรัฐมนตรีกลาโหม (<em>OSECDEF</em>)
+          และสำนักงานผู้อำนวยการข่าวกรองแห่งชาติ (<em>ODNI</em>)
+        </p>
+        <p>
+          พันตรี Lowery สำเร็จการศึกษาระดับ<strong>ปริญญาโทสาขาวิศวกรรมอวกาศยาน</strong>
+          จากสถาบันเทคโนโลยีกองทัพอากาศ (<em>Air Force Institute of Technology</em>) รัฐโอไฮโอ
+          และ<strong>ปริญญาตรีสาขาวิศวกรรมเครื่องกล</strong>
+          จากมหาวิทยาลัยเบย์เลอร์ (<em>Baylor University</em>) รัฐเท็กซัส
+        </p>
+      </div>
+    </article>
+
+    <article class="chapter-section" id="acronyms">
+      <div class="section-header">
+        <span class="section-num">Acronyms</span>
+        
+      </div>
+      <h2 class="section-title">อักษรย่อ</h2>
+      <div class="section-rule"></div>
+
+      <style>
+        .acronym-table { width:100%; border-collapse:collapse; font-size:15px; font-family:var(--font-ui); }
+        .acronym-table th {
+          text-align:left; padding:9px 14px;
+          background:var(--bg-code); color:var(--accent);
+          font-size:11px; letter-spacing:0.1em; text-transform:uppercase;
+          border-bottom:2px solid var(--border);
+        }
+        .acronym-table td { padding:9px 14px; border-bottom:1px solid var(--border); vertical-align:top; line-height:1.5; }
+        .acronym-table tr:last-child td { border-bottom:none; }
+        .acronym-table tr:hover td { background:var(--accent-glow); }
+        .acronym-table .abbr { font-weight:700; color:var(--accent-light); white-space:nowrap; font-family:var(--font-ui); }
+        .acronym-table .full { color:var(--text); }
+        .acronym-table .th  { color:var(--text-muted); font-size:14px; }
+      </style>
+
+      <table class="acronym-table">
+        <thead>
+          <tr>
+            <th style="width:90px;">อักษรย่อ</th>
+            <th>ความหมายเต็ม</th>
+            <th>คำอธิบายภาษาไทย</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="abbr">ABP</td><td class="full">Abstract-Power-Based</td><td class="th">ระบบที่อิงอำนาจเชิงนามธรรม</td></tr>
+          <tr><td class="abbr">BCRA</td><td class="full">Benefit-to-Cost Ratio of Attack</td><td class="th">อัตราส่วนผลประโยชน์ต่อต้นทุนการโจมตี</td></tr>
+          <tr><td class="abbr">BA</td><td class="full">Benefit of Attack</td><td class="th">ผลประโยชน์ที่ได้รับจากการโจมตี</td></tr>
+          <tr><td class="abbr">CA</td><td class="full">Cost of Attack</td><td class="th">ต้นทุนที่ต้องจ่ายเพื่อการโจมตี</td></tr>
+          <tr><td class="abbr">CCCH</td><td class="full">Congested, Contested, Competitive, &amp; Hostile</td><td class="th">ห้วงที่แออัด มีการช่วงชิง การแข่งขัน และความเป็นปรปักษ์</td></tr>
+          <tr><td class="abbr">CFSCC</td><td class="full">Combined Force Space Component Command</td><td class="th">กองบัญชาการองค์ประกอบอวกาศกำลังรบผสม</td></tr>
+          <tr><td class="abbr">DoD</td><td class="full">Department of Defense</td><td class="th">กระทรวงกลาโหมสหรัฐอเมริกา</td></tr>
+          <tr><td class="abbr">EO</td><td class="full">Executive Order</td><td class="th">คำสั่งฝ่ายบริหารของประธานาธิบดี</td></tr>
+          <tr><td class="abbr">MIT</td><td class="full">Massachusetts Institute of Technology</td><td class="th">สถาบันเทคโนโลยีแมสซาชูเซตส์</td></tr>
+          <tr><td class="abbr">OPOTUS</td><td class="full">Office of the President of the United States</td><td class="th">สำนักงานประธานาธิบดีแห่งสหรัฐอเมริกา</td></tr>
+          <tr><td class="abbr">OSECDEF</td><td class="full">Office of the Secretary of Defense</td><td class="th">สำนักงานรัฐมนตรีกลาโหม</td></tr>
+          <tr><td class="abbr">ODNI</td><td class="full">Office of the Director of National Intelligence</td><td class="th">สำนักงานผู้อำนวยการข่าวกรองแห่งชาติ</td></tr>
+          <tr><td class="abbr">PPB</td><td class="full">Physical-Power-Based</td><td class="th">ระบบที่อิงอำนาจทางกายภาพ</td></tr>
+          <tr><td class="abbr">SDM</td><td class="full">System Design &amp; Management</td><td class="th">การออกแบบและการจัดการระบบ</td></tr>
+          <tr><td class="abbr">US</td><td class="full">United States</td><td class="th">สหรัฐอเมริกา</td></tr>
+          <tr><td class="abbr">USAF</td><td class="full">United States Air Force</td><td class="th">กองทัพอากาศสหรัฐอเมริกา</td></tr>
+          <tr><td class="abbr">USSF</td><td class="full">United States Space Force</td><td class="th">กองกำลังอวกาศสหรัฐอเมริกา</td></tr>
+          <tr><td class="abbr">USSPACECOM</td><td class="full">United States Space Command</td><td class="th">กองบัญชาการอวกาศสหรัฐอเมริกา</td></tr>
+        </tbody>
+      </table>
+    </article>
+
+    <article class="chapter-section" id="executive-summary">
+      <div class="section-header">
+        <span class="section-num">Executive Summary</span>
+        
+      </div>
+      <h2 class="section-title">บทสรุปผู้บริหาร</h2>
+      <div class="section-rule"></div>
+      <div class="content">
+        <p>
+          ภาพที่ 1 แสดงให้เห็นถึงวิธีการ 5 รูปแบบในการใช้เครื่องจักรเพื่อบังคับใช้ต้นทุนทางกายภาพอย่างรุนแรงต่อผู้อื่น
+          ในขอบเขตปฏิบัติการทั้ง 5 มิติ ภาพด้านล่างสุดแสดงเครื่องจักรเฉพาะทางที่ใช้งานอยู่ในปัจจุบัน
+          เพื่อคุ้มครองข้อมูลพิเศษที่เรียกว่า "บิตคอยน์" ให้ปลอดภัยจากผู้กระทำการอันเป็นปรปักษ์
+          ภาพนี้สื่อถึง<strong>สาระสำคัญของวิทยานิพนธ์</strong>ที่ว่า
+          บิตคอยน์ไม่ได้เป็นเพียงโปรโตคอลทางการเงิน
+          แต่กำลังก้าวขึ้นเป็น<strong>ยุทธวิธีการแผ่ขยายอำนาจในพื้นที่ไซเบอร์</strong> (<em>Cyber Power Projection</em>) สำหรับยุคดิจิทัล
+          ในขณะที่ซอฟต์แวร์ทั่วไปทำได้เพียงจำกัดและควบคุมคอมพิวเตอร์ในเชิง<strong>ตรรกะ</strong> (<em>Logical Constraint</em>)
+          บิตคอยน์กลับสามารถจำกัดคอมพิวเตอร์ในเชิง<strong>กายภาพ</strong> (<em>Physical Constraint</em>)
+          โดยบังคับใช้ต้นทุนทางกายภาพอย่างหนักหน่วงซึ่งประเมินค่าเป็นหน่วย<strong>วัตต์ (Watts)</strong>
+          ต่อศัตรูในพื้นที่ไซเบอร์ ด้วยเหตุนี้ การนำบิตคอยน์ไปใช้อย่างแพร่หลายทั่วโลก
+          จึงเปรียบเสมือน<strong>การปฏิวัติแนวทางด้านความมั่นคงไซเบอร์</strong>
+          และอาจพลิกโฉมวิธีการปกป้องทรัพยากรที่มีค่าที่สุดของสังคมยุคดิจิทัลไปอย่างสิ้นเชิง
+        </p>
+
+        <!-- Figure 1 -->
+        <figure style="margin:1.8em 0; text-align:center;">
+          <img
+            src="images/Figure 1.png"
+            alt="ภาพที่ 1 — วิธีการ 5 รูปแบบในการสร้างต้นทุนทางกายภาพอย่างรุนแรงต่อผู้รุกรานใน 5 มิติ"
+            style="max-width:100%; border-radius:6px; border:1px solid var(--border); box-shadow:0 4px 16px rgba(0,0,0,0.2);"
+            onerror="this.parentElement.style.display='none'"
+          />
+          <figcaption style="margin-top:10px; font-size:13px; color:var(--text-faint); font-family:var(--font-ui);">
+            ภาพที่ 1: วิธีการ 5 รูปแบบในการสร้างต้นทุนทางกายภาพอย่างรุนแรงต่อผู้รุกรานใน 5 มิติที่แตกต่างกัน
+          </figcaption>
+        </figure>
+
+        <p>
+          บิตคอยน์อาจเป็น<strong>เทคโนโลยีความมั่นคงแห่งชาติที่มีความสำคัญเชิงยุทธศาสตร์อย่างยิ่งยวดสำหรับยุคดิจิทัล</strong>
+          อย่างไรก็ตาม ประชาชนชาวอเมริกันส่วนใหญ่อาจยังมองไม่เห็นถึงศักยภาพดังกล่าว
+          เนื่องจากยังขาดความเข้าใจในองค์ความรู้หลัก 4 ประการ ได้แก่
+          (1) ทฤษฎีคอมพิวเตอร์เบื้องหลังแนวคิด Proof-of-Work
+          (2) ยุทธวิธีการแผ่ขยายอำนาจสมัยใหม่
+          (3) บทบาทและหน้าที่ของกองทัพ และ
+          (4) ธรรมชาติของวิชาชีพการทำสงคราม
+          ซึ่งหากทฤษฎีที่นำเสนอในวิทยานิพนธ์ฉบับนี้ถูกต้อง
+          การที่ประชาชน<strong>ขาดความเข้าใจในแก่นความรู้เหล่านี้อาจนำไปสู่ภัยคุกคามต่อความมั่นคงเชิงยุทธศาสตร์</strong>ของสหรัฐอเมริกาได้
+        </p>
+
+        <p>
+          อนาคตความมั่นคงเชิงยุทธศาสตร์แห่งชาติของสหรัฐอเมริกาขึ้นอยู่กับ<strong>ความมั่นคงไซเบอร์</strong>เป็นสำคัญ
+          ซึ่งบิตคอยน์ได้พิสูจน์แล้วว่าระบบ Proof-of-Work สามารถทำหน้าที่เป็นระบบรักษาความปลอดภัยทางไซเบอร์รูปแบบใหม่ได้จริง
+          ขณะนี้นานาประเทศกำลังตื่นตัวถึงผลประโยชน์เชิงยุทธศาสตร์ของบิตคอยน์
+          และตระหนักว่าการนำเทคโนโลยีนี้มาใช้อาจเป็นผลประโยชน์สูงสุดของชาติ
+          ดังจะเห็นได้จากการที่รัสเซียพลิกท่าทีกลับมาสนับสนุนบิตคอยน์แบบ 180 องศาในช่วงที่ผ่านมา
+          สงครามเย็นครั้งใหม่อาจกำลังก่อตัวขึ้น โดยเปลี่ยนจากการแข่งขันด้านอวกาศมาเป็น
+          <strong>การแข่งขันในพื้นที่ไซเบอร์</strong> (<em>Cyberspace Race</em>)
+          และเช่นเดียวกับที่ผ่านมาเมื่อมียุทธวิธีแผ่ขยายอำนาจรูปแบบใหม่เกิดขึ้น
+          <strong>ความเร็วในการยอมรับและนำไปใช้คือปัจจัยชี้ขาด</strong>
+        </p>
+
+        <p>
+          หากสหรัฐอเมริกาไม่พิจารณาสะสมบิตคอยน์เป็น<strong>คลังสำรองเชิงยุทธศาสตร์</strong>
+          (<em>Strategic Bitcoin Reserves</em>) หรืออย่างน้อยไม่ส่งเสริมให้เกิดการใช้งานในวงกว้าง
+          ผู้เขียนเชื่อว่าสหรัฐอเมริกาอาจสูญเสียความได้เปรียบทางเทคโนโลยีการแผ่ขยายอำนาจที่สำคัญนี้ให้แก่คู่แข่งตัวฉกาจ
+          ดังนั้น แนวทางที่ผู้นำสหรัฐฯ กำลังใช้ประเมินความเสี่ยงและผลประโยชน์ของเทคโนโลยี Proof-of-Work อยู่ในปัจจุบัน
+          จึงอาจกลายเป็นภัยคุกคามต่อความมั่นคงแห่งชาติเสียเอง
+          สิ่งที่น่ากังวลเป็นพิเศษคือ การที่ผู้กำหนดนโยบายจัดให้บิตคอยน์เป็นเพียง "สกุลเงินคริปโต" อย่างผิวเผิน
+          และปล่อยให้<strong>สถาบันที่มีผลประโยชน์ทับซ้อน</strong> (<em>Conflicts of Interest</em>)
+          อ้างตนเป็นผู้เชี่ยวชาญ
+          ซึ่งอาจบ่อนทำลายความมั่นคงเชิงยุทธศาสตร์ของสหรัฐอเมริกาในท้ายที่สุด
+        </p>
+
+        <p>
+          นักวิทยาศาสตร์คอมพิวเตอร์ได้ศึกษาวิจัยโปรโตคอล Proof-of-Work มานานกว่า<strong>30 ปี</strong>
+          ซึ่งยาวนานกว่าอายุของบิตคอยน์ถึงสองเท่า
+          นับตั้งแต่เริ่มการวิจัย มีการตั้งสมมติฐานว่า Proof-of-Work สามารถทำหน้าที่เป็น
+          <strong>ระบบรักษาความปลอดภัยไซเบอร์แบบใหม่</strong>
+          ที่ช่วยให้ผู้คนปกป้องทรัพยากรคอมพิวเตอร์และข้อมูลที่ล้ำค่าจากการถูกแฮ็กหรือถูกฉ้อฉล
+          โดยการบังคับใช้ต้นทุนทางกายภาพอย่างหนักหน่วงในรูปแบบของพลังงานคอมพิวเตอร์
+          ต่อผู้กระทำการอันเป็นปรปักษ์ที่พยายามเข้าถึงหรือแทรกแซงข้อมูลเหล่านั้น
+          กล่าวอีกนัยหนึ่ง นักวิทยาศาสตร์คอมพิวเตอร์เพิ่งค้นพบสิ่งที่เจ้าหน้าที่ทหารทราบกันดีมานับพันปีแล้ว
+          นั่นคือ <em>หากต้องการหยุดยั้งผู้ไม่หวังดี จะต้องทำให้การกระทำนั้นมีต้นทุนทางกายภาพที่แพงเกินกว่าจะแบกรับไหว</em>
+        </p>
+
+        <p>
+          ในขณะที่แวดวงวิชาการสร้างทฤษฎีการทำงานของ Proof-of-Work ผ่านช่องทางที่เป็นทางการ
+          วิศวกรซอฟต์แวร์และผู้ลงมือปฏิบัติจริงอย่าง
+          <strong>Adam Back, Hal Finney และ Satoshi Nakamoto</strong>
+          กลับออกแบบ สร้าง และนำต้นแบบไปใช้งานจริงผ่านช่องทางที่ไม่เป็นทางการ
+          ทุกวันนี้ บิตคอยน์ได้ก้าวขึ้นเป็น<strong>ระบบความปลอดภัยไซเบอร์แบบ Proof-of-Work
+          ที่ได้รับการยอมรับในระดับโลกมากที่สุดในประวัติศาสตร์</strong>
+          และมีความทรงพลังทางกายภาพเหนือกว่าโปรโตคอลแบบโอเพ่นซอร์สอื่น ๆ อย่างทิ้งห่าง
+          จนก่อให้เกิดวลียอดฮิตที่ริเริ่มโดย Michael Saylor นักเทคโนโลยีศิษย์เก่า MIT รุ่นปี 1987 ว่า
+          <strong>"ไม่มีอันดับสอง"</strong> (<em>There is no second best</em>)
+        </p>
+
+        <p>
+          แล้วบิตคอยน์เข้าไปเกี่ยวข้องกับสงครามได้อย่างไร?
+          เพื่อทำความเข้าใจความเชื่อมโยงนี้ เราต้องย้อนกลับไปพิจารณา<strong>ภารกิจหลักของกองทัพ</strong>
+          รัฐอธิปไตยมีพันธกิจและความรับผิดชอบต่อประชาชน
+          ในการปกป้องการเข้าถึงเส้นทางสัญจรระหว่างประเทศ ไม่ว่าจะเป็น ทางบก ทะเล อากาศ และอวกาศ
+          เพื่อรักษา<strong>เสรีภาพในการปฏิบัติการ</strong> (<em>Freedom of Action</em>)
+          และรักษาสถานะการแลกเปลี่ยนสินค้ากับนานาประเทศ
+          เมื่อใดที่รัฐหนึ่งเจตนาลิดรอนเสรีภาพหรือขัดขวางการแลกเปลี่ยนสินค้าของอีกรัฐหนึ่งผ่านเส้นทางเหล่านี้
+          การกระทำนั้นย่อมถือเป็น<strong>การก่อสงคราม</strong>
+          กองทัพจึงมีอยู่เพื่อปกป้องการเข้าถึงเส้นทางสัญจรดังกล่าว
+          โดยใช้วิธีบังคับใช้ต้นทุนทางกายภาพอันรุนแรงต่อผู้ที่พยายามปิดกั้นหรือขัดขวาง
+        </p>
+
+        <p>
+          เหล่าทัพต่าง ๆ ถูกจัดแบ่งตามเส้นทางสัญจรที่รับผิดชอบ
+          <strong>กองทัพบก</strong>ปกป้องทางบก <strong>กองทัพเรือ</strong>ปกป้องน่านน้ำ
+          <strong>กองทัพอากาศ</strong>ปกป้องน่านฟ้า และ<strong>กองกำลังอวกาศ</strong>ปกป้องห้วงอวกาศ
+          ทว่าไม่ว่าจะเป็นโดเมนใด ทุกเหล่าทัพต่างมีหลักการทำงานพื้นฐานเหมือนกัน
+          นั่นคือ การรักษาความสามารถของชาติในการใช้งานเส้นทางสัญจร
+          โดยสร้างต้นทุนทางกายภาพอย่างหนักหน่วงต่อผู้ที่เข้ามาปิดกั้น
+          ยิ่งกองทัพมีความทรงพลัง มีแรงจูงใจ และมีความเด็ดขาดมากเพียงใด
+          ก็ยิ่งปฏิบัติภารกิจได้ดีเยี่ยมเท่านั้น
+          และยิ่งสามารถ<strong>นำเทคโนโลยีมาใช้แผ่ขยายอำนาจได้อย่างชาญฉลาด</strong>
+          ประสิทธิภาพในการส่งมอบคุณค่าหลักก็จะยิ่งเพิ่มสูงขึ้น
+        </p>
+
+        <p>
+          หนึ่งในเส้นทางสัญจรที่มีความสำคัญเชิงยุทธศาสตร์สูงสุดในศตวรรษที่ 21 คือสิ่งที่เรียกกันว่า
+          <strong>"พื้นที่ไซเบอร์"</strong>
+          การรักษาความสามารถในการแลกเปลี่ยนทรัพยากรล้ำค่าอย่างชุดข้อมูลดิจิทัลผ่านเส้นทางนี้
+          ถือเป็น<strong>ผลประโยชน์เชิงยุทธศาสตร์ระดับชาติ</strong>ของทุกประเทศ
+          เช่นเดียวกับการรักษาน่านน้ำหรือน่านฟ้า รัฐอธิปไตยมีสิทธิ์และพันธกิจที่ต้องปกป้องการเข้าถึงเส้นทางไซเบอร์ระหว่างประเทศ
+          หากรัฐใดจงใจขัดขวางเสรีภาพหรือความสามารถในการส่งผ่านข้อมูลของอีกรัฐหนึ่งในพื้นที่ไซเบอร์
+          การกระทำนั้นก็ย่อมถูกตีความว่าเป็น<strong>การทำสงคราม</strong>เฉกเช่นในโดเมนอื่น ๆ
+        </p>
+
+        <p>
+          ก่อนการถือกำเนิดขึ้นของบิตคอยน์ <strong>รัฐชาติต่าง ๆ ไม่เคยมีวิธีที่มีประสิทธิภาพ</strong>
+          ในการปกป้องการแลกเปลี่ยนข้อมูลอย่างเสรีในโลกไซเบอร์ทางกายภาพ
+          โดยไม่ต้องพึ่งพากำลังรบที่ก่อให้เกิดการสูญเสียชีวิต (<em>Kinetic Power</em>)
+          แต่สถานการณ์นี้ได้เปลี่ยนไปหลังการค้นพบเทคโนโลยี Proof-of-Work แบบโอเพ่นซอร์สอย่างบิตคอยน์
+          ซึ่งช่วยให้ผู้คนสามารถ<strong>ต่อต้านผู้กระทำการอันเป็นปรปักษ์ในเชิงกายภาพได้อย่างแท้จริง</strong>
+          เทคโนโลยีนี้ได้รับการพิสูจน์แล้วว่าใช้งานได้จริง
+          และการยอมรับก็<strong>ขยายขอบเขตไปถึงระดับรัฐชาติ</strong>แล้ว
+        </p>
+
+        <p>
+          ด้วยโปรโตคอล Proof-of-Work อย่างบิตคอยน์ ในปัจจุบันรัฐชาติต่าง ๆ สามารถใช้เครื่องจักรพิเศษ
+          เพื่อสร้างข้อจำกัดทางกายภาพอันรุนแรงต่อรัฐอื่น ๆ ในพื้นที่ไซเบอร์ได้
+          <strong>โดยปราศจากการทำลายล้างและการเสียชีวิต</strong>
+          ด้วยความสามารถในการสร้างต้นทุนทางกายภาพที่แพงลิ่วผ่านพื้นที่ไซเบอร์
+          ทำให้เราสามารถออกแบบเครือข่ายคอมพิวเตอร์แบบไร้การพึ่งพาความไว้วางใจ (<em>Zero-Trust</em>)
+          รวมถึงอินเทอร์เน็ตรูปแบบใหม่ที่สามารถเพิกถอนสิทธิพิเศษของผู้ใช้ได้ทางกายภาพทันทีหากพวกเขาทุจริตระบบ
+          เครือข่ายแรกที่พิสูจน์แนวคิดการออกแบบนี้ได้สำเร็จก็คือบิตคอยน์
+          บิตคอยน์จึงเป็น<strong>เครื่องยืนยันประจักษ์ชัดว่า Proof-of-Work ใช้งานได้ผลจริง</strong>
+        </p>
+
+        <p>
+          แก่นแท้ของบิตคอยน์คือเครือข่ายคอมพิวเตอร์ที่ใช้ถ่ายโอนข้อมูลดิจิทัลระหว่างกัน
+          โดยอิง<strong>การออกแบบความมั่นคงทางกายภาพแบบ Zero-Trust</strong>
+          ซึ่งชุดข้อมูลดิจิทัลสามารถเป็นตัวแทนของข้อมูลประเภทใดก็ได้ รวมถึงข้อมูลทางการเงิน
+          จึงสมเหตุสมผลที่เครือข่าย Proof-of-Work จะถูกนำมาใช้ปกป้องการแลกเปลี่ยนข้อมูลทางการเงินเป็นอันดับแรก
+          แต่นั่นไม่ใช่ขีดความสามารถทั้งหมด เทคโนโลยีนี้สามารถนำไปประยุกต์ใช้ได้กว้างขวางยิ่งกว่านั้น
+          เพราะยังมีข้อมูลล้ำค่าอีกหลากหลายประเภทที่สังคมยุคสารสนเทศต้องการปกป้อง
+        </p>
+
+        <blockquote>
+          ในท้ายที่สุด บิตคอยน์อาจเป็นจุดเริ่มต้นของ<strong>ขีดความสามารถในการรักษาความมั่นคงไซเบอร์ระดับยุทธการรูปแบบใหม่</strong>
+          บทสรุปที่สำคัญที่สุดคือ <strong>บิตคอยน์เป็นตัวแทนของ "ซอฟต์วอร์" (<em>Softwar</em>)</strong>
+          หรือโปรโตคอลการป้องกันไซเบอร์เชิงพลังงานไฟฟ้า
+          มิใช่เพียงระบบการชำระเงินอิเล็กทรอนิกส์แบบ Peer-to-Peer เท่านั้น
+          ผู้เขียนเชื่อมั่นว่าเทคโนโลยี Proof-of-Work มีศักยภาพที่จะ
+          <strong>พลิกโฉมหน้าอนาคตความมั่นคงเชิงยุทธศาสตร์แห่งชาติ</strong>
+          และพลวัตของอำนาจระหว่างประเทศในมิติที่เราเพิ่งจะเริ่มต้นทำความเข้าใจเท่านั้น
+        </blockquote>
+      </div>
+    </article>
+
+    <!-- ────────────────────────────────────────── -->
+    <!-- CHAPTER 1                                  -->
+    <!-- ────────────────────────────────────────── -->
+    <article class="chapter-section" id="chapter1">
+      <div style="text-align:center; margin-bottom:10px;">
+        <span style="font-size:16px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent); font-family:var(--font-ui);">บทที่ 1</span>
+      </div>
+      <h2 class="section-title" style="text-align:center;">บทนำ</h2>
+      <p class="section-title-en" style="text-align:center;">Chapter 1: Introduction</p>
+      <div class="section-rule" style="margin-left:auto; margin-right:auto;"></div>
+
+      <blockquote style="text-align:center; border-left:none; border-top:2px solid var(--border); border-bottom:2px solid var(--border); border-radius:0; background:transparent; padding:24px 32px; max-width:680px; margin-left:auto; margin-right:auto;">
+        "เราไม่อาจยุติสงครามได้ด้วยการออกกฎหมายห้าม และไม่อาจยุติมันได้ด้วยการปลดอาวุธของผู้เข้มแข็ง
+        สงครามจะยุติได้ก็ต่อเมื่อทำให้ทุกชาติ ไม่ว่าอ่อนแอหรือเข้มแข็ง สามารถปกป้องตนเองได้
+        หากไม่มีประเทศใดถูกโจมตีได้สำเร็จ สงครามก็ไม่มีความหมายอีกต่อไป"
+        <br><br>— Nikola Tesla
+      </blockquote>
+
+      <!-- 1.1 -->
+      <div class="content">
+      <div class="subsection" id="s1-1" style="margin-top:32px;">
+        <h3 class="subsection-title">1.1 แรงบันดาลใจ</h3>
+
+        <p>
+          อัลเบิร์ต ไอน์สไตน์ (Albert Einstein) เคยตั้งทฤษฎีไว้ว่ามวลสารและพลังงานสามารถสลับสับเปลี่ยนกันได้
+          หากทฤษฎีนี้ถูกต้อง ย่อมหมายความว่าในอนาคต รัฐชาติต่าง ๆ อาจเรียนรู้ที่จะนำระบบป้องกันที่อาศัยพลังงาน
+          (อำนาจที่ไม่ใช่จลนศาสตร์) มาทดแทนระบบป้องกันที่อาศัยมวลสาร (อำนาจจลนศาสตร์) บางส่วน
+          เพื่อประยุกต์ใช้ในด้านความมั่นคงทางกายภาพและการป้องกันประเทศ
+          แม้ว่ากองทัพสมัยใหม่จะมีการใช้งานระบบป้องกันทางไซเบอร์และอิเล็กทรอนิกส์อยู่แล้ว
+          ทว่าอาจมีเทคโนโลยีการป้องกันอีกรูปแบบหนึ่งที่สามารถผสานระบบไฟฟ้าและไซเบอร์เข้าด้วยกัน
+          จนเกิดเป็นเทคโนโลยีการป้องกันทาง <strong>"ไซเบอร์เชิงพลังงานไฟฟ้า" (Electro-Cyber)</strong>
+          หากเป็นเช่นนั้น ในอนาคตสังคมอาจเรียนรู้ที่จะใช้เทคโนโลยีพิเศษนี้เป็นเครื่องมือในการทำสงครามแบบ
+          "อ่อน" (Soft War) เพื่อแก้ไขข้อพิพาทเชิงนโยบายระหว่างประเทศ สถาปนาลำดับชั้นทางอำนาจ ปกป้องทรัพย์สิน
+          ปรับสมดุลโครงสร้างอำนาจ หรือแม้กระทั่งใช้เพื่อบรรเทาภัยคุกคามจากการทำสงครามแบบ "แข็ง" (Hard War)
+          เช่น การบานปลายสู่สงครามนิวเคลียร์
+        </p>
+
+        <p>
+          แนวคิดเรื่องการทำสงครามไซเบอร์เชิงพลังงานไฟฟ้าไม่ใช่เรื่องใหม่แต่อย่างใด
+          ทว่ามีจุดเริ่มต้นมาไม่น้อยกว่า 123 ปีแล้ว
+          ย้อนกลับไปในปี ค.ศ. 1900 นิโคลา เทสลา (Nikola Tesla) ได้ตั้งสมมติฐานว่า
+          สังคมมนุษย์จะพัฒนาอำนาจจลนศาสตร์ที่มีอานุภาพทำลายล้างสูงส่งจนถึงจุดที่มนุษยชาติต้องเผชิญกับทางตัน
+          และเพื่อความอยู่รอด มนุษย์จะถูกบีบบังคับให้ต้องทำสงครามผ่านการแข่งขัน "ส่งพลังงาน"
+          โดยที่มนุษย์ไม่ต้องเข้าไปมีส่วนร่วมโดยตรง (Human-out-of-the-loop)
+          เขาเชื่อมั่นว่ามนุษย์จะสามารถประดิษฐ์เครื่องจักรอัจฉริยะขึ้นมาเพื่อแข่งขันกันด้วยพลังงานไฟฟ้าในการยุติข้อพิพาท
+          โดยที่มนุษย์เป็นเพียงผู้เฝ้าสังเกตการณ์อยู่ห่าง ๆ เท่านั้น
+        </p>
+
+        <p>
+          นอกจากเทสลาแล้ว บุคคลสำคัญแห่งยุคปฏิวัติอุตสาหกรรมของอเมริกาคนอื่น ๆ
+          ก็มีแนวคิดที่สอดคล้องกันเกี่ยวกับการนำไฟฟ้ามาใช้เพื่อลดทอนภัยคุกคามจากสงคราม
+          ดังเช่นในปี ค.ศ. 1921 เฮนรี ฟอร์ด (Henry Ford)
+          ซึ่งมีรายงานว่ายืนอยู่เคียงข้าง โทมัส เอดิสัน (Thomas Edison) ผู้เป็นคู่แข่งของเทสลา
+          ได้กล่าวอ้างว่าสังคมจะสามารถขจัดหนึ่งในสาเหตุรากเหง้าของสงครามได้
+          หากเรียนรู้ที่จะสร้างสกุลเงินในรูปแบบไฟฟ้าซึ่งนายธนาคารไม่สามารถเข้ามาควบคุมได้
+        </p>
+
+        <p>
+          ทั้งเทสลาและฟอร์ดต่างมองเห็นศักยภาพของการนำไฟฟ้ามาใช้เพื่อขจัดสาเหตุรากเหง้าของสงคราม
+          หรือเพื่อยุติความสูญเสียและการทำลายล้างที่สืบเนื่องมาจากสงคราม
+          อย่างไรก็ตาม ทั้งสองกลับไม่ประสบความสำเร็จในการสร้างเทคโนโลยีเพื่อทดสอบหรือพิสูจน์สมมติฐานดังกล่าว
+          สาเหตุสำคัญอาจเป็นเพราะทฤษฎีของทั้งคู่นั้นเกิดขึ้นก่อนการประดิษฐ์ "เครื่องจักรอัจฉริยะ"
+          หรือที่ในปัจจุบันรู้จักกันในนามของ
+          <strong>คอมพิวเตอร์อเนกประสงค์แบบเก็บโปรแกรมได้ (General-Purpose Stored-Program Computers)</strong>
+          กล่าวคือ ทฤษฎีของเทสลาและฟอร์ดเกิดขึ้นก่อนที่จะมีกรอบแนวคิดเรื่อง "วิทยาการคอมพิวเตอร์"
+          และก่อนที่จะมีการพัฒนาสิ่งที่เรียกว่า "ซอฟต์แวร์" ขึ้นบนโลก
+        </p>
+
+        <p>
+          วิทยานิพนธ์ฉบับนี้ได้รับแรงบันดาลใจจากชุดคำถามที่ว่า
+          จะเกิดอะไรขึ้นหากสิ่งที่เทสลาและฟอร์ดคาดการณ์ไว้นั้นถูกต้อง
+          และแท้จริงแล้วทั้งคู่กำลังกล่าวถึงเทคโนโลยีชิ้นเดียวกัน?
+          จะเป็นอย่างไรหากทฤษฎีของฟอร์ดเป็นจริง
+          และเราสามารถบรรเทาสาเหตุหลักของสงครามได้ด้วยการแปลงพลังงานไฟฟ้าให้กลายเป็นข้อมูลทางการเงิน?
+          และจะเป็นอย่างไรหากทฤษฎีของเทสลาถูกต้อง
+          ที่ว่าสงครามในอนาคตจะต้องอาศัยเครื่องจักรอัจฉริยะมาแข่งขันกันส่งพลังงานโดยที่มนุษย์ไม่ต้องเข้าไปเกี่ยวข้องดังที่เขาได้ทำนายไว้?
+          เทคโนโลยีในลักษณะนี้จะไม่ช่วยลดทอนการสูญเสียชีวิตจากสงครามจลนศาสตร์แบบดั้งเดิมหรอกหรือ?
+          และหากทำได้จริง เทคโนโลยีนี้จะไม่ถือว่าคุ้มค่ากับพลังงานทุกวัตต์ที่ต้องสูญเสียไปหรอกหรือ?
+        </p>
+
+        <p>
+          สมมติว่าทฤษฎีของเทสลาถูกต้อง เทคโนโลยีการทำสงครามแบบ "อ่อน" ดังกล่าวจะมีหน้าตาเป็นเช่นไร?
+          เทคโนโลยีนี้จะส่งผลกระทบหรือพลิกโฉมลำดับชั้นทางสังคมและโครงสร้างอำนาจของสังคมเกษตรกรรม
+          ที่คุ้นเคยกับการทำสงครามแบบ "แข็ง" หรือสงครามจลนศาสตร์มานานกว่า 10,000 ปีได้อย่างไร?
+          หาก "เครื่องจักรอัจฉริยะ" ของเทสลาหมายถึงคอมพิวเตอร์
+          การแข่งขันด้านพลังงานของพวกมันก็ย่อมต้องถูกควบคุมด้วยโปรแกรมคอมพิวเตอร์ใช่หรือไม่?
+          บางทีรูปแบบการทำสงครามไซเบอร์เชิงพลังงานไฟฟ้าแบบ "อ่อน" ที่ล้ำยุคของมนุษยชาตินี้
+          อาจแฝงตัวอยู่ในรูปแบบของโปรโตคอลคอมพิวเตอร์ที่เปิดให้เข้าถึงและพัฒนาได้อย่างเสรี (Open-source)
+          ที่เรียกว่า <strong>"ซอฟต์วอร์" (Softwar)</strong>
+          และด้วยความที่มันเป็นสิ่งที่ไม่เคยปรากฏมาก่อนในประวัติศาสตร์
+          จึงอาจเป็นเหตุผลว่าทำไมถึงยังไม่มีใครสังเกตเห็นมัน
+          (แนวคิดนี้ได้ถูกแสดงไว้ในภาพที่ 2)
+        </p>
+
+        <figure style="margin:2em 0; text-align:center;">
+          <img src="images/Figure 2.png" alt="ภาพที่ 2" style="max-width:100%; border-radius:8px; border:1px solid var(--border);"
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+          <div style="display:none; align-items:center; justify-content:center; background:var(--bg-code); border:1px dashed var(--border); border-radius:8px; padding:40px; color:var(--text-muted); font-size:14px;">
+            [ภาพที่ 2 — ยังไม่มีไฟล์]
+          </div>
+          <figcaption style="margin-top:10px; font-size:14px; color:var(--text-muted); font-style:italic;">
+            ภาพที่ 2: ทฤษฎีของเทสลาและฟอร์ดอาจปรากฏขึ้นจริงในรูปแบบโปรโตคอลคอมพิวเตอร์แบบโอเพนซอร์ส
+          </figcaption>
+        </figure>
+
+        <p>
+          ในทางทฤษฎี โปรโตคอล "ซอฟต์วอร์" สามารถใช้ประโยชน์จากโครงข่ายไฟฟ้าระดับโลกที่กระจายตัวอยู่ทั่วทุกมุมโลก
+          ผนวกกับโครงสร้างพื้นฐานอินเทอร์เน็ตที่มีอยู่เดิม
+          เพื่อเสริมอานุภาพให้คอมพิวเตอร์สามารถบังคับใช้ต้นทุนทางกายภาพที่สูงลิ่วจนเป็นอุปสรรคต่อคอมพิวเตอร์เครื่องอื่น ๆ ในพื้นที่ไซเบอร์ได้
+          มันสามารถหลอมรวมแนวคิดของเทสลาและฟอร์ดเข้าด้วยกัน
+          โดยทำหน้าที่เป็นทั้งโปรโตคอล "ซอฟต์วอร์" และเครือข่ายทางการเงินไปพร้อม ๆ กัน
+          ไม่มีเหตุผลเชิงตรรกะใดที่จะหักล้างได้ว่าเทคโนโลยีนี้ไม่สามารถปฏิบัติหน้าที่ทั้งสองประการควบคู่กันไปได้
+          โดยเฉพาะอย่างยิ่งเมื่อพิจารณาว่า การพัฒนาและการขยายตัวของเทคโนโลยีทุกประเภทล้วนต้องอาศัยเงินทุนเป็นแรงขับเคลื่อน
+          โดยเฉพาะในกลุ่มอุตสาหกรรมป้องกันประเทศ
+        </p>
+
+        <p>
+          สิ่งที่น่าสนใจไปกว่านั้นคือ บางทีเทคโนโลยี "ซอฟต์วอร์" อาจจะถือกำเนิดขึ้นมาแล้ว
+          และรัฐชาติต่าง ๆ ก็กำลังเริ่มให้การยอมรับ
+          บางทีเทคโนโลยีการแผ่ขยายอำนาจรูปแบบใหม่นี้อาจกำลังพิสูจน์ให้เห็นแล้วว่า
+          มันสามารถเสริมสร้างขีดความสามารถให้แก่ทุกชาติ ไม่ว่าจะอ่อนแอหรือเข้มแข็ง
+          ให้สามารถปกป้องผลประโยชน์ของตนในเชิงกายภาพได้ในแบบที่ไม่เคยมีมาก่อน
+          จนทำให้คำทำนายของเทสลากลายเป็นจริง
+          เป็นไปได้ว่าเทคโนโลยีการทำสงครามไซเบอร์เชิงพลังงานไฟฟ้านี้กำลังซ่อนตัวอยู่ในที่แจ้ง
+          เพียงแต่ผู้คนยังไม่ทันสังเกตเห็น เนื่องจากมีความเข้าใจคลาดเคลื่อนว่ามันเป็นเพียงระบบเงินสดอิเล็กทรอนิกส์แบบเพียร์ทูเพียร์
+          ในท้ายที่สุดแล้ว สิ่งเดียวที่สังคมอาจต้องการเพื่อให้ตระหนักว่ามนุษยชาติกำลังก้าวเข้าสู่กระบวนทัศน์ใหม่ของการทำสงครามที่ไร้ซึ่งการนองเลือด
+          ก็อาจเป็นเพียง <strong>"มุมมองที่แตกต่างออกไป"</strong>
+          และด้วยเหตุผลนี้เอง ผู้เขียนจึงมุ่งมั่นนำเสนอวิทยานิพนธ์ฉบับนี้ขึ้นมา
+        </p>
+      </div>
+      </div><!-- /content -->
+
+      <!-- 1.2–1.5 placeholder -->
+      <div class="subsection" id="s1-2">
+        <h3 class="subsection-title">1.2 เหตุผลและความจำเป็น (Justification)</h3>
+
+        <!-- 1.2.1 -->
+        <div id="s1-2-1" style="margin-top:28px;">
+          <blockquote>
+            "เครื่องบินเป็นแค่ของเล่นที่น่าสนใจ แต่ไม่มีคุณค่าใด ๆ ทางทหาร"
+            <br><br>— จอมพล เฟอร์ดินานด์ ฟอช (Ferdinand Foch) ผู้บัญชาการทหารสูงสุดกองกำลังสัมพันธมิตรในสงครามโลกครั้งที่ 1
+          </blockquote>
+
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.2.1 หากมีผู้ประดิษฐ์โปรโตคอล "ซอฟต์วอร์" ขึ้นมาจริง ๆ เราจะมั่นใจได้อย่างไรว่าสังคมจะมองเห็นคุณค่าทางทหารของมัน?
+          </h4>
+
+          <p>เมื่อผ่านพ้นสงครามโลกมาถึงสองครั้งและเฉียดกรายเข้าสู่ปากเหวแห่งการทำลายล้างด้วยอาวุธนิวเคลียร์ในศตวรรษที่ผ่านมา จึงไม่ใช่เรื่องแปลกที่เราจะมองย้อนกลับไปยังทฤษฎีของเทสลา (Tesla) และฟอร์ด (Ford) ด้วยความกังขาและมีอคติ ทว่าในความเป็นจริง ทั้งสองอาจจะค้นพบความจริงบางอย่างที่ยิ่งใหญ่ แนวคิดของพวกเขาอาจจะถูกต้องมาตั้งแต่ต้น เพียงแต่วิทยาการคอมพิวเตอร์ในยุคนั้นยังไม่ก้าวหน้าพอที่จะทำให้มันเป็นจริงได้ หากเป็นเช่นนั้น การนำแนวคิดเหล่านี้มาปัดฝุ่นและทบทวนอย่างละเอียดอีกครั้งในยุคปัจจุบัน—ยุคที่สังคมเติบโตขึ้นนับศตวรรษและก้าวล้ำทางเทคโนโลยี (โดยเฉพาะวิทยาการคอมพิวเตอร์)—ย่อมก่อให้เกิดประโยชน์มหาศาล</p>
+
+          <p>ความจำเป็นของงานวิจัยชิ้นนี้สามารถอธิบายได้ผ่านการทดลองทางความคิด (Thought Experiment) ลองสมมติว่า (1) การทำ "สงครามแบบอ่อน" (Soft War) สามารถเกิดขึ้นได้จริง และ (2) สงครามนี้ถูกขับเคลื่อนผ่านโปรโตคอล "ซอฟต์วอร์" บางรูปแบบ คำถามคือ มันสมเหตุสมผลหรือไม่ที่เราจะปักใจเชื่อว่า สังคมจะมองเห็นความสำคัญเชิงยุทธศาสตร์ของเทคโนโลยีนี้ทันทีที่มันถูกค้นพบเป็นครั้งแรก? ผู้เขียนขอยืนยันว่า ไม่มีเหตุผลใดเลยที่เราจะต้องเชื่อเช่นนั้น เทคโนโลยีการทำสงครามแบบอ่อน—ซึ่งไร้การปะทะ (Non-kinetic) จับต้องไม่ได้ และไร้รูปทรง—ย่อมไม่มีหน้าตาคล้ายคลึงกับอาวุธยุทโธปกรณ์แบบดั้งเดิมแม้แต่น้อย จึงเป็นไปได้สูงมากที่เทคโนโลยีนี้จะไม่ถูกจดจำหรือยอมรับในฐานะ "อาวุธสงคราม" เพราะรูปลักษณ์และกลไกการทำงานของมันแตกต่างจากสิ่งที่เราคุ้นเคยโดยสิ้นเชิง</p>
+
+          <p>การจะหวังให้สังคมมองเห็นอานุภาพที่แท้จริงของเทคโนโลยีประเภทนี้ทันทีที่มันปรากฏขึ้นนั้นเป็นเรื่องยากยิ่งนัก หากเรามองย้อนกลับไปในประวัติศาสตร์ จะพบว่ามีมหาอาณาจักรจำนวนนับไม่ถ้วนที่ล่มสลายลง เพียงเพราะพวกเขาล้มเหลวในการตระหนักถึงความสำคัญเชิงยุทธศาสตร์ของเทคโนโลยีการสงครามรูปแบบใหม่ที่เพิ่งถือกำเนิดขึ้น—แม้ว่าเทคโนโลยีเหล่านั้นจะดูทรงพลังและชัดเจนอย่างมากเมื่อเรามองย้อนกลับไปก็ตาม</p>
+
+          <p>ยกตัวอย่างเช่นในศตวรรษที่ 9 นักเล่นแร่แปรธาตุชาวจีนผู้คิดค้นดินปืน เชื่อว่ามันคือ "ยารักษาโรค" พวกเขาใช้เวลาหลายร้อยปีกว่าจะตระหนักว่าดินปืนมีศักยภาพมหาศาลในฐานะเทคโนโลยีการสงครามรูปแบบใหม่ ด้วยเหตุผลบางประการ ผู้คนในยุคนั้นไม่ได้คิดจะนำส่วนผสมของถ่าน กำมะถัน และดินประสิว มาประยุกต์ใช้เพื่อความมั่นคงของอาณาจักรเลย ทำไมจึงเป็นเช่นนั้น? สาเหตุอาจเป็นเพราะยังไม่มีใครจินตนาการออกว่า ผงสีดำเหล่านี้จะสามารถนำมาใช้แผ่ขยายอำนาจและสร้างความสูญเสียทางกายภาพอย่างหนักหน่วงต่อศัตรูได้อย่างไร จนกระทั่งศตวรรษที่ 13 เมื่อวิศวกรโรงหล่อเหล็กเริ่มประดิษฐ์อาวุธและเทคโนโลยีเสริม เพื่อดึงเอาพลังงานมหาศาลจากดินปืนมาใช้โจมตีศัตรู ทุกสิ่งจึงเปลี่ยนไป</p>
+
+          <p>ในช่วงทศวรรษที่ 1450 จักรพรรดิคอนสแตนตินที่ 11 (Constantine XI) ทรงปฏิเสธที่จะสนับสนุนการใช้งานปืนใหญ่ที่คิดค้นโดย ออร์บัน (Orban) วิศวกรโรงหล่อเหล็ก แม้เขาจะเสนอตัวสร้างมันขึ้นเพื่อปกป้องกรุงคอนสแตนติโนเปิลจากจักรวรรดิออตโตมันก็ตาม เพียงหนึ่งปีหลังจากนั้น จักรพรรดิก็ทรงสวรรคตระหว่างการถูกปิดล้อมและระดมยิงด้วยปืนใหญ่ ในช่วงทศวรรษที่ 1520 จักรวรรดิจีนได้สั่งเผาทำลายกองทัพเรืออันเกรียงไกรของตนทิ้ง เพียงไม่นานก่อนที่โลกจะค้นพบทวีปอเมริกาและยุโรปจะก้าวขึ้นเป็นมหาอำนาจทางทะเล—นี่คือความผิดพลาดครั้งประวัติศาสตร์ที่จีนต้องใช้เวลากว่าหกศตวรรษเพื่อฟื้นฟู หรือในช่วงทศวรรษที่ 1860 กองทัพเรืออังกฤษได้ออกหน้าปฏิเสธและต่อต้านการนำตอร์ปิโดขับเคลื่อนด้วยตัวเองมาใช้อย่างแข็งขัน เมื่อ โรเบิร์ต ไวท์เฮด (Robert Whitehead) วิศวกรชาวอังกฤษประดิษฐ์มันขึ้นมาได้สำเร็จ</p>
+
+          <p>ในช่วงทศวรรษที่ 1920 นายพล บิลลี มิตเชลล์ (Billy Mitchell) แห่งกองทัพบกสหรัฐฯ ถูกลดยศและนำตัวขึ้นศาลทหารในข้อหาขัดขืนคำสั่ง หลังจากที่เขาออกมาวิพากษ์วิจารณ์ผู้นำกองทัพบก กองทัพเรือ และรัฐสภาสหรัฐฯ ถึงความไร้วิสัยทัศน์ นายพลมิตเชลล์ประณามผู้บังคับบัญชาของตนว่ากระทำการ "เข้าข่ายการทรยศชาติ" เนื่องจากพวกเขาปฏิเสธที่จะยอมรับทฤษฎีใหม่ที่ว่า เครื่องบินรบกำลังจะทวีความสำคัญเชิงยุทธศาสตร์เทียบเท่ากับเรือรบและอาวุธยุทโธปกรณ์อื่น ๆ เขาเสียชีวิตลง 9 ปีก่อนที่ทฤษฎีของเขาจะได้รับการพิสูจน์อย่างเด็ดขาดจากเหตุการณ์ที่ญี่ปุ่นโจมตีอ่าวเพิร์ลฮาร์เบอร์ (Pearl Harbor) ท้ายที่สุด เขาได้รับการคืนยศนายพลหลังเสียชีวิต และได้รับเหรียญทองจากรัฐสภาหลังสงครามโลกครั้งที่สองสิ้นสุดลง ปัจจุบัน นายพลมิตเชลล์ได้รับการยกย่องในฐานะ "บิดาแห่งกองทัพอากาศสหรัฐฯ"</p>
+
+          <p>ประวัติศาสตร์ยังคงเต็มไปด้วยตัวอย่างของความล้มเหลวซ้ำซากในการมองเห็นอานุภาพเชิงยุทธศาสตร์ของเทคโนโลยีการแผ่ขยายอำนาจรูปแบบใหม่ในทันทีที่มันถูกค้นพบ ในขณะเดียวกัน ก็มีบทพิสูจน์มากมายที่แสดงให้เห็นว่า เทคโนโลยีเหล่านี้คือตัวแปรสำคัญที่สามารถสร้างหรือทำลายจักรวรรดิได้เลยทีเดียว แต่ถึงกระนั้น ผู้นำจักรวรรดิก็ยังคงหลงลืมบทเรียนพื้นฐานนี้ซ้ำแล้วซ้ำเล่า</p>
+
+          <p>บันทึกทางประวัติศาสตร์ตลอด 5,000 ปีที่ผ่านมา ชี้ให้เห็นว่าความล้มเหลวในการตระหนักถึงความสำคัญของอาวุธยุคใหม่นั้น "เป็นเรื่องปกติ ไม่ใช่ข้อยกเว้น" จักรวรรดิต่าง ๆ รุ่งเรืองและดับสูญเพียงเพราะพวกเขายอมปล่อยให้ตนเองถูกรุกรานจากเทคโนโลยีที่พลิกเกมได้ ยิ่งไปกว่านั้น ผู้นำเหล่านั้นมักทำตัวราวกับว่าตนมีสิทธิ์เลือกว่าจะปฏิเสธหรือเมินเฉยต่อเทคโนโลยีใหม่ได้ คำถามคือ ทำไมผู้ปกครองถึงยังคงยอมให้จักรวรรดิของตนถูกสั่นคลอน? ทำไมพวกเขาถึงยอมทิ้งความได้เปรียบทางเทคโนโลยีไปให้ศัตรูอย่างง่ายดาย? เรื่องนี้มีคำอธิบายอยู่หลายประการ</p>
+
+          <p>คำอธิบายที่เรียบง่ายที่สุดคือ สังคมมักทำผิดพลาดซ้ำเดิมด้วยความเชื่อที่ว่า "สงครามครั้งหน้าจะมีหน้าตาเหมือนสงครามครั้งที่ผ่านมา" สมมติฐาน รูปแบบความคิด และความเชื่อที่ฝังหัวเหล่านี้เองที่สร้าง "จุดบอด" บดบังทัศนวิสัย เมื่อผู้คนไม่ยอมตั้งคำถามกับความเชื่อของตนเอง พวกเขาจึงไม่ตระหนักถึงความหยิ่งทะนงและความประมาทที่ซ่อนอยู่</p>
+
+          <p>เห็นได้ชัดว่า การที่อาณาจักรหนึ่งจะมองเห็นศักยภาพที่ซ่อนอยู่ของเทคโนโลยีใหม่นั้นเป็นเรื่องยากเย็นแสนเข็ญ แม้ว่ามันจะถูกวางอยู่ตรงหน้าแล้วก็ตาม บ่อยครั้งที่จักรวรรดิใหญ่ปฏิเสธเทคโนโลยีใหม่แม้ชาติคู่แข่งจะเริ่มนำไปใช้แล้ว หรือแม้กระทั่งละเลยเสียงเตือนจากนายทหารของตนเองที่ตะโกนร้องให้เร่งนำมาใช้ก่อนที่ขั้วอำนาจโลกจะถูกพลิกคว่ำ หนำซ้ำยังหันไปดิสเครดิตหรือปลดนายทหารเหล่านั้นออกจากตำแหน่งเสียอีก</p>
+
+          <p>เมื่อทบทวนบทเรียนจากอดีตเหล่านี้ ลองถามตัวเราเองดูว่า: สมเหตุสมผลหรือไม่ที่จะเชื่อว่าสังคมจะมองเห็นและเข้าใจคุณค่าของโปรโตคอล "ซอฟต์วอร์" ทันทีที่มีการประดิษฐ์มันขึ้นมา? คำถามเหล่านี้สะท้อนให้เห็นถึงความจำเป็นของวิทยานิพนธ์ฉบับนี้ การตื่นตัวและเฝ้าระวังเทคโนโลยีการแผ่ขยายอำนาจรูปแบบใหม่ถือเป็นภารกิจระดับชาติที่สำคัญยิ่งยวด เพราะการเพิกเฉยและปฏิเสธเทคโนโลยีเหล่านั้นอาจนำมาซึ่งหายนะ จักรวรรดิจะรุ่งเรืองหรือล่มสลาย ย่อมขึ้นอยู่กับความสามารถในการปรับตัวให้เข้ากับยุทธวิธีและเทคโนโลยีใหม่ ๆ และนี่คืองานของผมในฐานะนายทหารกองกำลังอวกาศ (USSF) และนักวิจัยด้านความมั่นคงแห่งชาติ (National Defense Fellow) ประจำสถาบัน MIT หน้าที่ของผมคือการตื่นตัวและคอยจับตาดูเทคโนโลยีการแผ่ขยายอำนาจที่กำลังจะมาเปลี่ยนโลก</p>
+        </div>
+
+        <!-- 1.2.2 -->
+        <div id="s1-2-2" style="margin-top:40px;">
+          <blockquote>
+            "[โครงการแมนฮัตตัน] คือสิ่งที่โง่เขลาที่สุดที่เราเคยทำมา ระเบิดลูกนี้ไม่มีทางระเบิดเด็ดขาด และผมพูดคำนี้ในฐานะผู้เชี่ยวชาญด้านวัตถุระเบิด"
+            <br><br>— พลเรือเอก วิลเลียม เลฮี (William Leahy) ที่ปรึกษาทางทหารระดับสูงของประธานาธิบดีทรูแมน, ค.ศ. 1945
+          </blockquote>
+
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.2.2 ต่อให้สังคมมองเห็นคุณค่าของ "ซอฟต์วอร์" เราจะมั่นใจได้อย่างไรว่าพวกเขาจะเปิดรับมันก่อนที่จะสายเกินไป?
+          </h4>
+
+          <p>หากเราขยายการทดลองทางความคิดนี้ออกไปอีก สมมติว่า (1) สงครามแบบอ่อนสามารถเกิดขึ้นได้จริง (2) สงครามในอนาคตจะถูกขับเคลื่อนบางส่วนด้วยโปรโตคอล "ซอฟต์วอร์" และ (3) นักวิจัยด้านความมั่นคงแห่งชาติประจำสถาบัน MIT ของสหรัฐฯ สามารถระบุเทคโนโลยีหลักที่ช่วยทำให้สงครามรูปแบบนี้เกิดขึ้นจริงได้ และกำลังพยายามอย่างหนักเพื่อสร้างความตระหนักรู้ต่อสาธารณะ—ถึงขั้นอุทิศเวลาวิจัยกว่าหนึ่งปีเพื่อพัฒนาทฤษฎีเกี่ยวกับซอฟต์วอร์</p>
+
+          <p>คำถามคือ เป็นเรื่องสมเหตุสมผลหรือไม่ที่เราจะเชื่อว่าสังคมจะยอมรับและนำเทคโนโลยีนี้มาใช้งานได้ทันเวลา? คนบางกลุ่มอาจจะรับได้ แต่ต้องใช้เวลานานแค่ไหนกว่าที่คนส่วนใหญ่จะตกผลึกและบรรลุฉันทามติร่วมกันว่า เทคโนโลยีนี้คือยุทธศาสตร์ชาติระดับคอขาดบาดตาย ซึ่งต้องเร่งนำมาใช้และสะสมไว้โดยเร็วที่สุด? สังคมของเราจะบรรลุฉันทามติก่อนฝ่ายตรงข้ามหรือไม่? เพราะเฉกเช่นเดียวกับประวัติศาสตร์ของการเปลี่ยนผ่านเทคโนโลยีเชิงยุทธศาสตร์ "เวลา" คือปัจจัยชี้ขาดทุกสิ่ง</p>
+
+          <p>การทดลองทางความคิดนี้สะท้อนให้เห็นถึงประเด็นวิกฤตด้านความมั่นคง หากเทคโนโลยีใหม่มีนัยสำคัญต่อความมั่นคงแห่งชาติ อุปสรรคใด ๆ ก็ตามที่ทำให้สังคมยอมรับเทคโนโลยีนั้นช้าลง ย่อมถือเป็นภัยคุกคามต่อความมั่นคงเสียเอง เช่นเดียวกับทุกครั้งที่มีเทคโนโลยีพลิกโลกถือกำเนิดขึ้น ความสำเร็จล้วนขึ้นอยู่กับความเร็วในการปรับตัว ดังนั้น สิ่งใดก็ตามที่ทำให้เรายอมรับได้ช้าลง สิ่งนั้นก็กำลังลดทอนความมั่นคงของเราเช่นกัน</p>
+
+          <p>ลำพังแค่รอให้สังคมค่อย ๆ มองเห็นความสำคัญของเทคโนโลยีใหม่นั้นไม่เพียงพอ—พวกเขาต้องสร้างฉันทามติ ยอมรับ และก้าวขึ้นเป็นผู้นำให้ได้ก่อนชาติคู่แข่ง เราไม่อาจนิ่งดูดายแล้วปล่อยให้ศัตรูเป็นผู้มาสอนเราว่าเทคโนโลยีนี้สำคัญแค่ไหน ดังตัวอย่างในอดีต ประชาชนชาวกรุงคอนสแตนติโนเปิลมีเวลาไม่ถึงหนึ่งปีในการถกเถียงว่า "ปืนใหญ่" คือยุทธศาสตร์สำคัญที่ต้องยอมจ่ายต้นทุนสูงเพื่อนำมาใช้หรือไม่ เวลานั้นสั้นเกินไป สุดท้ายพวกเขาจึงต้องเรียนรู้ความสำคัญของปืนใหญ่อย่างเจ็บปวด เมื่อสุลต่านเมห์เหม็ดที่ 2 (Sultan Mehmed II) เป็นผู้มาสอนบทเรียนนั้นด้วยการทำให้เห็นเป็นตัวอย่าง</p>
+
+          <p>ในช่วงต้นศตวรรษที่ 1900 รัฐบาลสหรัฐฯ มีเวลาหลายทศวรรษในการสร้างความตระหนักรู้ว่า เครื่องบิน พลังงานนิวเคลียร์ และจรวด คือจุดเปลี่ยนแห่งความมั่นคง ซึ่งโชคดีที่พวกเขาสามารถทำได้สำเร็จ—แต่ก็ไม่ได้ปราศจากอุปสรรค ในช่วงทศวรรษอันมีค่านั้น ความเชื่องช้าของสังคมถูกฉุดรั้งด้วยอุปสรรคมากมาย เช่น การนำตัวนายพลมิตเชลล์ขึ้นศาลทหาร หรือคำแนะนำที่ผิดพลาดอย่างมหันต์จากบุคคลอย่างพลเรือเอกเลฮี</p>
+
+          <p>ในช่วงทศวรรษที่ 1930 อัลเบิร์ต ไอน์สไตน์ (Albert Einstein) เคยสรุปไว้ว่าพลังงานนิวเคลียร์น่าจะยังไม่สามารถเกิดขึ้นจริงได้ในช่วงชีวิตของเขา แต่เพียงไม่กี่ปีต่อมา ไอน์สไตน์กลับต้องเป็นฝ่ายส่งจดหมายอ้อนวอนให้รัฐบาลสหรัฐฯ หันมาตระหนักถึงความสำคัญเชิงยุทธศาสตร์ของพลังงานนิวเคลียร์อย่างเร่งด่วน ภายในปี ค.ศ. 1939 สถานการณ์โลกตึงเครียดถึงขีดสุด จนแม้แต่ไอน์สไตน์—ผู้ฝักใฝ่สันติภาพที่มีชื่อเสียงที่สุดในโลก—ยังต้องกระตุ้นให้ประธานาธิบดี แฟรงกลิน โรสเวลต์ (Franklin Roosevelt) เร่งพัฒนาหัวรบนิวเคลียร์ให้ตัดหน้าเยอรมนี หลายคนอาจลืมไปว่า จดหมายประวัติศาสตร์ฉบับนั้นเปรียบเสมือนจดหมาย "สารภาพผิด" (Mea culpa) ของไอน์สไตน์ หลังจากที่เขาเคยออกมาลดทอนความน่าเชื่อถือของพลังงานนิวเคลียร์และสนับสนุนการต่อต้านสงครามอย่างเปิดเผยมาก่อน</p>
+
+          <p>ความเชื่องช้าและอุปสรรคที่ขัดขวางไม่ให้ชาวอเมริกันบรรลุฉันทามติเกี่ยวกับเทคโนโลยีใหม่เหล่านี้ มีอานุภาพมากพอที่จะทำให้ความมั่นคงแห่งชาติของสหรัฐฯ ต้องตกอยู่ในอันตรายร้ายแรง ลองจินตนาการดูว่า จะมีกี่ชีวิตที่รอดตาย หรือเราจะประหยัดเวลา พลังงาน และทรัพยากรไปได้มากเพียงใด หากผู้นำทางทหารและผู้กำหนดนโยบายยอมเชื่อทฤษฎีของนายพลมิตเชลล์ให้เร็วกว่านี้ และผลักดันให้สหรัฐฯ เป็นผู้นำด้านสงครามทางอากาศตั้งแต่ช่วงกลางทศวรรษ 1930? หรือลองคิดดูว่าโลกจะเป็นอย่างไร หากเยอรมนี—ชาติแรกที่พัฒนาเครื่องบินเจ็ตและขีปนาวุธพิสัยไกลได้สำเร็จ—สามารถสร้างหัวรบนิวเคลียร์ได้ก่อนสหรัฐฯ เป็นเวลาหลายเดือน? ประเด็นสำคัญคือ สหรัฐอเมริกาหลบ "กระสุนเชิงยุทธศาสตร์" มาได้หลายครั้งตลอดศตวรรษที่ 20 แต่มันสมเหตุสมผลหรือไม่ที่จะตั้งสมมติฐานว่า สหรัฐฯ จะยังคงหลบกระสุนแห่งเทคโนโลยีการแผ่ขยายอำนาจที่จะเกิดขึ้นตลอดศตวรรษที่ 21 ต่อไปได้อีก? แน่นอนว่าไม่ใช่</p>
+        </div>
+
+        <!-- 1.2.3 -->
+        <div id="s1-2-3" style="margin-top:40px;">
+          <blockquote>
+            "จงปกป้องศีรษะด้วยโล่ในสมรภูมิ ยื่นมือขวาที่กำดาบออกไปเบื้องหน้าเสมอ หมวกเกราะ แผ่นอก และเสื้อเกราะของท่านนั้นเพียงพออย่างยิ่งยวดแล้วเมื่อผสานกับอาวุธอื่น ๆ และมันจะพิสูจน์ให้เห็นถึงอานุภาพอันทรงพลังในการรบ ศัตรูของเราไม่มีและไม่ได้ใช้อาวุธเช่นนี้ ท่านจะได้รับการปกป้องตราบเท่าที่อยู่หลังกำแพงเหล่านี้..."
+            <br><br>— สุนทรพจน์สุดท้ายที่เชื่อกันว่าเป็นของจักรพรรดิคอนสแตนตินที่ 11 (Constantine XI) ระหว่างเหตุการณ์ปืนใหญ่ถล่มปิดล้อมกรุงคอนสแตนติโนเปิล ค.ศ. 1453
+          </blockquote>
+
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.2.3 อันตรายสี่ประการต่อความมั่นคงเชิงยุทธศาสตร์แห่งชาติ
+          </h4>
+
+          <p>การทดลองทางความคิดที่กล่าวมานี้มุ่งเป้าไปที่คำถามสำคัญประการหนึ่ง นั่นคือ อุปสรรคใดที่ฉุดรั้งให้สังคมยอมรับเทคโนโลยีการแผ่ขยายอำนาจ (Power Projection Technology) รูปแบบใหม่ล่าช้าลง ทั้งที่เทคโนโลยีเหล่านั้นมีความสำคัญยิ่งยวดต่อความมั่นคงเชิงยุทธศาสตร์แห่งชาติ? เหตุผลที่คำถามนี้มีความสำคัญอย่างยิ่ง ก็เพราะทุกคำตอบล้วนสะท้อนถึงภัยคุกคามต่อความมั่นคงของชาติทั้งสิ้น ผู้เขียนขอเสนอคำตอบ 4 ประการ ได้แก่ การขาดความรู้พื้นฐานเกี่ยวกับวิชาชีพการสงคราม, อุดมการณ์สันติวิธี, อคติเชิงการวิเคราะห์ และความไม่ลงรอยกันทางความคิด (Cognitive Dissonance)</p>
+
+          <p>อุปสรรคประการแรกที่ทำให้สังคมเปิดรับเทคโนโลยีการแผ่ขยายอำนาจรูปแบบใหม่ช้าลง คือการขาดความรู้ทั่วไปเกี่ยวกับวิชาชีพการสงคราม คนบางกลุ่มเพียงแค่ขาดประสบการณ์หรือไม่มีความเข้าใจที่ลึกซึ้งพอในพื้นฐานของกลไกความมั่นคงทางกายภาพ จึงไม่อาจเชื่อมโยงและมองเห็นความสำคัญจนเกิดการยอมรับอย่างรวดเร็วได้ ซึ่งไม่ใช่เรื่องแปลกแต่อย่างใด หากพิจารณาว่ามีประชากรไม่ถึง 2% ที่เข้าไปมีส่วนร่วมในวิชาชีพนี้อย่างจริงจัง การทำสงครามถือเป็นสาขาความเชี่ยวชาญเฉพาะทางที่คนแทบทั้งสังคมยินยอมมอบหมายให้บุคลากรอย่างผู้เขียนเป็นผู้รับผิดชอบแทน</p>
+
+          <p>อุปสรรคประการที่สองคือ อุดมการณ์สันติวิธี (Pacifism) บุคคลบางกลุ่มมีศักยภาพเต็มเปี่ยมที่จะเข้าใจถึงนัยสำคัญเชิงยุทธศาสตร์ของเทคโนโลยีใหม่ ทว่าพวกเขากลับมีอคติและยอมรับมันได้ยากเนื่องจากมีข้อโต้แย้งทางศีลธรรม จริยธรรม หรืออุดมการณ์ฝังลึกอยู่ อุดมการณ์สันติวิธีนี้เองที่เคยทำให้การพัฒนากองทัพอากาศและกองกำลังอวกาศต้องล่าช้าลง และยังแผ่ขยายอิทธิพลอย่างมากในหมู่นักวิทยาศาสตร์พลเรือนช่วงทศวรรษแรกของการพัฒนาหัวรบนิวเคลียร์ ถึงขั้นที่ครั้งหนึ่ง ประธานาธิบดีทรูแมน (Truman) เคยเรียก ออปเพนไฮเมอร์ (Oppenheimer) ว่าเป็น "นักวิทยาศาสตร์ขี้แย" และสั่งห้ามไม่ให้เขาเหยียบทำเนียบขาว เพียงเพราะออปเพนไฮเมอร์แสดงความปวดร้าวทางอารมณ์อย่างหนักในการพยายามประนีประนอมจุดยืนของตนเอง กับการพัฒนาและใช้งานหัวรบนิวเคลียร์ ซึ่งขัดแย้งกับหลักศีลธรรม จริยธรรม และอุดมการณ์ของเขา</p>
+
+          <p>นวัตกรรมอย่างการบิน การสำรวจอวกาศ และพลังงานนิวเคลียร์ ถือเป็นก้าวกระโดดทางเทคโนโลยีที่คนจำนวนมากในสังคมอยากให้สงวนไว้เพื่อสันติภาพเท่านั้น คนเหล่านี้ตระหนักดีว่าเทคโนโลยีดังกล่าวสามารถนำไปใช้เพื่อแผ่ขยายอำนาจทางกายภาพและทำสงครามได้ แต่พวกเขาเลือกที่จะต่อต้านด้วยเหตุผลทางอุดมการณ์ พร้อมทั้งลดทอนความน่าเชื่อถือของผู้ที่ออกมาเรียกร้องให้ใช้เทคโนโลยีนี้เพื่อความมั่นคง โดยประณามคนเหล่านั้นว่าเป็น "พวกกระหายสงคราม" (War mongers) ทว่าในท้ายที่สุด นักอุดมการณ์สันติวิธีที่กล้าส่งเสียงอย่างไอน์สไตน์ (Einstein) ก็สามารถก้าวข้ามข้อโต้แย้งเหล่านี้ได้อย่างสง่างาม และหันมาสนับสนุนการพัฒนาหัวรบนิวเคลียร์ เพราะเขาตระหนักถึงความจริงอันเรียบง่ายที่ว่า ไม่มีใครสามารถออกกฎหมายห้ามไม่ให้ศัตรูนำเทคโนโลยีเหล่านี้มาใช้โจมตีตนเองได้</p>
+
+          <p>ไม่ว่าจะเป็นเพราะการขาดความรู้เรื่องสงครามหรืออุดมการณ์สันติวิธี ความท้าทายหลักในการทำให้สาธารณชนตื่นตัวและยอมรับเทคโนโลยีการแผ่ขยายอำนาจเชิงยุทธศาสตร์อย่างรวดเร็วนั้น ดูเหมือนจะเป็นผลพวงมาจากการที่มนุษย์ "ทำให้ตนเองเชื่อง" (Self-domestication) มากจนเกินไป มนุษย์ก็เหมือนกับสัตว์ชนิดอื่น ๆ ที่เสี่ยงต่อการถูกทำให้เชื่องและสยบยอม ซึ่งสถานะดังกล่าวจะทำให้พวกเขามองข้ามความสำคัญของเทคโนโลยีการแผ่ขยายอำนาจรูปแบบใหม่ไปอย่างน่าเสียดาย แม้ประโยคนี้อาจฟังดูระคายหู แต่ก็เป็นความจริงที่ได้รับการสนับสนุนจากหลักฐานทางวิทยาศาสตร์และเอกสารเชิงประจักษ์จำนวนมาก ซึ่งจะมีการกล่าวถึงอย่างละเอียดตลอดวิทยานิพนธ์ฉบับนี้</p>
+
+          <p>"ความเชื่อง" เป็นปัญหาด้านความมั่นคงที่เกิดขึ้นซ้ำแล้วซ้ำเล่า โดยเฉพาะในประเด็นที่เกี่ยวโยงกับความมั่นคงเชิงยุทธศาสตร์แห่งชาติ และเทคโนโลยีหรือยุทธวิธีการแผ่ขยายอำนาจทางกายภาพที่เกิดขึ้นใหม่ เป็นไปได้ว่าประชากรมนุษย์ใช้เวลาแยกตัวออกจากธรรมชาตินานเกินไปจนหลงลืมสัญชาตญาณดิบของตนเอง ความสุขสบาย ความชะล่าใจ หรือแม้กระทั่งความหยิ่งทระนง ทำให้พวกเขาลืมไปว่า การยืนอยู่บนจุดสูงสุดของเส้นโค้งอำนาจนั้นมีความสำคัญเชิงยุทธศาสตร์มากเพียงใด ด้วยเหตุนี้ จึงไม่ใช่เรื่องแปลกที่พวกเขาจะต้องดิ้นรนทำความเข้าใจว่าเทคโนโลยีอำนาจรูปแบบใหม่ทำงานอย่างไร และเหตุใดการเร่งนำมาใช้จึงเป็นเรื่องคอขาดบาดตาย</p>
+
+          <p>บางคนเปรียบเปรยว่า การคาดหวังให้สังคมที่แสนเชื่องมองเห็นอานุภาพของเทคโนโลยีการแผ่ขยายอำนาจใหม่ (หรือเทคโนโลยีอาวุธ) ก็ไม่ต่างอะไรกับการคาดหวังให้สุนัขพันธุ์โกลเด้นรีทรีฟเวอร์เข้าใจถึงกลไกของปลอกคอกันสุนัขป่า (Wolf collar) สุนัขที่ถูกเลี้ยงดูมาอย่างเชื่องช้าย่อมไม่รู้ว่ารากเหง้าของตนคืออะไรและมาจากไหน ดังนั้น โดยสัญชาตญาณ มันจึงไม่มีทางเข้าใจได้เลยว่าควรรับมืออย่างไรเมื่อต้องเผชิญหน้ากับสุนัขป่าซึ่งเป็นเวอร์ชันดิบเถื่อนของตัวมันเอง รีทรีฟเวอร์ไม่รู้ด้วยซ้ำว่า นิสัยหลีกเลี่ยงการปะทะของมันคือสิ่งที่ทำให้ตัวมันเองเปราะบางและกลายเป็นเหยื่อชั้นเลิศ ดังนั้น มันจึงไม่อาจเข้าใจได้เลยว่าปลอกคอกันสุนัขป่าทำงานอย่างไร และเหตุใดมันจึงต้องสวมสิ่งนี้เมื่อมีสุนัขป่าปรากฏตัวอยู่เบื้องหน้า</p>
+
+          <figure style="margin:2em 0; text-align:center;">
+            <img src="images/Figure 3.png" alt="ภาพที่ 3" style="max-width:100%; border-radius:8px; border:1px solid var(--border);"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+            <div style="display:none; align-items:center; justify-content:center; background:var(--bg-code); border:1px dashed var(--border); border-radius:8px; padding:40px; color:var(--text-muted); font-size:14px;">
+              [ภาพที่ 3 — ยังไม่มีไฟล์]
+            </div>
+            <figcaption style="margin-top:10px; font-size:14px; color:var(--text-muted); font-style:italic;">
+              ภาพที่ 3: สุนัขที่ถูกทำให้เชื่องด้วยการสวมปลอกคอหนามเพื่อป้องกันการถูกสุนัขป่ากัดคอ
+            </figcaption>
+          </figure>
+
+          <p>นอกเหนือจากนี้ ยังมีสถานการณ์อื่นที่ทำให้การยอมรับเทคโนโลยีล่าช้า แม้ว่าผู้คนเหล่านั้นจะมีความรู้เรื่องการสงครามอย่างถ่องแท้และไม่ได้ต่อต้านด้วยอุดมการณ์สันติวิธีก็ตาม คนกลุ่มนี้เข้าใจนัยสำคัญด้านความมั่นคงเชิงยุทธศาสตร์ของเทคโนโลยีใหม่อย่างทะลุปรุโปร่ง แต่กลับยอมยกความได้เปรียบทางเทคโนโลยีให้แก่ศัตรูอย่างง่ายดาย สถานการณ์นี้สะท้อนให้เห็นถึงอุปสรรคประการที่สามและสี่ที่คอยฉุดรั้งสังคมไม่ให้เปิดรับเทคโนโลยีใหม่</p>
+
+          <p>อุปสรรคประการที่สาม คือ อคติเชิงการวิเคราะห์ (Analytical Bias) บ่อยครั้งที่ผู้คนไม่ตระหนักว่ามุมมองที่พวกเขามีต่อเทคโนโลยีนั้นเต็มไปด้วยอคติ เพราะพวกเขาไม่ได้สังเกตเห็น "สมมติฐาน" ที่ตนเองตั้งไว้ล่วงหน้า สมมติฐานที่ทึกทักเอาเองว่า วัตถุประสงค์แรกเริ่มในการใช้งานเทคโนโลยีนั้น ๆ คือกรณีการใช้งานที่สำคัญที่สุดหรือเกี่ยวข้องที่สุด ตัวอย่างเช่น เมื่อนักเล่นแร่แปรธาตุเริ่มตั้งทฤษฎีเกี่ยวกับประโยชน์และความเสี่ยงทางการแพทย์ของดินปืนเป็นครั้งแรก พวกเขามีอคติโดยไม่รู้ตัวเพราะเลือกวิเคราะห์เฉพาะกรณีการใช้งานแรกสุดที่พวกเขาตั้งใจไว้ พวกเขาไม่รู้เลยว่าตนกำลังสร้างสมมติฐานที่ปิดกั้นตัวเอง—นั่นคือการด่วนสรุปว่า ดินปืนเป็นเพียงยารักษาโรคอย่างเคร่งครัด และไม่สามารถนำไปประยุกต์ใช้ประโยชน์ในด้านอื่นได้อีก</p>
+
+          <p>เหตุใดนักเล่นแร่แปรธาตุจึงตั้งสมมติฐานเช่นนั้นกับดินปืน? อาจเป็นเพราะแต่เดิมพวกเขาตั้งใจจะปรุงยา จึงเรียกมันว่า "ยา" และประเมินคุณค่าของมันในฐานะยาเท่านั้น สิ่งนี้กลายเป็นกำแพงขัดขวางการยอมรับดินปืนในระดับชาติที่คงอยู่อย่างยาวนาน ตราบเท่าที่ยังไม่มีใครยอมเปลี่ยนกรอบทฤษฎีใหม่เพื่อวิเคราะห์ดินปืนในมิติอื่น แม้การเปรียบเทียบนี้อาจดูเป็นการลดทอนความซับซ้อนของปัญหา แต่ก็สะท้อนให้เห็นว่า ปรากฏการณ์เดียวกันนี้กำลังเป็นอุปสรรคที่ทำให้สหรัฐฯ เปิดรับเทคโนโลยีความมั่นคงไซเบอร์แบบ Proof-of-Work ที่สำคัญอย่างบิตคอยน์ล่าช้า เราต้องรู้เท่าทันสมมติฐานที่ตนเองกำลังสร้างขึ้น ที่ไปด่วนสรุปว่ากรณีการใช้งานที่สำคัญที่สุดหรือเกี่ยวข้องที่สุดของบิตคอยน์ คือกรณีการใช้งานแรกสุดที่ทำให้มันเป็นที่นิยม (เงินอินเทอร์เน็ต) ประวัติศาสตร์มีตัวอย่างนับไม่ถ้วนของเทคโนโลยีใหม่ ที่พิสูจน์ให้เห็นแล้วว่า การทึกทักเอาเองว่าจุดประสงค์เริ่มต้นของการสร้างเทคโนโลยี จะต้องเป็นจุดประสงค์หลักตลอดไปนั้น เป็นความคิดที่ไม่สมเหตุสมผลเอาเสียเลย</p>
+
+          <p>อุปสรรคประการที่สี่ คือ ความไม่ลงรอยกันทางความคิด (Cognitive Dissonance) บางครั้งผู้คนมองเห็นอย่างชัดเจนว่า เทคโนโลยีใหม่นี้มีความสำคัญถึงขั้นชี้ชะตาความมั่นคงเชิงยุทธศาสตร์ชาติ แต่พวกเขากลับดิ้นรนที่จะไม่ยอมรับสิ่งที่ตาเห็น เพราะมันขัดแย้งกับความเชื่อเดิมที่ฝังรากลึกอยู่ ความเชื่อเดิมที่บกพร่องอาจเกิดจากสาเหตุที่กล่าวไปแล้ว (ความไม่รู้ อุดมการณ์ หรืออคติ) แต่ในขณะเดียวกันก็อาจเกิดจากความกลัว ความตระหนกตกใจ หรือแม้กระทั่งความหยิ่งทระนง พูดกันตามตรง การเปลี่ยนแปลงคือสิ่งที่น่ากลัว และมันเป็นเรื่องง่ายกว่ามากในทางอารมณ์ ที่เราจะเลือกเพิกเฉยหรือพยายามลดทอนความน่าเชื่อถือของภัยคุกคามนั้น เพียงเพราะเราไม่อยากเผชิญกับความรู้สึกที่กำลังถูกคุกคาม</p>
+
+          <p>บรรดาผู้เชี่ยวชาญด้านปืนใหญ่ผู้ทรงเกียรติแห่งกองทัพเรืออังกฤษ เคยต่อต้านตอร์ปิโดขับเคลื่อนอัตโนมัติของไวท์เฮด (Whitehead) อย่างรุนแรง เพราะเป็นการยากที่พวกเขาจะยอมให้ความจริงที่ว่า เทคโนโลยีชิ้นเล็ก ๆ นี้มีอานุภาพมากพอที่จะบ่อนทำลายและต้านทานกองเรือที่ทรงพลังที่สุดในโลกของพวกเขาได้ มันยากเหลือเกินที่จะยอมรับว่า ตลอดชีวิตการทำงานที่อุทิศให้กับการเชี่ยวชาญรูปแบบการทำสงครามชนิดหนึ่ง กำลังจะถูกทำให้กลายเป็นสิ่งล้าสมัยเพียงเพราะการปรากฏตัวของเทคโนโลยีแผ่ขยายอำนาจรูปแบบใหม่ ดังที่ เอ็ดวิน เกรย์ (Edwyn Gray) ได้ตั้งข้อสังเกตเกี่ยวกับไวท์เฮดไว้ว่า วิศวกรชาวอังกฤษที่แทบไม่มีใครรู้จักผู้นี้ กลับมีอิทธิพลต่อยุทธวิธีทางทหารเรือมากยิ่งกว่านายพลเรือและสถาปนิกทางเรือชั้นนำของโลกทุกคนรวมกันเสียอีก</p>
+
+          <p>สภาวะความไม่ลงรอยกันทางความคิดที่เกิดจากความกลัว ความตระหนกตกใจ หรือความหยิ่งทระนงนี้ ยังอธิบายได้ดีว่าเหตุใดสหรัฐฯ จึงเคยปฏิเสธทฤษฎีของนายพลมิตเชลล์ ที่ระบุว่าเรือรบของกองทัพเรือสหรัฐฯ นั้นเปราะบางเพียงใดเมื่อเผชิญกับการโจมตีทางอากาศ นายพลมิตเชลล์เคยจัดการสาธิตอันโด่งดัง โดยใช้เครื่องบินทิ้งตอร์ปิโดจมเรือรบเยอรมันที่ยึดมาได้ เพื่อแสดงให้เห็นว่ามันง่ายดายแค่ไหนที่ฝ่ายข้าศึกจะใช้ยุทธวิธีเดียวกันนี้โจมตีเรือรบสหรัฐฯ แต่ถึงกระนั้น เหล่าเจ้าหน้าที่ก็ยังคงปฏิเสธคำเตือนของเขา และยังคงหลับหูหลับตาทุ่มเม็ดเงินมหาศาลไปกับการพัฒนาเรือรบต่อไปตลอดทศวรรษที่ 1930</p>
+
+          <p>การยอมรับนัยสำคัญเชิงยุทธศาสตร์ชาติของเทคโนโลยีการแผ่ขยายอำนาจใหม่ที่เข้ามาก่อกวน (Disruptive Technology) และการปรับเปลี่ยนทิศทางเพื่อเปิดรับให้เร็วที่สุดนั้น เป็นเรื่องที่ทำได้ยากโดยธรรมชาติ โดยเฉพาะในระบบองค์กรที่ถูกออกแบบมาอย่างจงใจให้ต่อต้านการเปลี่ยนแปลงที่รวดเร็ว ความท้าทายนี้ยังทวีความรุนแรงยิ่งขึ้นด้วยเส้นโค้งการเรียนรู้ที่สูงชันของเทคโนโลยีใหม่ แต่ในบางกรณี เช่น การปรากฏขึ้นของตอร์ปิโดไวท์เฮด การขาดการยอมรับอาจเกิดจากความทระนงตน สภาวะความไม่ลงรอยกันทางความคิด หรือความผิดพลาดจากต้นทุนจม (Sunk Cost Fallacy)</p>
+
+          <p>โดยทั่วไปแล้ว การจะมองเห็นจุดแข็งและศักยภาพในการก่อกวนของเทคโนโลยีการแผ่ขยายอำนาจใหม่ได้นั้น จำเป็นต้องอาศัยความกล้าหาญที่จะมองเห็นจุดอ่อนและความเปราะบางของตนเองต่อเทคโนโลยีเหล่านั้นเสียก่อน ด้วยเหตุนี้ การจะโอบรับเทคโนโลยีใหม่ จึงหมายความว่าประชากรหรือองค์กรนั้นต้องยอมรับความจริงที่ว่า ระบบป้องกันเดิมที่มีอยู่จะไม่สามารถรักษาสถานะความยิ่งใหญ่ให้พวกเขาได้อย่างที่คิด การลงทุนมหาศาลไปกับเทคโนโลยีสงครามจลนศาสตร์ อาจไม่ตอบโจทย์ความมั่นคงตามที่คาดหวัง และกลายเป็นเพียงต้นทุนจมมหาศาล หากรัฐชาติอื่น ๆ หันไปเรียนรู้เทคโนโลยีสงครามแบบ "อ่อน" ผ่านพื้นที่ไซเบอร์ ซึ่งสามารถหลบหลีกจุดแข็งของสงครามจลนศาสตร์ได้</p>
+
+          <p>ยิ่งไปกว่านั้น ความตื่นตระหนกหรือแม้แต่การปฏิเสธความจริง มักเป็นปฏิกิริยาตอบสนองทั่วไปต่อความกลัวในการสูญสิ้นสถานะ เมื่อบุคคลหรือประชากรตระหนักว่าตนกำลังสูญเสียความได้เปรียบทางเทคโนโลยีที่สำคัญยิ่งให้แก่ข้าศึก เพียงเพราะหลงยึดติดกับสมมติฐานที่ตนเองสร้างขึ้นโดยไม่รู้ตัว—เช่น การคาดหวังว่าสงครามครั้งหน้าจะเหมือนสงครามครั้งที่แล้ว หรือคาดหวังว่าเทคโนโลยีสงครามในยุคดิจิทัลจะต้องมีลักษณะเหมือนเทคโนโลยีสงครามในยุคอนาล็อก มันยากที่จะยอมรับแนวคิดที่ว่า สมมติฐานที่ฝังรากลึกของตนเองเกี่ยวกับอนาคตของสงคราม อาจเป็นสิ่งที่สร้างความเสียหายที่แก้ไขไม่ได้ให้แก่ประเทศของตน แต่นี่คือความรับผิดชอบของผู้นำทุกคน โดยเฉพาะอย่างยิ่งนายทหาร จักรวรรดิจะรุ่งเรืองหรือล่มสลาย ล้วนขึ้นอยู่กับสมมติฐานที่ฝังรากลึกซึ่งคอยชี้นำการตัดสินใจของผู้กุมชะตาความมั่นคงแห่งชาติ</p>
+
+          <p>ประเด็นสำคัญคือ ไม่มีจักรวรรดิใดปลอดภัยจากการถูกล้มล้างทางเทคโนโลยี (Technological Disruption) จึงเป็นยุทธศาสตร์สำคัญยิ่งที่ประชาชนจะต้องไม่ยอมให้ความกลัว ความตกตะลึง ความหยิ่งทระนง ความชะล่าใจ หรือความผิดพลาดจากต้นทุนจม มาทำให้การยอมรับเทคโนโลยีการแผ่ขยายอำนาจที่สำคัญล่าช้าออกไป ความเร็วในการยอมรับมีความสำคัญเสมอมา โดยเฉพาะอย่างยิ่งผู้นำทางทหารต้องไม่ยึดถือเอาความเชี่ยวชาญในยุทธวิธี เทคนิค และเทคโนโลยีเดิม ๆ ว่าเป็นสิ่งศักดิ์สิทธิ์จนแตะต้องไม่ได้ เพราะยุทธศาสตร์แห่งชัยชนะสามารถเปลี่ยนแปลงได้รวดเร็วและบ่อยครั้ง ตามที่สภาพแวดล้อมทางเทคโนโลยีเปลี่ยนแปลง และไม่ต้องสงสัยเลยว่า สภาพแวดล้อมทางเทคโนโลยีของเรากำลังเปลี่ยนแปลงอย่างรวดเร็วในยุคดิจิทัล ซึ่งอาจจะรวดเร็วยิ่งกว่าช่วงเวลาใด ๆ ในประวัติศาสตร์การทำสงครามของมนุษยชาติ</p>
+        </div>
+
+        <!-- 1.2.4 -->
+        <div id="s1-2-4" style="margin-top:40px;">
+          <blockquote>
+            "จงให้การศึกษาและมอบความรู้แก่ประชาชนทั้งมวล... เพราะพวกเขาคือปราการที่พึ่งพิงอันแน่วแน่เพียงหนึ่งเดียว สำหรับการธำรงไว้ซึ่งเสรีภาพของเรา"
+            <br><br>— โทมัส เจฟเฟอร์สัน (Thomas Jefferson)
+          </blockquote>
+
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.2.4 การสร้างความตระหนักรู้และให้การศึกษาแก่ประชาชนทั่วไปเกี่ยวกับเทคโนโลยีการแผ่ขยายอำนาจยุคใหม่
+          </h4>
+
+          <p>ไม่ว่าสังคมจะดิ้นรนและเผชิญกับอุปสรรคใดในการยอมรับนัยสำคัญด้านความมั่นคงเชิงยุทธศาสตร์แห่งชาติของเทคโนโลยีการแผ่ขยายอำนาจที่เกิดขึ้นใหม่ คำตอบในการก้าวข้ามอุปสรรคเหล่านี้ดูเหมือนจะมีเพียงหนึ่งเดียว นั่นคือ การสร้างความตระหนักรู้และให้การศึกษาแก่สาธารณชน หากสังคมถูกทำให้เชื่องจนเกินไป จนไม่สามารถเข้าใจพลวัตของการแผ่ขยายอำนาจทางกายภาพ หรือรู้สึกเอนเอียงที่จะปฏิเสธทฤษฎีบนพื้นฐานของเหตุผลเชิงอุดมการณ์ อุปสรรคเหล่านี้สามารถบรรเทาได้ด้วยการสร้างความตระหนักรู้และการให้การศึกษา หากสาธารณชนกำลังประสบกับอคติเชิงการวิเคราะห์ในระดับระบบ หรือกำลังดิ้นรนเพื่อประสานความไม่ลงรอยกันทางความคิด (Cognitive Dissonance) ที่เกี่ยวข้องกับเทคโนโลยีการแผ่ขยายอำนาจที่เข้ามาพลิกโฉมโลก การให้การศึกษาที่ถูกต้องก็คือยารักษาอุปสรรคเหล่านี้เช่นกัน</p>
+
+          <p>ด้วยเหตุนี้ จุดประสงค์และความจำเป็นหลักสำหรับการวิจัยชิ้นนี้ คือการมอบข้อมูลเชิงลึกเกี่ยวกับนัยสำคัญต่อความมั่นคงเชิงยุทธศาสตร์แห่งชาติ ที่อาจเกิดขึ้นจากเทคโนโลยีการแผ่ขยายอำนาจรูปแบบใหม่ที่ชื่อว่า "บิตคอยน์" นิยามความหมายที่เรียบง่ายที่สุดของบิตคอยน์คือ มันเป็นโปรโตคอลคอมพิวเตอร์ที่เปิดให้เข้าถึงและพัฒนาได้อย่างเสรี (Open-source) แบบ Proof-of-Work ที่ได้รับการยอมรับในระดับโลกมากที่สุดในปัจจุบัน Proof-of-Work เป็นโปรโตคอลการคำนวณรูปแบบใหม่ที่ช่วยให้ผู้ใช้งานสามารถรักษาทรัพยากรไซเบอร์ให้ปลอดภัยจากการโจมตี โดยไม่ได้พึ่งพาแค่ข้อจำกัดเชิงตรรกะที่เข้ารหัสไว้ (Logical Constraints) เท่านั้น แต่ยังรวมถึงการบังคับใช้ต้นทุนทางกายภาพอันรุนแรงต่อคอมพิวเตอร์ด้วย ในขณะที่ระบบคอมพิวเตอร์ส่วนใหญ่ป้องกันการเจาะระบบเชิงตรรกะ (การแฮ็ก) ด้วยโค้ดเพียงอย่างเดียว ระบบ Proof-of-Work อย่างบิตคอยน์กลับใช้อำนาจทางกายภาพในโลกแห่งความเป็นจริง (ซึ่งก็คือพลังงานไฟฟ้า หรือ วัตต์) มาเป็นเกราะกำบังทรัพยากรไซเบอร์ โดยการยัดเยียดต้นทุนทางกายภาพขั้นรุนแรง (วัดเป็นวัตต์) ให้แก่ผู้กระทำการอันเป็นปรปักษ์</p>
+
+          <p>เมื่อพิจารณาผ่านกรอบทฤษฎีที่พัฒนาและนำเสนอในวิทยานิพนธ์ฉบับนี้ ซึ่งเรียกว่า "ทฤษฎีการแผ่ขยายอำนาจ" ผู้เขียนขอตั้งสมมติฐานว่า บิตคอยน์ไม่ใช่เทคโนโลยีทางการเงินอย่างจำเพาะเจาะจง ทว่ามันคือโปรโตคอล "ซอฟต์วอร์" (Softwar) แรกของโลกที่ได้รับการยอมรับในระดับสากล ซึ่งอาจเข้ามาพลิกโฉมธรรมชาติของการแผ่ขยายอำนาจในยุคดิจิทัล และอาจถือเป็นลำดับความสำคัญเชิงยุทธศาสตร์แห่งชาติที่สำคัญยิ่งยวด ที่พลเมืองสหรัฐฯ จำเป็นต้องเปิดรับและทำความเข้าใจให้เร็วที่สุดเท่าที่จะทำได้</p>
+        </div>
+      </div>
+      <div class="subsection" id="s1-3">
+        <h3 class="subsection-title">1.3 ภูมิหลัง (Background)</h3>
+
+        <blockquote>
+          "สงครามเป็นเพียงการดำเนินนโยบายสืบต่อไปด้วยวิถีทางอื่น"
+          <br><br>— คาร์ล ฟอน เคลาเซวิตซ์ (Carl von Clausewitz)
+        </blockquote>
+
+        <!-- 1.3.1 -->
+        <div id="s1-3-1" style="margin-top:28px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">1.3.1 พื้นฐานการทำสงครามสมัยใหม่</h4>
+
+          <p>ผู้เขียนตระหนักดีว่าผู้อ่านหลายท่านอาจมิได้มีความเชี่ยวชาญหรือผ่านการฝึกอบรมด้านทฤษฎีการทหารสมัยใหม่ ดังนั้น ก่อนที่จะเข้าสู่การอภิปรายเชิงทฤษฎีอย่างละเอียดเกี่ยวกับนัยสำคัญต่อความมั่นคงเชิงยุทธศาสตร์แห่งชาติ ที่อาจเกิดขึ้นจากเทคโนโลยี Proof-of-Work อย่างบิตคอยน์ การสร้างความเข้าใจพื้นฐานร่วมกันเกี่ยวกับวิชาชีพการทำสงครามจึงเป็นเรื่องที่เป็นประโยชน์อย่างยิ่ง ด้วยเหตุนี้ ผู้เขียนจึงขออ้างอิงแนวคิดของหนึ่งในนักทฤษฎีการทหารสมัยใหม่ที่ได้รับการยกย่องมากที่สุด นั่นคือ นายพล คาร์ล ฟอน เคลาเซวิตซ์</p>
+
+          <p>ในช่วงต้นศตวรรษที่ 19 นายพลเคลาเซวิตซ์ได้ศึกษาธรรมชาติของสงคราม และนิยามมันว่าเป็น "ตรีเอกานุภาพ" (Trinity) ที่ประกอบด้วยลักษณะเด่น 3 ประการ ได้แก่ ประการแรก สงครามถูกขับเคลื่อนด้วย "พลังทางธรรมชาติอันมืดบอด" ซึ่งเต็มไปด้วย "ความรุนแรงดั้งเดิม" เช่นเดียวกับที่พบในธรรมชาติ ประการที่สอง สงครามมี "กลไกของโอกาสและความน่าจะเป็น" ซึ่งมักจะให้รางวัลแก่ "ผู้ที่มีจิตใจสร้างสรรค์" และประการที่สาม สงครามคือเครื่องมือเชิงนโยบายแห่งชาติที่ถูกนำมาใช้เพื่อแก้ไขข้อพิพาทระหว่างประเทศ</p>
+
+          <p>คำอธิบายเกี่ยวกับการทำสงครามของเคลาเซวิตซ์มีความน่าสนใจในหลายมิติ ประการแรกคือ การยอมรับว่าสงครามเป็นปรากฏการณ์ปฐมภูมิ (Primordial phenomenon) ซึ่งมีมาตั้งแต่จุดกำเนิดของสิ่งมีชีวิตบนโลก หากเรานำข้อสังเกตนี้มารวมกับความรู้ทางชีววิทยาในปัจจุบัน เราจะพบว่าการแข่งขันเพื่อแย่งชิงอำนาจทางกายภาพ (เช่น การทำสงคราม) นั้นเกิดขึ้นมานานนับพันล้านปีก่อนจะมีมนุษย์เสียอีก การแข่งขันทางอำนาจทางกายภาพมีบทบาทสำคัญอย่างยิ่งต่อวิวัฒนาการและการสถาปนาลำดับชั้นทางอำนาจตามธรรมชาติ ซึ่งช่วยให้สิ่งมีชีวิตสามารถจัดระเบียบและสถาปนาลำดับการเข้าถึงทรัพยากรที่มีอยู่อย่างจำกัดบนโลก</p>
+
+          <p>ประการที่สองที่ทำให้นิยามของเคลาเซวิตซ์โดดเด่น คือการตระหนักว่าพลังทางธรรมชาติที่ถูกระดมมาใช้ในสงครามนั้น "มืดบอดโดยเนื้อแท้" กล่าวอีกนัยหนึ่งคือ การแข่งขันทางอำนาจทางกายภาพนั้นปราศจากอคติ ไม่มีการเลือกปฏิบัติ และอยู่นอกเหนือระบบความเชื่อของมนุษย์โดยสิ้นเชิง เมื่อพิจารณาผ่านองค์ความรู้ทางฟิสิกส์ "พลังทางธรรมชาติ" ที่เคลาเซวิตซ์กล่าวถึงก็คือ แรงที่กระทำต่อมวลสารให้เกิดการเคลื่อนที่เพื่อสร้าง "อำนาจทางกายภาพ" หรือที่เรียกกันว่าพลังงาน (วัตต์) เราสามารถพิสูจน์เชิงประจักษ์ได้ว่า พลังงานนั้นมืดบอดและไร้อคติจริง ๆ มันไม่มีการเลือกปฏิบัติ และทุกสรรพสิ่งล้วนต้องตกอยู่ภายใต้กฎเกณฑ์ของมัน—รวมถึงผู้ที่ยืนอยู่บนจุดสูงสุดของลำดับชั้นทางอำนาจ ซึ่งพรั่งพร้อมด้วยยศถาบรรดาศักดิ์ ความมั่งคั่ง และสถานะทางสังคม</p>
+
+          <p>ประการที่สาม ตรีเอกานุภาพของเคลาเซวิตซ์มองว่าสงครามคือเกมแห่งความน่าจะเป็น ที่ผลลัพธ์มักตกเป็นของผู้ที่มีความสร้างสรรค์ ดังนั้น สงครามจึงไม่ใช่เพียงการแข่งขันทางอำนาจแบบตรงไปตรงมา แต่เป็นเสมือน "ลอตเตอรี่แห่งอำนาจ" ยิ่งไปกว่านั้น การชนะในเกมนี้ไม่ได้ขึ้นอยู่กับการหาวิธีสะสมกำลังรบให้มากที่สุดเพียงอย่างเดียว แต่มันคือการรวบรวมสติปัญญาของมนุษย์ เพื่อประยุกต์ใช้อำนาจทางกายภาพด้วยวิธีที่สร้างสรรค์และเต็มไปด้วยนวัตกรรม เพื่อเป้าหมายเดียวนั่นคือการใช้มันเป็นเครื่องมือในการกำหนดนโยบายและแก้ไขข้อพิพาทระหว่างประเทศ</p>
+
+          <p>จากมุมมองนี้เอง เคลาเซวิตซ์จึงได้บัญญัติวาทะกรรมอันโด่งดังที่ว่า <em>"สงครามเป็นเพียงการดำเนินนโยบายสืบต่อไปด้วยวิถีทางอื่น"</em> สิ่งที่เขาต้องการสื่อก็คือ แม้สงครามจะมีธรรมชาติที่โหดร้ายและทำลายล้าง แต่รัฐชาติไม่ได้ทำสงครามเพียงเพื่ออวดอ้างอานุภาพ ทว่าพวกเขาใช้พลังอันมืดบอดเหล่านั้นเป็น "ทางเลือก" ในการยุติข้อพิพาทเชิงนโยบายระหว่างประเทศ กล่าวคือ สงครามเป็นกลไกที่รัฐชาติใช้แก้ปัญหาโดยอาศัย "อำนาจทางกายภาพ" (วัตต์) แทนการขึ้น "ศาลยุติธรรม" เหตุผลก็เพราะอำนาจทางกายภาพนั้นปราศจากอคติอย่างสิ้นเชิง ในขณะที่ศาลยุติธรรมไม่อาจเป็นเช่นนั้นได้เสมอไป</p>
+        </div>
+
+        <!-- 1.3.2 -->
+        <div id="s1-3-2" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">1.3.2 สงคราม เทียบกับ กฎหมาย</h4>
+
+          <p>เหตุใดรัฐชาติจึงต้องพึ่งพาสิ่งที่อันตรายและทำลายล้างอย่างสงคราม เพื่อแก้ไขข้อพิพาทเชิงนโยบาย ทั้งที่พวกเขามีทางเลือกที่ประหยัดพลังงานและสันติกว่ามากอย่างการตัดสินคดีผ่านชั้นศาล? คำตอบนั้นแสนเรียบง่าย: เพราะพวกเขาไม่ไว้วางใจ ไม่เคารพ หรือไม่ยอมรับอำนาจของศาล หากขอยืมแนวคิดจากวิศวกรซอฟต์แวร์นิรนามท่านหนึ่ง ปัญหารากเหง้าของสันติภาพก็คือ "ความไว้วางใจจำนวนมหาศาล" ที่จำเป็นต้องมีเพื่อให้มันดำรงอยู่ได้</p>
+
+          <p>มันไม่ใช่เรื่องง่ายที่จะทำให้คนหมู่มากบรรลุฉันทามติว่าอะไรคือความ "ถูกต้อง" และยิ่งยากเข้าไปใหญ่ที่จะหาคำตัดสินหรือ "หลักนิติธรรม" ที่ทุกคนยอมรับ มันเป็นเรื่องยากยิ่งกว่าที่จะหวังให้ประชาชนวางใจว่า ผู้ออกกฎหมายจะไม่นำอำนาจเชิงนามธรรมที่ได้รับมาไปใช้ในทางที่ผิด ประวัติศาสตร์เต็มไปด้วยการทรยศหักหลังและการทำลายความไว้วางใจ ซึ่งเป็นรากฐานสำคัญที่ทำให้สังคมกฎหมายดำรงอยู่ได้ ความจริงที่ปฏิเสธไม่ได้ก็คือ สังคมที่พึ่งพากฎหมายมักล่มสลายลงเพราะมันเปราะบางต่อการทุจริตและการแทรกแซงเชิงระบบ</p>
+
+          <p>หลักนิติธรรมคือโปรโตคอลความร่วมมือที่ประหยัดพลังงานอย่างยิ่ง โดยเฉพาะในการสถาปนาลำดับชั้นทางอำนาจของมนุษย์ กฎหมายเหมาะสมอย่างยิ่งสำหรับการระงับข้อพิพาทด้านทรัพย์สิน แต่สังคมกฎหมายต้องแลกมาด้วยต้นทุนบางอย่าง เช่นเดียวกับกฎเกณฑ์ทุกชนิด กฎหมายสร้างความไม่เท่าเทียมโดยเนื้อแท้ มันแบ่งแยกผู้คนออกเป็นชนชั้นปกครองและชนชั้นที่ถูกปกครอง นอกจากนี้ กฎหมายยังอยู่บนพื้นฐานของความไว้วางใจ มันจะทำงานได้ก็ต่อเมื่อเราเชื่อมั่นว่าชนชั้นปกครองจะไม่กดขี่ประชาชน ประชาชนจะเคารพกฎกติกา และประเทศเพื่อนบ้านจะเคารพอำนาจอธิปไตยของเรา กล่าวอีกนัยหนึ่ง สังคมกฎหมายมีช่องโหว่ให้เกิดการคอร์รัปชันได้ง่าย เพราะมันฝากความหวังไว้กับมนุษย์ ซึ่งเป็นนักล่าอันดับสูงสุดของห่วงโซ่อาหารโลก การไว้วางใจนักล่าว่าจะไม่จู่โจม ย่อมไม่ใช่ยุทธศาสตร์ความมั่นคงที่ดี ไม่ว่ามันจะดูประหยัดพลังงานและสงบสุขเพียงใดก็ตาม</p>
+
+          <p>เจตนารมณ์ของกฎหมายนั้นสูงส่ง แต่โครงสร้างสังคมที่พึ่งพากฎหมายซึ่งมีความไม่เท่าเทียมและอิงความไว้วางใจนี้เอง ที่ทำให้ระบบขาดความมั่นคง นี่คือสาเหตุที่ทำให้เกิดรัฐบาลที่ฉ้อฉลและเผด็จการขึ้นทุกยุคทุกสมัย สังคมกฎหมายมักเสื่อมสภาพและล้มเหลวลงเมื่อเวลาผ่านไป บางครั้งชนชั้นปกครองอาศัยช่องโหว่ของกฎหมายเพื่อหาผลประโยชน์และสร้างการกดขี่ข่มเหง บางครั้งชนชั้นที่ถูกปกครองก็หาเหตุผลที่จะปฏิเสธกฎเกณฑ์จนเกิดสภาวะอนาธิปไตย หรือบางครั้งรัฐชาติเพื่อนบ้านก็ปฏิเสธที่จะยอมรับกฎกติการ่วมจนนำไปสู่การรุกราน บันทึกทางประวัติศาสตร์กว่า 5,000 ปี ทำให้เราเห็นความจริงข้อหนึ่งอย่างชัดเจน: ระบบที่พึ่งพากฎหมายมักเสื่อมสลายลงในท้ายที่สุด</p>
+
+          <p>เมื่อสังคมกฎหมายล่มสลายลงอย่างหลีกเลี่ยงไม่ได้ สงครามก็จะตามมา เฉกเช่นเดียวกับกฎหมาย สงครามมีสิ่งที่ต้องแลก สงครามนั้นผลาญพลังงานและเต็มไปด้วยการทำลายล้าง ทว่ามันกลับมีความ "เท่าเทียม" อำนาจทางกายภาพไม่เคยแยกแยะระหว่างผู้ปกครองหรือผู้ถูกปกครอง สงครามยังเป็นกลไกที่ "ปราศจากความไว้วางใจ" (Zero-Trust) มันไม่ต้องการความเชื่อใจเพื่อดำเนินไปอย่างสมบูรณ์ สงครามไม่แยแสต่อระบบความเชื่อของผู้คน ดังนั้นมันจึงเป็นกลางอย่างสมบูรณ์ การแข่งขันทางอำนาจทางกายภาพทำงานด้วยมาตรฐานเดียวกันเสมอ ไม่ว่าผู้คนจะมีความเชื่อเช่นไรก็ตาม</p>
+
+          <p>ณ จุดนี้ เราจะเห็นได้ว่า กฎหมายและสงครามทำหน้าที่เสริมซึ่งกันและกัน ในฐานะเครื่องมือสองขั้วที่ถูกนำมาใช้เพื่อบรรลุเป้าหมายเดียวกัน กฎหมายคือแนวทางที่ประหยัดพลังงานและไร้การทำลายล้าง ซึ่งช่วยให้สังคมระงับข้อพิพาทและสถาปนาลำดับชั้นทางอำนาจได้ แต่มันบังคับให้ผู้คนต้องสยบยอมต่อระบบความเชื่อที่ไม่เท่าเทียมและอิงความไว้วางใจ ซึ่งทำให้เปราะบางต่อการทุจริตเชิงระบบ ในทางตรงกันข้าม สงครามคือแนวทางที่ผลาญพลังงานและทำลายล้าง แต่มันมีความเท่าเทียมและปราศจากความไว้วางใจ ทำให้ในทางปฏิบัติแล้ว มันแทบจะไม่มีช่องโหว่ให้เกิดการทุจริตเชิงระบบได้เลย สิ่งเหล่านี้คือปัจจัยที่รัฐชาติต้องชั่งน้ำหนักเมื่อถึงคราวที่ต้องระงับข้อพิพาทเชิงนโยบาย</p>
+
+          <p>การทำความเข้าใจความแตกต่างระหว่างสงครามและกฎหมาย ช่วยให้เราตระหนักว่าเหตุใดการใช้ "อำนาจทางกายภาพ" จึงเป็นวิธีที่มีประสิทธิภาพสูงสุดในการฟื้นฟูกฎหมายและระเบียบสังคม เมื่อระบบเดิมเสื่อมสภาพลง ผู้ปกครองที่ฉ้อฉลสามารถถูกโค่นล้มได้ด้วยอำนาจทางกายภาพ (ซึ่งเรามักเรียกว่า "การปฏิวัติ") ผู้ฝ่าฝืนกฎกติกาสามารถถูกกดดันให้ปฏิบัติตามได้ด้วยอำนาจทางกายภาพ (ซึ่งเรามักเรียกว่า "การบังคับใช้กฎหมาย") และคนนอกที่ไม่เคารพกฎหมายของเราสามารถถูกขัดขวางได้ด้วยอำนาจทางกายภาพ (ซึ่งเรามักเรียกว่า "การป้องกันความมั่นคงเชิงยุทธศาสตร์แห่งชาติ")</p>
+
+          <p>เมื่อใดก็ตามที่ระบบกฎหมายล้มเหลว วิธีรักษาดูเหมือนจะเหมือนกันในทุกสมมติฐาน นั่นคือ: เพิ่มระดับการแผ่ขยายอำนาจทางกายภาพให้สูงขึ้นและชาญฉลาดยิ่งขึ้นจนกว่าสถานการณ์จะดีขึ้น ไม่ว่าการใช้กระบวนการยุติธรรมทางศาลเพื่อแก้ไขปัญหาการทุจริตจะดูสงบสุขและประหยัดพลังงานเพียงใด แต่เห็นได้ชัดว่ามันไม่สามารถใช้แก้ปัญหาได้ทุกกรณี—มิเช่นนั้นโลกนี้คงไม่มีสงครามมาตั้งแต่ต้น หลักฐานทางประวัติศาสตร์นับไม่ถ้วนชี้ให้เห็นว่า การลงนามในสนธิสัญญาหรือนโยบาย เป็นวิธีที่มีประสิทธิภาพน้อยกว่ามากในการจัดระเบียบสังคมที่ล้มเหลว เมื่อเทียบกับการใช้กำลังและอำนาจทางกายภาพดิบ ๆ</p>
+        </div>
+
+        <!-- 1.3.3 -->
+        <div id="s1-3-3" style="margin-top:40px;">
+          <blockquote>
+            "ขอให้มีสงครามเถิด! แล้วเราจะได้พิสูจน์ให้เห็นว่า เรานั้นมีค่ามากกว่าที่ใครคาดคิดไว้"
+            <br><br>— อเล็กซานเดอร์ แฮมิลตัน (Alexander Hamilton), จากละครเวที Hamilton
+          </blockquote>
+
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">1.3.3 สงครามมีประโยชน์อย่างยิ่งต่อสังคม ไม่ว่าสังคมจะยอมรับหรือไม่ก็ตาม</h4>
+
+          <p>สิ่งใดกันที่ทำให้อำนาจทางกายภาพมีประสิทธิภาพสูงสุดในการเป็นเครื่องมือคุ้มครองทรัพย์สินและยุติข้อพิพาทเชิงนโยบาย? คำอธิบายหนึ่งอาจย้อนกลับไปที่ข้อสังเกตของเคลาเซวิตซ์ที่ว่า: อำนาจทางกายภาพนั้นมืดบอดโดยสมบูรณ์ มันมองไม่เห็นอารมณ์ความรู้สึก และไม่เคยยอมให้ความรู้สึกเหล่านั้นเข้ามามีอิทธิพลเหนือมัน คุณสมบัตินี้ทำให้อำนาจทางกายภาพมีความเป็นกลางและปลอดจากการแทรกแซงทางการเมืองอย่างแท้จริง มันไม่รู้จักการเลือกปฏิบัติ การลำเอียง หรือวาระซ่อนเร้นใด ๆ เนื่องจากมันเป็นสิ่งที่อยู่นอกเหนือระบบความเชื่อของมนุษย์</p>
+
+          <p>ด้วยเหตุนี้ ศาลแห่งการตัดสินด้วยกำลังจึงทำงานด้วยระบบคุณธรรมนิยม (Meritocracy) อย่างแท้จริง มันมอบเสรีภาพให้ทุกคนสามารถลุกขึ้นท้าทายและเปลี่ยนแปลงนโยบายได้โดยไม่ต้องสนยศถาบรรดาศักดิ์หรือสถานะทางสังคม คุณลักษณะนี้ทำให้มันกลายเป็น "ศาลอุทธรณ์" ที่พึ่งพาได้เสมอสำหรับผู้ที่ถูกกดขี่เชิงระบบ คำตัดสินของอำนาจทางกายภาพนั้นรวดเร็วและเด็ดขาด เกณฑ์การพิจารณานั้นโปร่งใสและเป็นที่ประจักษ์แก่ทุกคน ทำให้เป็นวิธีการที่สร้างฉันทามติได้อย่างไร้ข้อกังขา</p>
+
+          <p>อีกหนึ่งคำอธิบายที่อธิบายว่าเหตุใดอำนาจทางกายภาพจึงทรงคุณค่า ก็คือการที่มันแทบไม่มีขีดจำกัดและสามารถเข้าถึงได้ค่อนข้างง่าย ในขณะที่ปริมาณยศถาบรรดาศักดิ์ คะแนนเสียง และสถานะทางสังคมในระบบความเชื่อนั้นมีขีดจำกัดอย่างชัดเจน บางครั้งการลุกขึ้นมาโค่นล้มและสถาปนาลำดับชั้นทางอำนาจใหม่เสียเลย จึงเป็นเรื่องที่ง่ายและบรรลุผลได้เร็วกว่าการค่อย ๆ ไต่เต้าขึ้นไปตามกฎเกณฑ์เดิม</p>
+
+          <p>อำนาจทางกายภาพนั้นแตกต่างออกไปอย่างสิ้นเชิง ปริมาณอำนาจทางกายภาพที่ผู้คนสามารถระดมมาใช้เพื่อกำหนดทิศทาง บังคับใช้ และปกป้องนโยบายที่พวกเขาให้คุณค่านั้นแทบไม่มีขีดจำกัด อำนาจนี้สามารถเข้าถึงได้ด้วยสติปัญญาและคุณค่าในตัวของมนุษย์ผู้นั้นเอง ไม่ใช่ด้วยยศตำแหน่ง นอกจากนี้ ผู้คนยังมีแนวโน้มที่จะเคารพยำเกรงอำนาจทางกายภาพมากกว่า เพราะความทรงพลังของมันเป็นที่ประจักษ์ชัด อำนาจทางกายภาพคือเครื่องพิสูจน์คุณค่าในตัวมันเอง มันไม่ต้องการให้ใครมาเชื่อมั่นเพื่อรับรองความมีอยู่ของมัน สิ่งนี้แตกต่างอย่างสิ้นเชิงกับสถานะทางสังคม ซึ่งเป็นเพียงสิ่งสมมติเชิงนามธรรมที่ถูกประดิษฐ์ขึ้น</p>
+
+          <p>ดังนั้น ไม่ว่าเราจะอยากยอมรับความจริงข้อนี้หรือไม่ก็ตาม สงครามมีคุณูปการต่อสังคม ซึ่งอธิบายได้ว่าเหตุใดมนุษยชาติจึงทำสงครามกันบ่อยครั้งนัก ยิ่งไปกว่านั้น ในมุมมองทางสังคม-เทคโนโลยี (Sociotechnical) สงครามได้รับการพิสูจน์แล้วว่ามีประสิทธิภาพ มันมีบทบาทสำคัญในการหล่อหลอมสังคมเกษตรกรรมที่เจริญรุ่งเรือง แทบทุกประเทศในโลกปัจจุบันล้วนถือกำเนิดขึ้นจากไฟสงคราม พรมแดนของรัฐถูกขีดเส้นด้วยสงคราม นวัตกรรมและเทคโนโลยีที่ก้าวล้ำที่สุดมักถูกกระตุ้นและเร่งการพัฒนาให้เร็วขึ้นด้วยสงคราม</p>
+
+          <p>แม้การพูดถึงประโยชน์ของสงครามจะฟังดูขัดหูและไม่เป็นที่นิยมนัก แต่มันเป็นสิ่งจำเป็นที่เราต้องทำความเข้าใจว่าประโยชน์เหล่านั้นคืออะไร เพื่อที่เราจะได้รู้เท่าทันว่าเหตุใดสงครามจึงยังคงเกิดขึ้นไม่จบสิ้น การพยายามทำความเข้าใจบทบาทของสงครามอาจช่วยให้เราออกแบบระบบที่สามารถลดความจำเป็นที่จะต้องพึ่งพามันลงได้ หรือมันอาจมอบข้อมูลเชิงลึกเพื่อให้เราสามารถต่อสู้ในรูปแบบใหม่ที่ดีกว่าเดิม—อาจจะเป็นการทำสงครามในรูปแบบที่ "อ่อน" ลงและลดการทำลายล้างลงอย่างมหาศาล ในมุมมองของผู้เขียน การทำความเข้าใจคุณลักษณะที่แท้จริงของสงคราม ถือเป็นกุญแจดอกสำคัญที่จะนำไปสู่การทำความเข้าใจคุณค่าของเทคโนโลยีใหม่อย่าง "บิตคอยน์"</p>
+        </div>
+
+        <!-- 1.3.4 -->
+        <div id="s1-3-4" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">1.3.4 เช่นเดียวกับวิชาชีพอื่น ๆ วิชาชีพการสงครามก็สามารถถูกพลิกโฉม (Disrupt) ด้วยซอฟต์แวร์ได้เช่นกัน</h4>
+
+          <p>ประวัติศาสตร์ของเครื่องจักรคำนวณ (Computing machines) มีมายาวนานกว่าสองสหัสวรรษ เป็นเวลาหลายพันปีที่การป้อนคำสั่งให้เครื่องจักรเหล่านี้ทำงาน ต้องอาศัยกลไกทางกลและพลังงานจลนศาสตร์ แม้กระทั่งเมื่อมีการประดิษฐ์คอมพิวเตอร์อเนกประสงค์ที่ขับเคลื่อนด้วยไฟฟ้าเต็มรูปแบบขึ้นมา โปรแกรมเมอร์ก็ยังต้องใช้เวลาหลายวันในการสับคันโยก หมุนแป้นปุ่ม สับสวิตช์ และเสียบสายเคเบิลเพื่อควบคุมการทำงานของมัน</p>
+
+          <p>ในที่สุด เมื่อเทคโนโลยีสุกงอม นักวิทยาศาสตร์ วิศวกร และนักคณิตศาสตร์ ก็ได้คิดค้นแนวคิดที่นำไปสู่การปฏิวัติ นั่นคือ: การแปลงกลไกเชิงจลนศาสตร์ให้กลายเป็นสถานะทางดิจิทัล แล้วจัดเก็บข้อมูลเหล่านั้นลงในหน่วยความจำอิเล็กทรอนิกส์ ด้วยนวัตกรรมนี้ เครื่องจักรคำนวณเฉพาะทางจึงสามารถถูกดัดแปลงและตั้งโปรแกรมใหม่ได้ทันที โดยไม่ต้องผ่านกระบวนการออกแบบ สร้าง หรือตั้งระบบใหม่ด้วยมือ สิ่งที่เคยเป็นไปไม่ได้ในทางกายภาพ กลับกลายเป็นเรื่องที่เป็นไปได้ ส่งผลให้สังคมเกษตรกรรมสมัยใหม่เปลี่ยนแปลงไปตลอดกาล</p>
+
+          <p>การถือกำเนิดขึ้นของคอมพิวเตอร์อเนกประสงค์แบบเก็บโปรแกรมได้ (Stored-program general-purpose computing) เป็นนวัตกรรมที่ลึกซึ้งอย่างยิ่ง จนทำให้สังคมต้องแยกวิธีการรับรู้การทำงานของคอมพิวเตอร์ออกเป็นสองแนวคิด องค์ประกอบที่จับต้องได้ของเครื่องจักร ซึ่งมีมวลและต้องใช้แรงในการขับเคลื่อน ถูกนิยามว่าเป็น "ฮาร์ดแวร์" (Hard-wares) ในขณะที่องค์ประกอบคำสั่งอื่น ๆ ที่ไร้มวลสาร เริ่มถูกนิยามว่าเป็น "ซอฟต์แวร์" (Soft-wares)</p>
+
+          <p>นับตั้งแต่คอมพิวเตอร์แบบ "ซอฟต์แวร์" ถือกำเนิดขึ้น สังคมได้เร่งแข่งขันกันเพื่อแปลงกิจกรรมทางกายภาพทุกรูปแบบ ให้กลายเป็นกิจกรรมที่ปราศจากมวลสารและถูกควบคุมโดยคอมพิวเตอร์ ตลอด 80 ปีที่ผ่านมา โลกถูกขับเคลื่อนด้วยการลดทอนความเป็นรูปธรรม (Dematerialization) ของเครื่องจักรเฉพาะทาง (อาทิ แท่นพิมพ์ เครื่องพิมพ์ดีด โทรศัพท์ เครื่องคิดเลข โทรทัศน์) ในแทบทุกอุตสาหกรรม การพลิกโฉมนี้กลายเป็นเรื่องปกติไปแล้ว และดูเหมือนว่าจะไม่มีวิชาชีพใดเลยที่สามารถรอดพ้นจากการถูก Disrupt ด้วยเทคโนโลยีที่เรียกว่า "ซอฟต์แวร์" นี้ได้</p>
+
+          <p>ด้วยบริบทที่กล่าวมาทั้งหมดนี้ ผู้เขียนจึงอยากท้าทายผู้อ่านด้วยคำถามต่อไปนี้: มันสมเหตุสมผลหรือไม่ ที่เราจะคาดหวังให้วิชาชีพการทำสงครามเป็นข้อยกเว้นเพียงหนึ่งเดียว? มันสมเหตุสมผลหรือไม่ ที่จะเชื่อว่าการทำสงครามจะไม่ถูกพลิกโฉมด้วยซอฟต์แวร์เลย ทั้งที่เรามีบทพิสูจน์ตลอดเกือบหนึ่งศตวรรษที่ผ่านมาว่า เทคโนโลยีนี้ได้เข้าไปเปลี่ยนแปลงและพลิกโฉมวิชาชีพอื่น ๆ แทบทั้งหมดบนโลก?</p>
+        </div>
+
+        <!-- 1.3.5 -->
+        <div id="s1-3-5" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">1.3.5 สงครามแบบอ่อน (Soft War) จะมีหน้าตาเป็นอย่างไร?</h4>
+
+          <p>เพื่อประโยชน์ในการทำความเข้าใจ ลองตั้งสมมติฐานว่าการทำสงครามกำลังจะถูกพลิกโฉมด้วยซอฟต์แวร์ เช่นเดียวกับที่เกิดขึ้นในทุกวิชาชีพ สมมติว่าซอฟต์แวร์สามารถทำให้ยุทโธปกรณ์แบบแข็งสูญเสียความจำเป็นและถูกแปรสภาพเป็นระบบที่ไร้ตัวตน เฉกเช่นเดียวกับที่มันเคยทำกับเครื่องจักรเฉพาะทางอื่น ๆ นับไม่ถ้วนในช่วงหลายทศวรรษที่ผ่านมา หากสิ่งนี้เกิดขึ้นจริง มันจะมีหน้าตาเป็นอย่างไร?</p>
+
+          <p>หากเรายึดตามนิยามการสงครามของเคลาเซวิตซ์ ลองจินตนาการดูว่าเราจะต้องใช้อะไรบ้าง เพื่อออกแบบคอมพิวเตอร์และซอฟต์แวร์ ให้ทำหน้าที่เป็น "เครื่องมือไร้มวลสาร" สำหรับการแข่งขันทางอำนาจทางกายภาพระดับโลก ซึ่งเป็นเครื่องมือที่สังคมใช้เป็น "วิถีทางอื่น" ในการยุติข้อพิพาทเชิงนโยบาย? พูดอีกอย่างก็คือ เทคโนโลยีประเภทใดที่จะทำให้สังคมแยกแยะวิชาชีพการทหารออกเป็นสองขั้วอย่างชัดเจน: ระหว่างเครื่องจักรสงครามแบบ "แข็ง" และเครื่องจักรสงครามแบบ "อ่อน"?</p>
+
+          <p>ในการเข้าร่วมสงครามรูปแบบ "อ่อน" ผู้คนจะต้องหาวิธีดึงเอามวลสารออกจากการแข่งขันอำนาจทางกายภาพในสเกลระดับโลก วิธีหนึ่งที่จะทำได้คือ การแผ่ขยายอำนาจทางกายภาพในรูปแบบอิเล็กทรอนิกส์ ผ่านประจุไฟฟ้าที่วิ่งผ่านตัวต้านทาน แทนที่จะใช้แรงจลนศาสตร์ขับเคลื่อนมวลสาร (เช่น กระสุนหรือระเบิด) แต่เพียงแค่ความสามารถในการฉายพลังงานไฟฟ้าในพื้นที่ไซเบอร์นั้น ย่อมไม่เพียงพอที่จะผ่านเกณฑ์คำนิยามของ "สงคราม" ตามแบบฉบับของเคลาเซวิตซ์ เพราะมันยังขาดองค์ประกอบที่สำคัญอีกสองประการ</p>
+
+          <p>เครื่องจักรสงครามแบบอ่อนจะต้องครอบคลุมองค์ประกอบเรื่อง "กลไกของโอกาสและความน่าจะเป็น ที่ให้รางวัลแก่ผู้มีจิตใจสร้างสรรค์" ดังนั้น นอกเหนือจากการประดิษฐ์กลไกสำหรับแผ่ขยายอำนาจทางอิเล็กทรอนิกส์แล้ว ยังจำเป็นต้องมีโปรโตคอลที่ขับเคลื่อนด้วยความน่าจะเป็น เพื่อเป็นสนามให้ผู้คนเข้ามาแข่งขันกัน จะต้องมีกลไกที่ชี้ขาดผู้ชนะอย่างชัดเจนโดยไม่ต้องพึ่งพาศาลหรือตุลาการใด ๆ ด้วยเหตุนี้ จึงเป็นไปได้ที่มนุษย์จะออกแบบโปรโตคอลร่วมกัน เพื่อกำหนดมาตรฐานสากลในการใช้พลังงานไฟฟ้าเข้าแข่งขันกัน ในสภาพแวดล้อมที่เท่าเทียมและปราศจากความไว้วางใจ (Zero-Trust)</p>
+
+          <p>องค์ประกอบประการสุดท้ายที่จะทำให้สิ่งนี้กลายเป็นสงครามแบบอ่อนตามนิยามของเคลาเซวิตซ์ คือการที่รัฐชาติต่าง ๆ เริ่มนำเทคโนโลยีการแผ่ขยายอำนาจทางอิเล็กทรอนิกส์นี้ มาใช้แก้ปัญหาข้อพิพาทเชิงนโยบายอย่างจริงจัง เครื่องจักรสงครามแบบอ่อนจะต้องรับใช้ชาติในฐานะ "การดำเนินนโยบายสืบต่อไปด้วยวิถีทางอื่น" ตามที่เคลาเซวิตซ์ได้อธิบายไว้ รัฐชาติจะต้องเริ่มใช้มันเพื่อปกป้องและพิทักษ์นโยบายระหว่างประเทศที่พวกเขายึดมั่น ในรูปแบบของสงครามทางกายภาพที่แท้จริง</p>
+        </div>
+
+        <!-- 1.3.6 -->
+        <div id="s1-3-6" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">1.3.6 สงครามแบบอ่อนจะมีประโยชน์เชิงยุทธศาสตร์ในการปรับสมดุลโครงสร้างอำนาจ</h4>
+
+          <p>ประโยชน์ที่แท้จริงของการสร้างรูปแบบ "อ่อน" ของการทำสงครามคืออะไร? เพื่อตอบคำถามนี้ ให้เราพิจารณาประโยชน์ของสงครามดังที่ได้อภิปรายไว้ก่อนหน้า แล้วลองจินตนาการว่าผลลัพธ์จะเป็นเช่นไรหากสงครามนั้นไร้มวลสาร ไร้รูปทรง และจับต้องไม่ได้ สงครามแบบอ่อนจะเปิดโอกาสให้ผู้คนเข้าถึง "ศาลฎีกาแห่งอำนาจทางกายภาพ" ในรูปแบบอิเล็กทรอนิกส์ ด้วยเหตุนี้ โปรโตคอลซอฟต์วอร์จึงเหมาะสมอย่างยิ่งสำหรับประเทศเล็ก ๆ ที่มีอำนาจจลนศาสตร์จำกัด ที่ต้องการแก้ไขข้อพิพาทเชิงนโยบายกับประเทศใหญ่ที่มีกำลังรบมหาศาล</p>
+
+          <p>นอกจากนี้ สงครามแบบอ่อนยังให้ประโยชน์อย่างเห็นได้ชัดแก่มหาอำนาจที่มีอาวุธนิวเคลียร์ทัดเทียมกัน เพราะมันเปิดทางให้พวกเขาต่อสู้และยุติข้อพิพาทเชิงนโยบายระดับชาติได้ โดยไม่ต้องกังวลถึงภัยคุกคามจากหลักประกันการทำลายล้างซึ่งกันและกันอย่างแน่นอน (MAD) ยกตัวอย่างเช่น ข้อพิพาทด้านนโยบายการเงินระหว่างประเทศ ถือเป็นประเด็นความขัดแย้งระดับยุทธศาสตร์ที่สามารถแก้ไขได้ด้วยสงครามรูปแบบอ่อน ข้อพิพาทประเภทนี้เหมาะสมอย่างยิ่งที่จะนำมาตัดสินกันด้วยวิธีการที่ประหยัดพลังงาน และมีความเสี่ยงในการบานปลายน้อยกว่าสงครามแบบดั้งเดิมอย่างมหาศาล</p>
+
+          <p>แน่นอนว่า ข้อพิพาทด้านนโยบายการเงินระหว่างประเทศ จะไม่ใช่ปัญหาเพียงเรื่องเดียวที่สามารถยุติได้ด้วยสงครามแบบอ่อน แต่มันดูเหมือนจะเป็นกรณีการใช้งานแรกสุดที่มองเห็นภาพได้ชัดเจนที่สุด โดยเฉพาะเมื่อเราพิจารณาว่า ในปัจจุบัน สหรัฐฯ กำลังใช้มาตรการคว่ำบาตร (Sanctions) ตัดขาดมหาอำนาจนิวเคลียร์อย่างรัสเซีย ออกจากเครือข่ายการประมวลผลทางการเงินโลกอย่างเปิดเผย</p>
+
+          <p>หากสังคมโลกประดิษฐ์รูปแบบ "อ่อน" ของการทำสงครามระหว่างประเทศขึ้นมาได้จริง การชั่งน้ำหนักระหว่างกฎหมายและสงครามก็น่าจะยังคงอยู่ สงครามจะยังคงเป็นวิธีที่สิ้นเปลืองพลังงานมากกว่าในการแก้ไขข้อพิพาท แต่สงครามรูปแบบ "อ่อน" นี้ จะเผาผลาญพลังงาน (วัตต์) ทางอิเล็กทรอนิกส์เท่านั้น ไม่ใช่ทางจลนศาสตร์ ดังนั้น มันจึงนำไปสู่พฤติกรรมที่ปรากฏขึ้นใหม่ (Emergent behavior) ที่แตกต่างออกไปอย่างสิ้นเชิง—ซึ่งประโยชน์สูงสุดของมันคือ "การไร้ซึ่งการทำลายล้าง" สงครามรูปแบบอ่อนจึงเป็นตัวแทนของกระบวนทัศน์การทำสงครามที่ "ปราศจากการนองเลือด" (Non-lethal)—ทำให้มันกลายเป็นยุทธศาสตร์ที่จะเข้ามาพลิกเกม และเป็นการปฏิวัติวิธีการที่รัฐชาติใช้เพื่อสถาปนา บังคับใช้ และปกป้องนโยบายระหว่างประเทศ</p>
+
+          <p>ทว่า เครื่องจักรสงครามแบบอ่อน จะไม่ได้เข้ามาแทนที่ยุทโธปกรณ์แบบแข็ง (Hard warfighting machinery) โดยสมบูรณ์ ซึ่งสมเหตุสมผลเมื่อเราทราบดีว่า การมีซอฟต์แวร์ไม่ได้แปลว่าเราไม่ต้องการฮาร์ดแวร์อีกต่อไป เราควรคาดหวังว่าเครื่องจักรสงครามแบบอ่อน จะยังคงต้องพึ่งพายุทโธปกรณ์แบบแข็ง เช่นเดียวกับที่ซอฟต์แวร์ต้องทำงานบนฮาร์ดแวร์ แต่มันบังเอิญว่า สิ่งที่มนุษย์ให้คุณค่าอย่างลึกซึ้งในปัจจุบัน ล้วนเป็นสิ่งที่ไร้ตัวตน ไร้รูปทรง และไม่มีมวลสาร—ซึ่งพอดีกับศักยภาพของเครื่องจักรสงครามแบบอ่อนที่จะก้าวเข้ามาทำหน้าที่ปกป้องพวกมัน ตัวอย่างเช่น "เงิน" ไม่ได้ต้องการมวลสารอีกต่อไป รูปแบบหลักของเงินในปัจจุบันคือข้อมูลที่จับต้องไม่ได้ซึ่งถูกควบคุมโดยซอฟต์แวร์</p>
+
+          <p>เช่นเดียวกับที่ซอฟต์แวร์เคยเข้ามาปฏิวัติวิธีการสร้างและควบคุมเครื่องจักรในอดีต ซอฟต์วอร์ (Softwar) ก็อาจเข้ามาเปลี่ยนแปลงความเข้าใจที่สังคมมีต่อวิธีการสร้างและควบคุมระบบสังคมได้อย่างมหาศาล คล้ายกับปริมาณฮาร์ดแวร์ประมวลผลที่ลดลงอย่างฮวบฮาบหลังจากการประดิษฐ์ซอฟต์แวร์ ปริมาณของยุทโธปกรณ์แบบแข็งที่จำเป็นต้องใช้เพื่อปกป้องนโยบายและระบบความเชื่อของเรา ก็อาจลดลงอย่างเป็นนัยสำคัญเช่นกันหลังจากการประดิษฐ์เครื่องจักรสงครามแบบอ่อน</p>
+        </div>
+
+        <!-- 1.3.7 -->
+        <div id="s1-3-7" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">1.3.7 สงครามแบบอ่อนอาจเปลี่ยนแปลงการประเมินคุณค่าทางจริยธรรม ศีลธรรม หรืออุดมการณ์ของสังคม</h4>
+
+          <p>ความมั่นคงของระบบ (Systems security) เป็นปรากฏการณ์ที่ข้ามพ้นขอบเขตของวิทยาศาสตร์ (Trans-scientific phenomenon) มันเต็มไปด้วยคำถามที่ยุ่งยาก ซับซ้อน และไม่อาจวัดค่าได้อย่างเป็นภววิสัย คำถามข้ามสาขาวิชาเหล่านี้จะกลายเป็นหัวข้อสนทนาที่สำคัญระดับโลกทันที หากสังคมได้ค้นพบการทำสงครามในรูปแบบ "อ่อน"—นั่นคือ วิธีการระงับข้อพิพาทเชิงนโยบายรูปแบบใหม่ ที่ขับเคลื่อนด้วยการควบคุมแบบ Zero-Trust และไร้การขออนุญาต (Permissionless) โดยไม่ก่อให้เกิดการบาดเจ็บล้มตายในทางกายภาพ</p>
+
+          <p>มันยังคงจะเป็นเรื่องที่มีศีลธรรมหรือจริยธรรมอยู่อีกหรือไม่ ในการออกแบบระบบกฎหมายด้วย "ปากกาและแผ่นกระดาษ" ซึ่งป้องกันตัวเองจากการทุจริตเชิงระบบไม่ได้ และต้องถูกบังคับใช้และป้องกันด้วยกำลังทหารและอาวุธที่พรากชีวิตคน หากสังคมมีทางเลือกเป็นระบบสงครามที่ไร้การทำลายล้างและปราศจากการเสียเลือดเนื้อ? ลองจินตนาการดูว่า จะเกิดอะไรขึ้นหากสังคมค้นพบวิธีการเขียนนโยบายด้วยภาษา C++ แทนที่จะเขียนลงบนกระดาษ จากนั้นใช้พลังงานไฟฟ้าที่ไม่เป็นอันตรายต่อชีวิตมาบังคับใช้และปกป้องนโยบายเหล่านั้นแทน? การค้นพบที่ยิ่งใหญ่เช่นนี้ ย่อมสั่นคลอนและเปลี่ยนมุมมองที่สังคมมีต่อคุณค่าทางศีลธรรมของระบบกฎหมายดั้งเดิมและการทำสงครามไปพร้อม ๆ กัน</p>
+
+          <p>มันจะมีจริยธรรมหรือไม่ ในการสั่งห้ามไม่ให้ประชาชนลุกขึ้นมาปกป้องทรัพย์สินและนโยบายที่พวกเขายึดมั่น ด้วยวิธีการที่ไร้การนองเลือด? บางคนอาจแย้งว่า การสั่งห้ามไม่ให้ผู้คนปกป้องทรัพย์สินของตนเลยนั้นต่างหากที่ไร้จริยธรรม สำหรับผู้อ่านชาวอเมริกัน ลองพิจารณาดูว่า บิดาผู้ก่อตั้งที่ร่างการแก้ไขเพิ่มเติมรัฐธรรมนูญสหรัฐฯ ครั้งที่ 2 (2nd Amendment) จะรู้สึกอย่างไร หากเห็นเจ้าหน้าที่รัฐในยุคปัจจุบันพยายามผลักดันนโยบายสาธารณะเพื่อขัดขวางไม่ให้พลเมืองมีสิทธิปกป้องทรัพย์สินของตนในทางกายภาพ? ประเด็นนี้จะทวีความสำคัญและดุเดือดขึ้นทันทีเมื่อถึงคราวต้องร่างนโยบายสาธารณะเกี่ยวกับบิตคอยน์ หากทฤษฎีที่นำเสนอในวิทยานิพนธ์ฉบับนี้ถูกต้อง บิตคอยน์ย่อมเป็นตัวแทนของ "ระบบความมั่นคงทางกายภาพ" มากกว่าที่จะเป็นเพียงระบบการเงินอย่างเคร่งครัด</p>
+
+          <p>ความพยายามในการทำให้เทคโนโลยีการแผ่ขยายอำนาจทางอิเล็กทรอนิกส์อย่างบิตคอยน์กลายเป็นสิ่งผิดกฎหมาย ท้ายที่สุดแล้วอาจถูกตราหน้าว่าเป็น "มาตรฐานคู่" (Double-standard) ทำไมมันถึงเป็นเรื่องที่ยอมรับได้ หากประชาชนจะจับอาวุธและใช้กำลัง "จลนศาสตร์" เพื่อปกป้องทรัพย์สินและนโยบายที่พวกเขาหวงแหน แต่กลับไม่เป็นที่ยอมรับ หากพวกเขาเลือกใช้วิธีการปกป้องทางกายภาพผ่านเทคโนโลยี "ไซเบอร์เชิงพลังงานไฟฟ้า" (ที่ไร้การเสียเลือดเนื้อ)? เจตนารมณ์แท้จริงของการแก้ไขเพิ่มเติมรัฐธรรมนูญครั้งที่ 2 คือการสร้างปราการที่แน่นหนา เพื่อป้องกันไม่ให้ผู้นำรัฐบาลสหรัฐฯ ละเมิดสิทธิของพลเมืองในการลุกขึ้นมาปกป้องสิ่งที่ตนเองให้คุณค่า</p>
+
+          <p>อารยธรรมมนุษย์ได้ใช้การแผ่ขยายอำนาจทางกายภาพเพื่อปกป้องทรัพย์สินและนโยบายที่พวกเขายึดมั่น มายาวนานกว่าห้าพันปีนับตั้งแต่นโยบายเริ่มถือกำเนิดขึ้น ไม่มีหลักฐานใดบ่งชี้ว่าสังคมเคยพบ (หรือจะค้นพบ) วิธีการรักษาความมั่นคงที่ไม่ต้องผลาญพลังงาน ความมั่นคงทางกายภาพจำเป็นต้องมีการเผาผลาญพลังงาน (วัตต์) พลังงานเหล่านี้ถูกใช้เพื่อสร้างต้นทุนที่แสนสาหัสให้แก่ผู้โจมตี เพื่อหยุดยั้งและข่มขวัญไม่ให้การโจมตีนั้นเกิดขึ้น</p>
+
+          <p>วัตต์ก็คือวัตต์ ไม่ว่าจะถูกสร้างขึ้นด้วยกลไกทางจลนศาสตร์หรือขับเคลื่อนทางอิเล็กทรอนิกส์ กฎกติกาก็ย่อมเป็นกฎกติกา ไม่ว่าจะถูกจดจารึกบนแผ่นกระดาษหรือถูกฝังรากเป็นชุดคำสั่งในคอมพิวเตอร์ ทรัพย์สินส่วนบุคคลก็คือทรัพย์สินส่วนบุคคล ไม่ว่าจะอยู่ในรูปลักษณ์ใด ในเรื่องของ "สิทธิในการป้องกันตนเอง" นั้น แทบจะไม่มีพื้นที่ว่างให้แก่ความคลุมเครือทางศีลธรรม และมันคงไม่ใช่เรื่องยากที่จะเข้าใจว่า การยกระดับการป้องกันความมั่นคงทางกายภาพของทรัพย์สินและนโยบาย ให้สามารถทำงานได้โดยปราศจากการทำลายล้างและการสูญเสียชีวิต ย่อมเป็นทางออกที่เปี่ยมไปด้วยคุณธรรม จริยธรรม และอุดมการณ์สูงสุดสำหรับทุกฝ่ายที่เกี่ยวข้อง</p>
+
+          <p>อุตสาหกรรมป้องกันประเทศรูปแบบใหม่ทั้งระบบ อาจถือกำเนิดขึ้นจากแนวคิดการใช้การแผ่ขยายอำนาจทางไซเบอร์เชิงพลังงานไฟฟ้า เพื่อยัดเยียดต้นทุนทางกายภาพอันหนักหน่วงให้แก่ศัตรูในพื้นที่ไซเบอร์ กองกำลังไซเบอร์ (Cyber forces) จะสามารถอุทิศตนเพื่อปฏิบัติภารกิจในการขจัดความจำเป็นที่มนุษย์จะต้องมานองเลือดกัน ด้วยการนำสงครามรูปแบบ "อ่อน" มาใช้แทนในขอบเขตที่เหมาะสม หากใครสักคนจะมองว่าความพยายามนี้เป็นสิ่งที่ผิดศีลธรรมหรือไร้จริยธรรม—แม้ว่ามันจะจำเป็นต้องใช้พลังงานจำนวนมหาศาลก็ตาม—คำถามคือ นอกเหนือจากความหวาดกลัวต่อการถูกพลิกโฉมทางเทคโนโลยีแล้ว มีเหตุผลอันใดอีกที่ทำให้รัฐชาติต้องการแบนเทคโนโลยีการทำสงครามที่ "ไร้การนองเลือด" นี้?</p>
+
+          <p>หาก Proof-of-Work เป็นตัวแทนของเทคโนโลยีการแผ่ขยายอำนาจเชิงยุทธศาสตร์ที่สำคัญในยุคดิจิทัลอย่างแท้จริง การตราหน้าว่ามันผิดกฎหมายเพียงเพราะเหตุผลเชิงอุดมการณ์ ย่อมเป็นการกีดกันไม่ให้ประชากรของตนเองได้รับผลประโยชน์จากเทคโนโลยีเชิงยุทธศาสตร์นี้ ในขณะที่รัฐชาติอื่น ๆ สามารถนำมันไปปรับใช้เพื่อผลประโยชน์และความมั่นคงของประเทศตนได้อย่างเต็มที่ การกระทำเช่นนี้ไม่ต่างอะไรกับการ "ปลดอาวุธนิวเคลียร์" ด้วยเหตุผลเชิงอุดมการณ์ ลองพิจารณากรณีของยูเครนเป็นตัวอย่าง ยูเครนเคยเป็นมหาอำนาจนิวเคลียร์อันดับสามของโลก ทว่าพวกเขากลับยินยอมส่งมอบทั้งหมดให้รัสเซีย เพื่อแลกกับ "คำสัญญา" ว่ารัสเซียจะไม่รุกรานพวกเขา และในขณะที่ผู้เขียนกำลังเขียนบทความนี้ โลกของเราก็กำลังอยู่ในขวบปีแรกของเหตุการณ์ที่กองทัพรัสเซียเคลื่อนทัพเข้ารุกรานยูเครน</p>
+        </div>
+
+        <!-- 1.3.8 -->
+        <div id="s1-3-8" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">1.3.8 สงครามแบบอ่อน จะคุ้มค่ากับพลังงานทุกวัตต์ที่เสียไป</h4>
+
+          <p>ถึงเวลาที่เราต้องพิจารณาผลกระทบเชิงซ้อน (Emergent effects) ด้านบวกที่สงครามแบบอ่อนจะมอบให้แก่มนุษยชาติ ลองจินตนาการดูว่า จะเกิดอะไรขึ้นหากเครื่องจักรสงครามรูปแบบใหม่นี้ เป็นแรงกระตุ้นชั้นดีที่เร่งให้เกิดการพัฒนาคอมพิวเตอร์ที่เร็วขึ้น และโครงสร้างพื้นฐานด้านพลังงานที่สมบูรณ์แบบยิ่งขึ้น? ลองจินตนาการดูว่า จะเกิดอะไรขึ้นหากความประหยัดต่อขนาด (Economies of scale) จากการพัฒนาโครงสร้างพลังงานไฟฟ้าดังกล่าว สามารถถูกนำมาแบ่งปันให้กับผู้คนทั่วโลกที่เข้าร่วมในเครือข่ายนี้ได้? ในขณะเดียวกัน การพัฒนานี้ก็ยังดำรงไว้ซึ่งทางเลือกใหม่ในการรักษาควบคุมทรัพย์สินระหว่างประเทศ (เช่น เงิน) และนโยบายระหว่างประเทศ แบบไร้ความเชื่อใจ (Zero-Trust) และไร้การขออนุญาต (Permissionless) โดยที่ไม่ต้องมีการนองเลือด</p>
+
+          <p>หากสงครามแบบอ่อนสามารถสร้างผลลัพธ์เชิงบวกเหล่านี้ได้จริง รัฐชาติต่าง ๆ ก็อาจเปลี่ยนท่าทีมากระตือรือร้นที่จะเข้าร่วมในสงครามนี้ แทนที่จะหลีกเลี่ยงมัน สังคมอาจยกระดับสงครามแบบอ่อนให้กลายเป็น "ปราการด่านแรก" ของประเทศ แทนที่จะเป็นเพียง "ปราการด่านสุดท้าย" ตามธรรมเนียมปฏิบัติแต่โบราณ เหตุใดเราจะต้องยอมเสี่ยงแบกรับภัยคุกคามด้านความมั่นคงเชิงระบบ หรือยอมรับคำตัดสินจากผู้พิพากษาที่ทุจริตและศาลที่ลำเอียง เพื่อยุติข้อพิพาทเรื่องทรัพย์สินหรือนโยบาย ในเมื่อเรามีทางเลือกเป็น "ซอฟต์วอร์" ที่ไร้การนองเลือด?</p>
+
+          <p>ด้วยสงครามแบบอ่อน พลเมืองจะได้รับพลัง (Empowered) อย่างแท้จริง ในการลุกขึ้นมาปกป้องตนเองจากจุดอ่อนเรื้อรังของสังคมที่พึ่งพากฎเกณฑ์ นั่นคือธรรมชาติที่ไม่น่าไว้วางใจของมนุษย์ด้วยกันเอง ความพยายามหยาดเหงื่อแรงกายและการเสียสละชีวิตมนุษย์นับไม่ถ้วน จะถูกแทนที่ด้วยใบแจ้งหนี้ค่าไฟฟ้า และจะไม่มีข้อจำกัดใด ๆ ในปริมาณพลังงานไฟฟ้าที่พลเมืองสามารถระดมสรรพกำลังมาใช้ เพื่อเป็นเกราะกำบังให้กับชุดข้อมูลที่พวกเขาหวงแหน หากทฤษฎีใด ๆ เกี่ยวกับสงครามแบบอ่อนที่กล่าวมานี้มีความถูกต้องแม้เพียงเศษเสี้ยว คำถามคือ การทำสงครามนี้จะไม่คุ้มค่ากับพลังงานทุกวัตต์ที่ต้องเสียไปหรอกหรือ? หลักคุณธรรมและจริยธรรมขั้นพื้นฐานก็ยังคงเรียกร้องให้เราต้องยอมรับยุทธวิธีการรักษาความมั่นคงทางกายภาพที่ไร้การทำลายล้าง ไร้การสูญเสียชีวิต และปราศจากการนองเลือด และโปรโตคอลการพิสูจน์อำนาจทางกายภาพ (Proof-of-Power Protocol) อย่างบิตคอยน์ ก็คือตัวแทนอันสมบูรณ์แบบของยุทธวิธีการรักษาความมั่นคงที่ปราศจากการนองเลือดอย่างแท้จริง</p>
+        </div>
+      </div>
+      <div class="subsection" id="s1-4">
+        <h3 class="subsection-title">1.4 วัตถุประสงค์ (Objective)</h3>
+
+        <!-- 1.4.1 -->
+        <div id="s1-4-1" style="margin-top:28px;">
+          <blockquote>
+            "หากคุณไม่เชื่อหรือไม่เข้าใจ ผมก็ไม่มีเวลาพอที่จะพยายามโน้มน้าวคุณ ขออภัยด้วย"
+            <br><br>— ซาโตชิ นากาโมโตะ (Satoshi Nakamoto) [20]
+          </blockquote>
+
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.4.1 ทำไมโปรโตคอล Proof-of-Work จึงไม่ถูกมองว่าเป็นโปรโตคอลความมั่นคงไซเบอร์อีกต่อไป?
+          </h4>
+
+          <p>ก่อนการเปิดตัวบิตคอยน์ ฉันทามติทางวิชาการมองว่าโปรโตคอล Proof-of-Work เป็นโปรโตคอลด้านความมั่นคงไซเบอร์ ที่สามารถนำมาใช้หยุดยั้งการโจมตีทางไซเบอร์ทั่วไปได้ เช่น การโจมตีแบบปฏิเสธการให้บริการ (Denial-of-Service) หรือการโจมตีแบบซีบิล (Sybil Attack) นักวิทยาศาสตร์คอมพิวเตอร์ต่างถกเถียงกันว่า โปรโตคอล Proof-of-Work จะสามารถนำมาใช้เป็นรากฐานในการสร้างฉันทามติบนเครือข่ายแบบกระจายศูนย์และไร้การขออนุญาต (Permissionless) ได้อย่างไร ทว่าภายหลังจากการเปิดตัวโปรโตคอล Proof-of-Work ที่ใช้งานได้จริง ประเด็นหลักในการสนทนาทางวิชาการกลับเปลี่ยนทิศทางจากเรื่องความมั่นคงไซเบอร์ไปเป็นเรื่องของเงินตราแทน [25, 26, 27]</p>
+
+          <p>ทุกวันนี้ ท่ามกลางกระแสความตื่นตัวเกี่ยวกับประโยชน์การใช้งานบิตคอยน์ในฐานะระบบชำระเงิน กลับมีงานวิจัยเพียงหยิบมือที่มุ่งศึกษาประโยชน์ของบิตคอยน์ในฐานะระบบความมั่นคงไซเบอร์แบบ Proof-of-Work ซึ่งสามารถนำไปใช้ปกป้องระบบซอฟต์แวร์และเครือข่ายคอมพิวเตอร์อื่น ๆ จากการทุจริตและการแทรกแซงเชิงระบบได้ ผู้เขียนตั้งข้อสังเกตว่าการขาดหายไปของงานวิจัยวิชาการในด้านนี้น่าสนใจยิ่งนัก เพราะในทุกแง่มุม บิตคอยน์ได้พิสูจน์ให้เห็นถึงความถูกต้องของทฤษฎี Proof-of-Work ที่ถือกำเนิดขึ้นเป็นครั้งแรกเมื่อ 30 ปีก่อน ซึ่งทฤษฎีส่วนใหญ่ในยุคนั้นแทบไม่มีความเกี่ยวข้องกับการเงิน เงินตรา หรือเศรษฐศาสตร์เลยแม้แต่น้อย แล้วเหตุใด "เงิน" จึงกลายมาเป็นหัวข้อหลักในการสนทนาไปได้?</p>
+
+          <p>บิตคอยน์คือหลักฐานที่ไม่อาจโต้แย้งได้ว่ากลไก "Proof-of-Work" สามารถทำงานได้จริงในฐานะระบบรักษาความมั่นคงไซเบอร์ บิตคอยน์ถือเป็นเทคโนโลยีที่สร้างมูลค่าในตัวเองอย่างเป็นพลวัต (Recursive) โดยอาศัย Proof-of-Work เพื่อปกป้องชุดข้อมูลของตนให้ปลอดภัยจากการแทรกแซงเชิงระบบ บิตคอยน์จึงเป็นเครื่องพิสูจน์คุณค่าของตัวมันเองในฐานะระบบความมั่นคงไซเบอร์ ไม่ใช่เพียงแค่ระบบการเงิน ยิ่งไปกว่านั้น ข้อเท็จจริงที่ว่าบิตคอยน์สามารถพิสูจน์ศักยภาพของ Proof-of-Work ในฐานะโปรโตคอลด้านความมั่นคงไซเบอร์ได้ ย่อมทำให้ตัวมันมีมูลค่าในตัวเองอย่างแท้จริง ซึ่งเหตุผลนี้อาจเป็นคำอธิบายเดียวที่ชี้ให้เห็นว่าเหตุใดบิตคอยน์จึงได้รับและสามารถรักษามูลค่าทางการเงินไว้ได้</p>
+
+          <p>ผู้คนต่างมีเหตุผลมากมายที่ต้องการปกป้องข้อมูลของตนจากการโจมตีทางไซเบอร์ ซึ่งรวมถึงและโดยเฉพาะอย่างยิ่งข้อมูลทางการเงิน ทว่าไม่ได้จำกัดอยู่แค่ข้อมูลทางการเงินอย่างเคร่งครัด จึงสมเหตุสมผลอย่างยิ่งที่ระบบซึ่งถูกออกแบบมาเพื่อปกป้องชุดข้อมูลทางกายภาพ จะสามารถทำหน้าที่เป็นระบบการเงินควบคู่กันไปได้อย่างสมบูรณ์แบบ แต่นั่นย่อมไม่ใช่กรณีการใช้งานเพียงรูปแบบเดียวที่เป็นไปได้ หรืออาจไม่ใช่กรณีการใช้งานหลักในอนาคตเสียด้วยซ้ำ เนื่องจากชุดข้อมูลทางการเงินเป็นเพียงข้อมูลประเภทหนึ่งที่ผู้คนต้องการปกป้องให้ปลอดภัยจากการทุจริตเชิงระบบเท่านั้น</p>
+
+          <p>ด้วยเหตุนี้ บิตคอยน์จึงอาจเป็นตัวแทนของสิ่งที่มีความหมายลึกซึ้งยิ่งกว่าสถาปัตยกรรมระบบการเงินรูปแบบใหม่ เพราะเมื่อใดที่เราสามารถหาวิธีปกป้องข้อมูลทางการเงินในเชิงกายภาพให้ปลอดภัยจากการโจมตีได้สำเร็จ นั่นย่อมหมายความว่าเราได้ค้นพบวิธีปกป้องชุดข้อมูล "ทั้งหมด" ให้ปลอดภัยจากการโจมตีในเชิงกายภาพได้แล้วเช่นกัน สิ่งนี้สื่อให้เห็นว่าบิตคอยน์อาจเป็นตัวแทนของสถาปัตยกรรมการประมวลผลรูปแบบใหม่—อันเป็นวิธีการใหม่สำหรับคอมพิวเตอร์ในการส่งผ่านชุดข้อมูลไปมาในพื้นที่ไซเบอร์ ด้วยรูปแบบที่ปราศจากการพึ่งพาความไว้วางใจ (Zero-Trust) และมีความปลอดภัยทางกายภาพ ซึ่งจะไม่เปราะบางต่อการทุจริตและการแทรกแซงเชิงระบบเหมือนดั่งเครือข่ายคอมพิวเตอร์ในปัจจุบันที่เชื่อมต่อกับพื้นที่ไซเบอร์ บิตคอยน์อาจมีนัยสำคัญต่อความมั่นคงเชิงยุทธศาสตร์แห่งชาติในมิติที่กว้างไกลกว่าการเป็นเพียงระบบการเงิน และเราอาจกำลังมองข้ามศักยภาพนี้ไป เพียงเพราะผู้คนไม่ยอมตั้งคำถามต่อสมมติฐานของตนเอง เราอาจกำลังทำตัวเหมือนนักเล่นแร่แปรธาตุในอดีต ที่เมื่อมองเห็นส่วนผสมของดินปืนดำ ก็ทึกทักเอาเองว่ามันคือ "ยารักษาโรค" เพียงเพราะผู้คิดค้นตั้งใจให้กรณีการใช้งานแรกของมันเป็นยา จึงตั้งชื่อเรียกมันว่ายานั่นเอง</p>
+        </div>
+
+        <!-- 1.4.2 -->
+        <div id="s1-4-2" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.4.2 การสร้างกรอบทฤษฎีใหม่เพื่อตอบสนองต่อคำสั่งฝ่ายบริหารสองฉบับของประธานาธิบดี
+          </h4>
+
+          <p>วัตถุประสงค์หลักของวิทยานิพนธ์ฉบับนี้ คือการพัฒนาและนำเสนอกรอบทฤษฎีใหม่ สำหรับใช้ในการศึกษาวิจัยความเสี่ยงและผลประโยชน์ที่อาจเกิดขึ้นจากบิตคอยน์ วัตถุประสงค์การวิจัยนี้ สอดรับและสนับสนุนคำสั่งฝ่ายบริหาร (Executive Order - EO) ของประธานาธิบดีไบเดน (Biden) เมื่อเดือนมีนาคม 2022 ว่าด้วยการพัฒนาสินทรัพย์ดิจิทัลอย่างรับผิดชอบ รวมถึงคำสั่งฝ่ายบริหารเมื่อเดือนพฤษภาคม 2022 ว่าด้วยการยกระดับความมั่นคงไซเบอร์ของชาติ อ้างอิงจากเอกสารแถลงข่าวของทำเนียบขาว คำสั่งฝ่ายบริหารดังกล่าวถือเป็น "แนวทางระดับรัฐบาลแบบองค์รวมเป็นครั้งแรก ในการจัดการกับความเสี่ยงและดึงเอาผลประโยชน์ที่อาจเกิดขึ้นจากสินทรัพย์ดิจิทัลและเทคโนโลยีพื้นฐานมาใช้" ทั้งนี้ ขอบเขตของงานวิจัยฉบับนี้จะจำกัดอยู่เพียงเทคโนโลยีพื้นฐานของบิตคอยน์ ซึ่งเป็นที่รู้จักกันทั่วไปในชื่อ Proof-of-Work เท่านั้น</p>
+
+          <p>แนวทางในปัจจุบันสำหรับการวิเคราะห์ความเสี่ยงและผลประโยชน์ที่อาจเกิดขึ้นของเทคโนโลยี Proof-of-Work อย่างบิตคอยน์ มักจะมุ่งเน้นและอิงอยู่กับกรอบทฤษฎีที่เกี่ยวข้องกับการเงิน การเงินมหภาค หรือเศรษฐศาสตร์เป็นหลัก เนื่องจากการวิเคราะห์เทคโนโลยีดังกล่าวยังคงวนเวียนอยู่กับกรอบทฤษฎีเดิม ๆ เหล่านี้ จึงมีความเป็นไปได้สูงว่า แวดวงวิชาการ ภาคอุตสาหกรรม และภาครัฐ กำลังสร้างอคติเชิงการวิเคราะห์ระดับโครงสร้าง (Systemic-level analytical bias) ขึ้นมาในระหว่างการประเมินความเสี่ยงและผลประโยชน์ของเทคโนโลยีนี้ สิ่งนี้ถือเป็นปัญหาใหญ่ เมื่อพิจารณาว่าวัตถุประสงค์ที่ระบุไว้อย่างชัดเจนของคำสั่งฝ่ายบริหาร คือการกำหนดนโยบายสาธารณะที่มีความรับผิดชอบเกี่ยวกับเทคโนโลยีอุบัติใหม่นี้ เป็นที่ประจักษ์ชัดอยู่แล้วว่า เราไม่สามารถรับประกันการพัฒนานโยบายสาธารณะที่มีความรับผิดชอบได้เลย หากการวิเคราะห์ที่ใช้เป็นฐานในการกำหนดนโยบายนั้นเต็มไปด้วยอคติเชิงการวิเคราะห์ตั้งแต่ต้น</p>
+        </div>
+
+        <!-- 1.4.3 -->
+        <div id="s1-4-3" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.4.3 แนวทางการวิเคราะห์แบบสมมติฐาน-อนุมานในการวิจัยเทคโนโลยีใหม่นั้นเต็มไปด้วยข้อสมมติฐานที่เลื่อนลอย
+          </h4>
+
+          <p>แวดวงวิชาการ ภาคอุตสาหกรรม และภาครัฐ อาจกำลังนำอคติเชิงการวิเคราะห์เข้ามาสู่งานวิจัยของตน อันเนื่องมาจากข้อสมมติฐานที่มักถูกตั้งขึ้นล่วงหน้าเมื่อดำเนินการวิจัยแบบสมมติฐาน-อนุมาน (Hypothesis-deductive approach) นักวิจัยมักจะทึกทักเอาเองโดยปริยายเกี่ยวกับเทคโนโลยี Proof-of-Work อย่างบิตคอยน์ เมื่อพวกเขาใช้แนวทางนี้ในการวิเคราะห์ความเสี่ยงและผลตอบแทน พวกเขาด่วนสรุปไปเองว่าเทคโนโลยีนี้จัดเป็นเทคโนโลยีทางการเงินหรือเศรษฐศาสตร์มหภาคอย่างเคร่งครัด เพียงเพราะผู้ประดิษฐ์นิรนามเรียกมันว่า "ระบบเงินสดอิเล็กทรอนิกส์แบบเพียร์ทูเพียร์" (Peer-to-peer electronic cash system) และบังเอิญว่ากรณีการใช้งานทางการเงินนั้น เป็นหนึ่งในกรณีการใช้งานเชิงปฏิบัติการกลุ่มแรก ๆ ของโปรโตคอล Proof-of-Work วิทยานิพนธ์ฉบับนี้จึงถือเป็นหนึ่งในข้อยกเว้นเพียงไม่กี่ชิ้น ที่ผู้เขียนไม่ยอมรับสมมติฐานโดยอัตโนมัติว่าบิตคอยน์เป็นเทคโนโลยีทางการเงิน เพียงเพราะนั่นคือกรณีการใช้งานแรกที่ผู้สร้างตั้งใจไว้</p>
+
+          <p>ปัญหาของการใช้สมมติฐานเดียวกันในทุก ๆ งานวิจัย คือการเปิดโอกาสให้เกิดอคติในระดับโครงสร้าง ข้อสมมติฐานดังกล่าวอาจเป็นเรื่องผิด หรืออย่างน้อยที่สุดก็อาจเป็นมุมมองที่ไม่สมบูรณ์ บิตคอยน์อาจมีประโยชน์ที่มากกว่าการเป็นเพียงเงินอิเล็กทรอนิกส์แบบเพียร์ทูเพียร์ วิธีที่ง่ายที่สุดในการพิสูจน์ว่าอคติหรือข้อสมมติฐานนี้มีอยู่จริง คือการสังเกตปริมาณเวลา ความพยายาม เม็ดเงิน และทรัพยากรบุคคล ที่ถูกทุ่มเทไปกับการวิเคราะห์บิตคอยน์ โดยตั้งอยู่บนแนวคิดที่ว่า เทคโนโลยี Proof-of-Work มีประโยชน์เฉพาะในฐานะเทคโนโลยีทางการเงินเท่านั้น—และมองว่ามันไม่มีบทบาทอื่นใดนอกเหนือจากเรื่องเงิน ที่จะคู่ควรพอให้ลองใช้กรอบทฤษฎีอื่น ๆ มาตั้งสมมติฐานเกี่ยวกับความเสี่ยงและผลประโยชน์ของมันเลย</p>
+
+          <p>แนวทางการวิจัยแบบสมมติฐาน-อนุมาน จำเป็นต้องอาศัยกรอบทฤษฎีเพื่อนำมาสร้างสมมติฐานสำหรับการวิเคราะห์ นักวิจัยต้องเลือกกรอบทฤษฎีที่จะใช้ประเมินบิตคอยน์ก่อนที่พวกเขาจะเริ่มทำการวิเคราะห์ ซึ่งนั่นหมายความว่า พวกเขาได้ด่วนสรุปไปแล้วว่าบิตคอยน์เป็นเทคโนโลยีประเภทใดก่อนที่จะลงมือวิเคราะห์เสียอีก แต่บิตคอยน์คือเทคโนโลยีอุบัติใหม่ ซึ่งอาจจะมีหรือไม่มีบทบาทหน้าที่อยู่นอกเหนือกรอบสมมติของทฤษฎีที่ถูกเลือกมาใช้ออกแบบหรือวิเคราะห์มันก็ได้ การคาดหวังให้เทคโนโลยีรูปแบบใหม่ล่าสุด ต้องสวมเข้ากับกรอบทฤษฎีเดิมที่มีอยู่ได้อย่างพอดิบพอดี จึงเป็นเรื่องที่ไม่สมเหตุสมผลเอาเสียเลย</p>
+
+          <p>ปัจจัยหนึ่งที่ก่อให้เกิดปัญหานี้ คือความไม่ชัดเจนว่า ควรใช้สาขาความรู้หรือกรอบทฤษฎีใดมาใช้ในการตั้งสมมติฐานและวิเคราะห์เชิงอนุมานต่อเทคโนโลยี Proof-of-Work การออกสำรวจความเสี่ยงและผลประโยชน์ของเทคโนโลยีนี้ในฐานะบทบาทอื่น ที่ไม่ใช่ระบบการชำระเงินอิเล็กทรอนิกส์แบบเพียร์ทูเพียร์ ถือเป็นดินแดนที่ยังไม่เคยมีใครก้าวไปถึง เทคโนโลยีนี้มีเอกลักษณ์เฉพาะตัวและยังใหม่มาก ดังนั้น ฟังก์ชันการทำงานและกรณีการใช้งานทางเลือกอื่น ๆ จึงยังไม่เป็นที่รู้จักหรือยังอยู่ในขั้นคาดเดา ส่งผลให้เกิดความคลุมเครือว่าควรนำกรอบทฤษฎีใดมาประยุกต์ใช้ หากทฤษฎีเหล่านั้นมีอยู่จริง</p>
+
+          <p>ด้วยเหตุนี้ การตัดสินใจเลือกกรอบทฤษฎี ซึ่งเป็นรากฐานของการวิเคราะห์ความเสี่ยงและผลประโยชน์ของบิตคอยน์ในแบบสมมติฐาน-อนุมานทั้งหมด จึงมีความเป็นอัตวิสัย (Subjective) สูงและเปราะบางต่อการเกิดอคติอย่างยิ่ง ศักยภาพในการเกิดอคติเริ่มต้นขึ้นเมื่อนักวิจัยต่างตั้งสมมติฐานเดียวกันว่า เทคโนโลยี Proof-of-Work อย่างบิตคอยน์ ทำงานได้เฉพาะในฐานะเทคโนโลยีทางการเงินเท่านั้น ในขณะที่พวกเขากำลังตั้งสมมติฐานเกี่ยวกับความเสี่ยงและผลประโยชน์ของมัน ผู้เขียนยังไม่พบงานวิจัยที่ตีพิมพ์อย่างเป็นทางการชิ้นใดที่ยอมรับถึงข้อสมมติฐานล่วงหน้านี้ นักเศรษฐศาสตร์ไม่ได้แสดงให้เห็นเลยว่า พวกเขาเข้าใจถึงความเป็นอัตวิสัยและอคติที่แฝงอยู่ในการตีกรอบให้เทคโนโลยีนี้เป็นเพียงเทคโนโลยีทางการเงินอย่างเคร่งครัด ข้อสังเกตนี้ถือเป็นสัญญาณเตือนภัยที่ชัดเจน ว่าเรากำลังเผชิญกับความเสี่ยงของอคติเชิงการวิเคราะห์ เพราะนักวิจัยไม่ได้แม้แต่จะตระหนักถึงสมมติฐานที่พวกเขาสร้างขึ้นซ้ำแล้วซ้ำเล่า รวมถึงศักยภาพในการเกิดอคติของตนเองด้วย</p>
+
+          <p>สิ่งนี้ได้นำมาสู่สภาวะกลืนไม่เข้าคายไม่ออกในแวดวงการวิจัย: มันเป็นเรื่องยากที่จะทำการวิเคราะห์แบบสมมติฐาน-อนุมานในมุมมองใหม่กับเทคโนโลยีอุบัติใหม่ เมื่อไม่มีความชัดเจนตั้งแต่แรกว่าควรใช้กรอบทฤษฎีทางเลือกใด (หากมีอยู่) เพื่อนำมาสร้างสมมติฐาน ภาวะกระอักกระอ่วนนี้ชี้ให้เห็นว่า ส่วนผสมสำคัญที่ขาดหายไปในงานวิจัยเกี่ยวกับเทคโนโลยี Proof-of-Work อย่างบิตคอยน์ ก็คือการออกสำรวจหรือการพัฒนากรอบทฤษฎีที่แตกต่างออกไป เพื่อนำมาใช้ตั้งสมมติฐานและวิเคราะห์มันในเชิงอนุมาน เพื่อประโยชน์ในการกำหนดนโยบายสาธารณะที่อยู่บนฐานข้อมูลที่ถูกต้องเกี่ยวกับเทคโนโลยี Proof-of-Work อย่างบิตคอยน์ การสร้างทฤษฎีใหม่ที่แตกต่างออกไปเพื่อใช้เป็นเข็มทิศนำทางในการวิเคราะห์—ซึ่งเป็นสิ่งที่ไม่ยึดติดกับสมมติฐานเดิม ๆ ที่ครอบงำงานวิจัยในปัจจุบัน—จึงน่าจะเป็นประโยชน์อย่างยิ่ง และนั่นคือวัตถุประสงค์หลักของวิทยานิพนธ์ฉบับนี้นั่นเอง</p>
+        </div>
+
+        <!-- 1.4.4 -->
+        <div id="s1-4-4" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.4.4 วิทยาการคอมพิวเตอร์ 101: ข้อกำหนดในการออกแบบโปรแกรมคอมพิวเตอร์ทั้งหมดล้วนเป็นนามธรรม เป็นอัตวิสัย และถูกตั้งขึ้นตามอำเภอใจ
+          </h4>
+
+          <p>ศักยภาพในการเกิดอคติเชิงการวิเคราะห์เกี่ยวกับบิตคอยน์ถือเป็นเรื่องที่น่าสังเกตเป็นอย่างยิ่ง โดยเฉพาะเมื่อพิจารณาข้อเท็จจริงที่ว่า เทคโนโลยี Proof-of-Work เคยถูกบรรยายโดยกลุ่มนักวิทยาศาสตร์คอมพิวเตอร์ให้เป็นโปรโตคอลด้านความมั่นคงไซเบอร์มาอย่างยาวนานถึง 15 ปี ก่อนหน้าการเปิดตัวบิตคอยน์เสียอีก นักวิทยาศาสตร์คอมพิวเตอร์ได้เริ่มวิจัยแนวคิด Proof-of-Work มาตั้งแต่ช่วงต้นทศวรรษที่ 1990 ทว่าประวัติศาสตร์ส่วนนี้กลับไม่ค่อยเป็นที่รับรู้โดยทั่วไป บางทีอาจเป็นเพราะในตอนที่แนวคิดการออกแบบนี้ถูกนำเสนอเป็นครั้งแรก มันยังไม่ได้ถูกเรียกว่า Proof-of-Work และเฉกเช่นเดียวกับข้อกำหนดในการออกแบบ (Design Specifications) ซอฟต์แวร์ทั้งหมด คำว่า "Proof-of-Work" เป็นเพียงชื่อที่ถูกตั้งขึ้นตามอำเภอใจ ซึ่งเพิ่งจะปรากฏขึ้นหลังจากที่แนวคิดดังกล่าวถูกนำเสนอในเอกสารทางวิชาการผ่านไปแล้วหลายปี</p>
+
+          <p>หากพูดถึงเรื่องของการตั้งชื่อและข้อกำหนดในการออกแบบตามอำเภอใจแล้ว บทความทางวิชาการฉบับแรกสุดที่ตีพิมพ์และแนะนำคำว่า "Proof-of-Work" นั้น เดิมทีเคยเรียกเทคโนโลยีนี้ว่า "พุดดิ้งขนมปัง" (Bread pudding) มาก่อน [27] ขณะที่บทความอื่น ๆ เรียกมันว่า ฟังก์ชันการกำหนดราคา (Pricing Function), ปริศนาของฝั่งไคลเอนต์ (Client Puzzle) หรือ แสตมป์ (Stamp) [25, 26] เช่นเดียวกับข้อกำหนดของซอฟต์แวร์ทั้งหมด ชื่อที่ถูกนำมาใช้เรียกโปรแกรมที่ผสานการออกแบบ Proof-of-Work (รวมถึงตัวชื่อ "Proof-of-Work" เองด้วย) ล้วนเป็นเพียงคำอุปมาที่ถูกตั้งขึ้นตามอำเภอใจ ขึ้นอยู่กับความพึงพอใจส่วนตัวของผู้คิดค้น หลักการพื้นฐานของทฤษฎีคอมพิวเตอร์ระบุไว้ชัดเจนว่า ซอฟต์แวร์เป็นสิ่งที่เป็นนามธรรม ดังนั้น ข้อกำหนดของซอฟต์แวร์ทั้งหมดจึงมักใช้คำอธิบายที่คลุมเครือทางความหมายและตั้งขึ้นตามอำเภอใจ วิศวกรซอฟต์แวร์จะเลือกอธิบายซอฟต์แวร์ของตนตามความพึงพอใจและมุมมองส่วนตัว โดยอิงจากข้อมูลที่พวกเขาคิดว่าสำคัญที่สุดและต้องการสื่อสารออกไปเกี่ยวกับการออกแบบของตน วิศวกรบางคนอาจเลือกชื่อที่สอดคล้องกับกรณีการใช้งานที่ตั้งใจไว้ของซอฟต์แวร์ ในขณะที่บางคนอาจเลือกชื่อเพื่อเน้นย้ำถึงแนวคิดในการออกแบบ ไม่ว่าจะเป็นกรณีใด ชื่อเหล่านั้นล้วนถูกกำหนดขึ้นตามอำเภอใจทั้งสิ้น ในความเป็นจริง แม้แต่คำว่า "ซอฟต์แวร์" (Software) เอง ก็ยังเป็นคำที่ถูกตั้งขึ้นตามอำเภอใจเช่นกัน [30]</p>
+
+          <p>ชื่อและคำอธิบายที่วิศวกรซอฟต์แวร์นำมาใช้เพื่ออธิบายการออกแบบและฟังก์ชันการทำงานของโปรแกรมคอมพิวเตอร์นั้น ไม่ได้มีเจตนาให้มีความแม่นยำในเชิงเทคนิค (เพราะการสร้างคำอธิบายที่แม่นยำในเชิงเทคนิคสำหรับสิ่งที่เป็นนามธรรมอย่างซอฟต์แวร์นั้นเป็นไปไม่ได้) ชื่อเหล่านี้มีจุดประสงค์เพียงเพื่อช่วยให้ผู้คนสามารถทำความเข้าใจถึงกรณีการใช้งานที่ถูกตั้งใจไว้ รวมถึงพฤติกรรมเชิงซ้อนของโปรแกรมที่ต้องการได้ง่ายขึ้นเท่านั้น ซึ่งท้ายที่สุดแล้ว มันอาจจะไม่ใช่กรณีการใช้งานหลักของโปรแกรมในอนาคตเสมอไป</p>
+        </div>
+
+        <!-- 1.4.5 -->
+        <div id="s1-4-5" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.4.5 คำว่า "เหรียญ" ของบิตคอยน์ เป็นเพียงคำอุปมาเสมอมา
+          </h4>
+
+          <p>ชื่อที่เราตั้งให้กับระบบคอมพิวเตอร์ของเราล้วนเป็นเพียงคำอุปมาเปรียบเปรย (Metaphors) และไม่เคยมีเจตนาให้ตีความตามตัวอักษรอย่างตรงไปตรงมา แม้จะเสี่ยงต่อการดูหมิ่นสติปัญญาของผู้อ่าน แต่ก็ต้องกล่าวย้ำว่า ระบบคอมพิวเตอร์ที่จัดเก็บอีเมลและรูปภาพแมวของเรานั้น ไม่ใช่ "ก้อนเมฆ" (Cloud) บนท้องฟ้าอย่างแท้จริง ในทำนองเดียวกัน ระบบคอมพิวเตอร์ที่ใช้ขายข้อมูลส่วนตัวและข้อมูลเฉพาะของผู้คนหลายพันล้านคนให้กับผู้ลงโฆษณา ก็ไม่ใช่ "หนังสือใบหน้า" (Face book) อย่างแท้จริงเช่นกัน ยิ่งไปกว่านั้น วัตถุใดก็ตามที่ถูกอธิบายด้วยข้อกำหนดการออกแบบซอฟต์แวร์เชิงวัตถุ (Object-oriented software design specification) ย่อมไม่ใช่วัตถุที่มีอยู่จริง—คำอธิบายเหล่านี้เป็นเพียงเครื่องมือเชิงนามธรรม ที่สร้างขึ้นเพื่อให้มนุษย์สามารถทำความเข้าใจถึงหน้าที่และพฤติกรรมของซอฟต์แวร์ได้ง่ายขึ้นเท่านั้น</p>
+
+          <p>ในปี ค.ศ. 2008 วิศวกรซอฟต์แวร์นิรนามที่ใช้นามแฝงว่า ซาโตชิ นากาโมโตะ (Satoshi Nakamoto) ได้ตัดสินใจนำรูปแบบแรกของระบบ Proof-of-Work แบบนำกลับมาใช้ซ้ำได้ (Reusable Proof-of-Work) ที่พัฒนาโดย ฮาล ฟินนีย์ (Hal Finney) มาอธิบายใหม่ว่าเป็น "เหรียญ" (Coin) แทนที่จะเรียกมันว่า "หลักฐาน" (Proof) ตามเดิม แทนที่จะอธิบายว่ามันคือโปรโตคอล Proof-of-Work แบบนำกลับมาใช้ซ้ำได้ ที่นำสถาปัตยกรรมเซิร์ฟเวอร์แบบกระจายศูนย์มาใช้แทนสถาปัตยกรรมเซิร์ฟเวอร์แบบรวมศูนย์ วิศวกรนิรนามท่านนี้กลับตั้งชื่อมันว่า "บิตคอยน์" (Bitcoin) และยืนยันว่ามันสามารถนำไปใช้เป็นระบบเงินสดอิเล็กทรอนิกส์แบบเพียร์ทูเพียร์ได้ วิศวกรนิรนามผู้นี้มีชื่อเสียงในเรื่องการอธิบายเทคโนโลยีของเขาอย่างสั้นกระชับ ไม่มีใครทราบแน่ชัดว่าวิศวกรผู้นี้เป็นใครหรือทำงานอยู่ที่ใด (แม้ว่าเขาจะมีความเชี่ยวชาญในสาขาวิทยาการเข้ารหัสลับอย่างเห็นได้ชัดก็ตาม) ข้อกำหนดการออกแบบที่เขาเขียนขึ้นนั้นถูกตีพิมพ์อย่างไม่เป็นทางการ และมีความยาวเพียง 8 หน้าเท่านั้น วิศวกรนิรนามท่านนี้ไม่ได้อธิบายรายละเอียดการออกแบบเพิ่มเติมมากนักในการสนทนาหลังจากนั้น และได้หายตัวไปอย่างไร้ร่องรอยในเวลาเพียง 2 ปีหลังจากประกาศเปิดตัวโครงการเป็นครั้งแรก โดยผลงานดังกล่าวไม่เคยได้รับการตีพิมพ์ลงในวารสารทางวิชาการ หรือผ่านการทบทวนโดยผู้ทรงคุณวุฒิ (Peer-reviewed) อย่างเป็นทางการเลย</p>
+
+          <p>มีประเด็นหนึ่งที่สมควรต้องกล่าวให้ชัดเจน นั่นคือ: ทุกสิ่งที่แวดวงวิชาการและภาคอุตสาหกรรมกำลังถกเถียงกันเกี่ยวกับบิตคอยน์—รวมถึงและโดยเฉพาะอย่างยิ่งบทความที่ได้รับการตีพิมพ์อย่างเป็นทางการเกี่ยวกับเทคโนโลยีนี้—ล้วนเป็นเพียงมุมมองของ "บุคคลอื่นที่ไม่ได้มีส่วนร่วมในการออกแบบ" ซึ่งพูดถึงเทคโนโลยีนี้โดยอาศัยรากฐานจาก (1) เพียงหนึ่งในกรณีการใช้งานที่เป็นไปได้อีกมากมายสำหรับเทคโนโลยี Proof-of-Work และ (2) ข้อกำหนดการออกแบบเชิงอุปมาอุปไมย ที่สร้างขึ้นโดยบุคคลนิรนามที่ได้ทิ้งขว้างโครงการนี้ไปแล้ว ทุกตัวอักษรที่ถูกเขียนเกี่ยวกับบิตคอยน์ผ่านช่องทางที่เป็นทางการ ล้วนถูกเขียนขึ้นโดยกลุ่มคนที่กำลังคาดเดาและตีความแนวคิดการออกแบบเชิงอุปมาของคนอื่น พัฒนาทฤษฎีของตนเองขึ้นมารองรับ และพยายามปะติดปะต่อเรื่องราวด้วยตนเองโดยอาศัยเพียงข้อมูลสาธารณะอันน้อยนิดที่ทุกคนมีเท่า ๆ กัน ด้วยเหตุนี้ จึงไม่อาจกล่าวได้ว่ามีผู้เชี่ยวชาญหรือผู้มีอำนาจชี้ขาดใด ๆ ที่รู้แจ้งในกรณีการใช้งานอเนกประสงค์ของเทคโนโลยี Proof-of-Work อย่างบิตคอยน์ โลกเรามีเพียงแค่กลุ่มผู้ที่มีความเชี่ยวชาญใน "กรณีการใช้งานเพียงกรณีเดียว" ของเทคโนโลยี Proof-of-Work อย่างบิตคอยน์เท่านั้น</p>
+
+          <p>การวิเคราะห์เชิงวิชาการและวิชาชีพที่มีอยู่อย่างล้นหลามเกี่ยวกับบิตคอยน์ มักจะไปกระจุกตัวอยู่กับสมมติฐานที่ว่า กรณีการใช้งานเพียงหนึ่งเดียวของเทคโนโลยีนี้คือการทำหน้าที่เป็นระบบเงินสดอิเล็กทรอนิกส์แบบเพียร์ทูเพียร์ ดูเหมือนว่าสาธารณชนกำลังละเลยหลักการพื้นฐานของทฤษฎีคอมพิวเตอร์ และหันไปตีความชื่อและข้อกำหนดการออกแบบของบิตคอยน์ตามตัวอักษรอย่างตรงไปตรงมา แทนที่จะตีความในเชิงอุปมาอุปไมย ทั้งที่ในความเป็นจริง คำว่า "เหรียญ" ไม่ใช่แม้แต่ชื่อแรกหรือกรณีการใช้งานแรกสุดที่ถูกตั้งเป็นทฤษฎีให้กับเทคโนโลยี Proof-of-Work หรือ "พุดดิ้งขนมปัง" ด้วยซ้ำ</p>
+
+          <p>ผู้คนไม่เพียงแต่ซึมซับนิสัยในการตั้งสมมติฐานว่า กรณีการใช้งานที่เป็นไปได้เพียงอย่างเดียวสำหรับเทคโนโลยีนี้คือด้านการเงิน แต่พวกเขายังติดนิสัยในการแสดงพฤติกรรมราวกับว่า "เหรียญ" ของบิตคอยน์คือเหรียญจริง ๆ อย่างเคร่งครัด ทั้ง ๆ ที่ความจริงอันไม่อาจโต้แย้งได้ก็คือ ข้อกำหนดการออกแบบซอฟต์แวร์เชิงวัตถุทั้งหมดล้วนเป็นเพียงนามธรรม กล่าวอีกนัยหนึ่ง ความจริงที่โต้แย้งไม่ได้ก็คือ "เหรียญ" ของบิตคอยน์นั้นไม่มีอยู่จริง—คำว่า "เหรียญ" เป็นเพียงแนวคิดที่ถูกจินตนาการขึ้นมาอย่างสมบูรณ์แบบ เช่นเดียวกับสิ่งที่เป็นนามธรรมทุกประการ "เหรียญ" ของบิตคอยน์สามารถถูกแปลงให้เป็นสิ่งอื่นใดก็ได้ตามแต่ที่จินตนาการของมนุษย์จะสรรค์สร้างได้—และนี่คือเหตุผลว่าทำไมเทคโนโลยี Proof-of-Work จึงถูกเรียกขานด้วยชื่ออื่นมานานกว่าหนึ่งทศวรรษ ก่อนที่นากาโมโตะจะตีพิมพ์ข้อกำหนดการออกแบบบิตคอยน์ออกมา</p>
+
+          <p>แต่ผู้คนก็ยังคงปฏิบัติต่อ "เหรียญ" ของบิตคอยน์ราวกับว่ามันเป็นเพียงเหรียญอย่างเคร่งครัด ยิ่งไปกว่านั้น กลุ่มคนที่มีความเชี่ยวชาญด้านเศรษฐศาสตร์หรือการเงิน ยังมักจะแสดงออกราวกับว่าตนเป็นผู้เชี่ยวชาญในเทคโนโลยี Proof-of-Work อย่างบิตคอยน์ เพียงเพราะเทคโนโลยีนี้บังเอิญถูกตั้งชื่อตามอำเภอใจว่า "เหรียญ" และมีกรณีการใช้งานด้านการเงินที่หลากหลาย เครื่องยนต์สันดาปภายในนั้นมีประโยชน์อย่างมากในการใช้ร่วมกับเลื่อยยนต์เพื่อตัดต้นไม้ แต่นั่นก็ไม่ได้ทำให้คนตัดไม้กลายเป็นผู้เชี่ยวชาญในการออกแบบเครื่องยนต์สันดาปภายในไปได้ ดังนั้น เหตุใดบรรดานักการเงินจึงกล้าอวดอ้างตนว่าเป็นผู้เชี่ยวชาญในเทคโนโลยี Proof-of-Work อย่างบิตคอยน์? สิ่งสูงสุดที่พวกเขาสามารถเคลมได้ก็คือ พวกเขาเป็นเพียงผู้เชี่ยวชาญใน "วิธีการนำเทคโนโลยี Proof-of-Work อย่างบิตคอยน์มาใช้สำหรับกรณีการใช้งานทางการเงินที่หลากหลาย" เท่านั้น</p>
+
+          <p>ในทางทฤษฎีแล้ว สิ่งใดก็ตาม—รวมถึงซอฟต์แวร์นามธรรมที่ถูกตั้งชื่อตามอำเภอใจ—ย่อมสามารถนำมาสร้างมูลค่าทางการเงินได้ทั้งสิ้น มูลค่าทางการเงินเองก็เป็นเพียงแนวคิดเชิงนามธรรม ดังนั้น สิ่งที่เป็นนามธรรมย่อมสามารถมีมูลค่าทางการเงินได้อย่างแน่นอน ยิ่งไปกว่านั้น ชุดข้อมูลดิจิทัลที่ถูกถ่ายโอนและจัดเก็บผ่านระบบคอมพิวเตอร์ สามารถเป็นตัวแทนของข้อมูลประเภทใดก็ได้ แน่นอนว่ามันย่อมสามารถเป็นตัวแทนของข้อมูลทางการเงินได้เช่นกัน ประเด็นที่ผู้เขียนพบว่าน่าสังเกต ไม่ใช่ข้อเท็จจริงที่ว่าผู้คนต่างตีกำหนดมูลค่าทางการเงินให้กับโปรโตคอล Proof-of-Work อย่างบิตคอยน์ แต่มันคือข้อเท็จจริงที่ว่า ผู้คนไม่ยอมรับว่าคำว่า "เหรียญ" เป็นเพียงชื่อที่ถูกตั้งขึ้นตามอำเภอใจสำหรับโปรโตคอล Proof-of-Work และชุดข้อมูลพื้นฐานของมัน ไม่ต่างอะไรกับชื่อ "แสตมป์" หรือ "พุดดิ้งขนมปัง" ด้วยเหตุผลบางประการ งานวิจัยทางวิชาการในปัจจุบันส่วนใหญ่กลับเลือกที่จะละเลยและไม่ยอมรับหลักการพื้นฐานของวิทยาการคอมพิวเตอร์ข้อนี้ สิ่งนี้เองที่เป็นคำอธิบายว่า เหตุใดเหล่านักวิจัยจึงยังคงนำเอากรอบทฤษฎีเดิม ๆ กลับมาใช้ซ้ำแล้วซ้ำเล่าเมื่อต้องวิเคราะห์บิตคอยน์ และสิ่งนี้ยังอธิบายได้อีกว่า ฉันทามติทางวิชาการเกี่ยวกับหน้าที่หลักในการส่งมอบคุณค่าของโปรโตคอล Proof-of-Work นั้น เปลี่ยนแปลงทิศทางไปได้อย่างไรภายหลังจากความสำเร็จในการนำบิตคอยน์มาใช้งานจริง แต่คำถามที่แท้จริงก็คือ เหตุใดฉันทามติทางวิชาการเกี่ยวกับ Proof-of-Work จึงต้องเปลี่ยนแปลงไป ในเมื่อทฤษฎีพื้นฐานของวิทยาการคอมพิวเตอร์ไม่ได้มีการเปลี่ยนแปลงไปเลยแม้แต่น้อย?</p>
+        </div>
+      </div>
+      <div class="subsection" id="s1-5">
+        <h3 class="subsection-title">1.5 โครงสร้างวิทยานิพนธ์ (Dissertation Structure)</h3>
+
+        <!-- 1.5.1 -->
+        <div id="s1-5-1" style="margin-top:28px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.5.1 โครงสร้างโดยรวมของวิทยานิพนธ์
+          </h4>
+
+          <p>วิทยานิพนธ์ฉบับนี้ถูกออกแบบมาเพื่อทำหน้าที่เสมือนจดหมายเปิดผนึกถึงสำนักงานรัฐมนตรีว่าการกระทรวงกลาโหม (OSD), สภาความมั่นคงแห่งชาติสหรัฐฯ (NSC), คณะเสนาธิการทหารร่วม (Joint Chiefs of Staff — JCS) และประชาชนชาวอเมริกัน ทั้งนี้ เพื่อตอบสนองต่อคำสั่งฝ่ายบริหาร (EO) ของประธานาธิบดีสหรัฐฯ (OPOTUS) เมื่อเดือนมีนาคม 2022 ว่าด้วยการพัฒนาสินทรัพย์ดิจิทัลอย่างรับผิดชอบ และคำสั่งฯ เมื่อเดือนพฤษภาคม 2022 ว่าด้วยการยกระดับความมั่นคงไซเบอร์ของชาติ วิทยานิพนธ์ฉบับนี้ได้ให้เหตุผลชี้ชัดว่า เหตุใดนโยบายบิตคอยน์ที่ผ่อนปรนและให้การสนับสนุน จึงอาจเป็นความจำเป็นต่อความมั่นคงเชิงยุทธศาสตร์แห่งชาติ นอกจากนี้ ยังชี้ให้เห็นว่าเหตุใดกระทรวงกลาโหมสหรัฐฯ (DoD) จึงควรพิจารณาสะสมบิตคอยน์ไว้เป็นคลังสำรองเชิงยุทธศาสตร์ด้วยเช่นกัน</p>
+
+          <p>ข้อเสนอแนะและเหตุผลเหล่านี้ ถูกนำเสนอผ่านมุมมองของผู้เขียนในฐานะนายทหารสหรัฐฯ ที่ยังคงประจำการ และในฐานะนักวิจัยด้านความมั่นคงแห่งชาติ (National Defense Fellow) ที่ได้รับมอบหมายให้มาประจำ ณ สถาบัน MIT เพื่อทำการศึกษาวิจัยเกี่ยวกับผลกระทบเชิงยุทธศาสตร์แห่งชาติอันเกิดจากเทคโนโลยีอุบัติใหม่</p>
+
+          <p>วิทยานิพนธ์ฉบับนี้ยังได้ออกสำรวจถึงความสำคัญของโปรโตคอล Proof-of-Work ของบิตคอยน์ ผ่านมุมมองที่กว้างขึ้นของทฤษฎีวิทยาการคอมพิวเตอร์ โดยนำเสนอเหตุผลว่าทำไมบิตคอยน์จึงควรได้รับการปฏิบัติในฐานะสิ่งที่แตกต่างไปจากเทคโนโลยีที่เรียกกันทั่วไปว่า "บล็อกเชน" หรือ "คริปโต" อย่างสิ้นเชิง เนื้อหาได้อธิบายให้เห็นว่า บิตคอยน์มีความแตกต่างจากโปรโตคอล "คริปโต" อื่น ๆ ทั้งในมิติทางกายภาพและเชิงระบบ ดังนั้น การนำบิตคอยน์ไปจัดกลุ่มรวมเป็นเทคโนโลยีประเภทเดียวกันเพียงเพราะมีคำอธิบายที่คล้ายคลึงกัน จึงเป็นสิ่งที่ไม่เหมาะสมอย่างยิ่ง</p>
+
+          <p>เนื้อหาภายในเล่มได้นำเสนอแนวคิดหลักของ "ทฤษฎีการแผ่ขยายอำนาจ" ตามลำดับขั้นตอน โดยเริ่มต้นจากแนวคิดพื้นฐาน แล้วค่อย ๆ ต่อยอดองค์ความรู้ขึ้นไปเรื่อย ๆ เพื่อนำไปสู่คำอธิบายรูปแบบใหม่เกี่ยวกับบิตคอยน์ในบทท้าย ๆ หากผู้อ่านข้ามเนื้อหาไปอ่านส่วนหลังก่อน อาจพลาดบริบทสำคัญที่จำเป็นต่อการทำความเข้าใจในแต่ละแนวคิดอย่างถ่องแท้ อย่างไรก็ตาม แต่ละบทได้นำวิธีการเปรียบเทียบอย่างต่อเนื่อง (Constant comparative method) ซึ่งเป็นหลักการของทฤษฎีฐานราก (Grounded Theory) มาใช้ ทำให้แนวคิดหลักที่นำเสนอในแต่ละส่วนมีการกล่าวย้ำและสอดแทรกอยู่เสมอ ดังนั้น ผู้อ่านก็น่าจะยังคงสามารถทำความเข้าใจแนวคิดหลักของทฤษฎีได้ ไม่ว่าจะข้ามเนื้อหาไปไกลเพียงใดก็ตาม ถึงกระนั้น ผู้เขียนก็ยังคงสนับสนุนให้ผู้อ่านอ่านเรียงตามลำดับบท และย้อนกลับไปทบทวนบทก่อนหน้าตามความจำเป็น เพื่อให้เกิดความเข้าใจในแนวคิดหลักอย่างสมบูรณ์</p>
+
+          <p>แต่ละบทถูกจัดโครงสร้างในรูปแบบของชุดบทความ หรือที่นักทฤษฎีฐานรากมักเรียกว่า "บันทึก" (Memos) ซึ่งทำหน้าที่จดบันทึกแนวคิดหลักของทฤษฎี และนำมาร้อยเรียงเข้าด้วยกันตามหมวดหมู่และแก่นเรื่องที่มีความคล้ายคลึงกัน ชื่อของแต่ละหัวข้อย่อยจะระบุถึงแนวคิดหลักที่นำเสนอในบันทึกนั้น ๆ และเนื่องจากผู้เขียนใช้แนวทางการตีความ (Interpretivist approach) ของทฤษฎีฐานราก จึงไม่มีบทที่แยกออกไปเพื่อทำหน้าที่ทบทวนวรรณกรรม (Literature review) โดยเฉพาะ ทว่าการทบทวนวรรณกรรมได้ถูกกระจายและสอดแทรกอยู่ตลอดทั้งวิทยานิพนธ์ โดยถูกนำมาใช้เพื่ออธิบายแนวคิดทางทฤษฎีหลักอย่างเป็นระบบ เพื่อเพิ่มความหนักแน่นและมิติความลึกให้กับแนวคิด</p>
+
+          <p>หากผู้อ่านเกิดความสงสัยระหว่างทางว่า หัวข้อที่กำลังอ่านอยู่นั้นมีความเกี่ยวข้องกับบิตคอยน์อย่างไร ขอให้ทราบว่านั่นคือความตั้งใจของผู้เขียนแบบ 100% ผู้เขียนจงใจค้นหาตัวอย่างและข้อมูลที่หลากหลาย ซึ่งดูเหมือนจะห่างไกลและไม่เกี่ยวข้องกับบิตคอยน์มากที่สุด เพื่อนำมาเพิ่มความลึกซึ้งทางแนวคิดให้กับทฤษฎีและทำให้มันสมบูรณ์แบบยิ่งขึ้น (ซึ่งเป็นกลยุทธ์ที่ได้รับการสนับสนุนจากผู้คิดค้นทฤษฎีฐานราก) บันทึกแต่ละส่วน ไม่ว่าจะดูไร้ความเกี่ยวข้องเพียงใดในตอนแรก ล้วนถูกเชื่อมโยงเข้าด้วยกันด้วยหมวดหมู่แนวคิดหลักที่ซ่อนอยู่ และในท้ายที่สุด แก่นเรื่องทั้งหมดจะมาบรรจบกันที่การนำเสนอข้อกำหนดใหม่และเป็นเอกลักษณ์เฉพาะตัวของบิตคอยน์—ในฐานะยุทธวิธีการแผ่ขยายอำนาจ มิใช่เพียงเทคโนโลยีทางการเงิน เจตนารมณ์ของแนวทางนี้ คือการบันทึกความซับซ้อนของเทคโนโลยี จัดการกับนัยสำคัญทางสังคม-เทคโนโลยี (Sociotechnical) ในวงกว้าง และสร้างแรงบันดาลใจให้นักวิจัยจากสาขาวิชาต่าง ๆ ได้นำไปต่อยอดสร้างสมมติฐานใหม่ ๆ เพื่อการวิจัยในอนาคตตามสาขาความเชี่ยวชาญของตน</p>
+        </div>
+
+        <!-- 1.5.2 -->
+        <div id="s1-5-2" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.5.2 บทที่ 1 และ 2 วางรากฐานทฤษฎีการแผ่ขยายอำนาจ
+          </h4>
+
+          <p>บทที่ 1 นำเสนอแรงบันดาลใจและเหตุผลความจำเป็นในการดำเนินการวิจัยชิ้นนี้ ผู้เขียนได้อธิบายถึงสิ่งที่จุดประกายให้เขาสร้างสรรค์ทฤษฎีใหม่เกี่ยวกับบิตคอยน์ รวมถึงเหตุผลที่เขารู้สึกว่าการกระทำเช่นนี้คือความรับผิดชอบของเขาในฐานะนายทหารและนักวิจัยด้านความมั่นคงแห่งชาติของสหรัฐฯ ผู้อ่านจะได้รับข้อมูลพื้นฐานเกี่ยวกับยุทธศาสตร์การทหารและวิชาชีพการทำสงครามจากมุมมองของผู้เขียน อีกทั้งยังจะได้สัมผัสกับแนวคิดเบื้องต้นเกี่ยวกับคำศัพท์ใหม่อย่าง "ซอฟต์วอร์" วัตถุประสงค์ของบทนี้คือการชี้แจงเหตุผลว่า ทำไมเราจึงจำเป็นต้องมีกรอบทฤษฎีที่แตกต่างออกไป เพื่อนำมาวิเคราะห์นัยสำคัญเชิงยุทธศาสตร์ของเทคโนโลยี Proof-of-Work อย่างบิตคอยน์</p>
+
+          <p>บทที่ 2 อธิบายรายละเอียดของระเบียบวิธีวิจัยที่ใช้ในการกำหนดโครงสร้างของทฤษฎีนี้ ผู้เขียนได้ให้ข้อคิดเห็นว่าเหตุใดเขาจึงเลือกใช้ระเบียบวิธีทฤษฎีฐานราก (Grounded Theory) พร้อมทั้งให้ภาพรวมของระเบียบวิธีและเทคนิคการวิเคราะห์ที่นำมาใช้ ผู้เขียนปิดท้ายบทนี้ด้วยการเน้นย้ำถึงข้อดีและข้อเสียของระเบียบวิธีทฤษฎีฐานราก รวมถึงบทเรียนล้ำค่าที่เขาได้รับระหว่างเส้นทางการทำวิจัย</p>
+        </div>
+
+        <!-- 1.5.3 -->
+        <div id="s1-5-3" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.5.3 บทที่ 3 อธิบายหลักการพื้นฐานของการแผ่ขยายอำนาจทางกายภาพ
+          </h4>
+
+          <p>บทที่ 3 ถึงบทที่ 5 ถือเป็นหัวใจและผลิตผลหลักของวิทยานิพนธ์ฉบับนี้ นั่นคือการนำเสนอทฤษฎีใหม่ที่เรียกว่า "ทฤษฎีการแผ่ขยายอำนาจ" ทฤษฎีนี้ถูกแบ่งออกเป็น 3 ส่วน โดยแต่ละส่วนจะสอดคล้องกับเนื้อหาในแต่ละบท ซึ่งเป็นตัวแทนของหมวดหมู่แนวคิดหลักที่แตกต่างกัน บทที่ 3 จะปูพื้นฐานแนวคิดเชิงทฤษฎีของการแผ่ขยายอำนาจ โดยผู้เขียนได้หยิบยกสาขาความรู้และกรอบทฤษฎีจากศาสตร์อื่น (เช่น ชีววิทยาและยุทธศาสตร์การทหาร) มาใช้อธิบายว่า เหตุใดการแผ่ขยายอำนาจทางกายภาพจึงเป็นสิ่งจำเป็นต่อการอยู่รอดและความเจริญรุ่งเรืองในธรรมชาติ และมันถูกนำมาใช้เพื่อสถาปนาลำดับชั้นทางอำนาจ (Pecking order) อย่างไร</p>
+
+          <p>บทนี้ยังได้สำรวจแนวคิดเชิงทฤษฎีที่เกี่ยวข้องกับกรรมสิทธิ์ในทรัพย์สินและความมั่นคงทางกายภาพ โดยใช้ตัวอย่างจากธรรมชาติเพื่อแสดงให้เห็นว่า สิ่งมีชีวิตมีวิวัฒนาการในการสร้างยุทธวิธีการแผ่ขยายอำนาจที่ชาญฉลาดมากขึ้นได้อย่างไร เพื่อใช้ระงับข้อพิพาท เข้าควบคุมทรัพยากร และบรรลุฉันทามติเกี่ยวกับสถานะความชอบธรรมในการเป็นเจ้าของตลอดจนสายการครอบครอง (Chain of custody) ของทรัพย์สิน วัตถุประสงค์ของบทนี้คือการนำเสนอแนวคิดทฤษฎีหลักที่จำเป็น ต่อการทำความเข้าใจความสัมพันธ์ทางสังคม-เทคโนโลยีที่ซับซ้อน ระหว่างอำนาจทางกายภาพ ความมั่นคงทางกายภาพ และกรรมสิทธิ์ในทรัพย์สิน บทสรุปสำคัญที่ได้จากบทนี้ คือความเข้าใจอย่างลึกซึ้งว่า ทำไม "เขากวาง" จึงนับเป็นเทคโนโลยีการแผ่ขยายอำนาจที่ล้ำลึกอย่างยิ่ง เนื่องจากมันเปิดโอกาสให้เกิดการแข่งขันทางอำนาจทางกายภาพระหว่างสิ่งมีชีวิตสายพันธุ์เดียวกันได้ โดยที่สามารถลดทอนความรุนแรงและการบาดเจ็บถึงชีวิตลงได้อย่างมีประสิทธิภาพ</p>
+        </div>
+
+        <!-- 1.5.4 -->
+        <div id="s1-5-4" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.5.4 บทที่ 4 อธิบายหลักการพื้นฐานของการแผ่ขยายอำนาจเชิงนามธรรม (และเหตุใดมันจึงมีความบกพร่อง)
+          </h4>
+
+          <p>บทที่ 4 นำเสนอการวิเคราะห์เชิงลึกว่า เหตุใดมนุษย์จึงเลือกใช้ยุทธวิธีการแผ่ขยายอำนาจที่แตกต่างไปจากสัตว์ ผู้เขียนได้เจาะลึกถึงยุทธวิธี เทคนิค และเทคโนโลยีการแผ่ขยายอำนาจรูปแบบต่าง ๆ ที่สังคมเกษตรกรรมสมัยใหม่นำมาใช้งาน เนื้อหาในบทนี้สามารถแบ่งออกได้เป็น 2 ส่วนหลัก โดยส่วนที่ 1 จะมุ่งเน้นไปที่กระบวนการที่มนุษย์ใช้สร้างและใช้อำนาจเชิงนามธรรม (Abstract power) มาเป็นรากฐานในการระงับข้อพิพาท ควบคุมทรัพยากร และสถาปนาลำดับชั้นทางอำนาจ ส่วนที่ 2 จะมุ่งเน้นไปที่การอธิบายว่า เหตุใดท้ายที่สุดแล้ว โฮโมเซเปียนส์ (Sapiens) จึงมักจะหวนกลับไปใช้อำนาจทางกายภาพเป็นเครื่องมือในการระงับข้อพิพาท ควบคุมทรัพยากร และสถาปนาลำดับชั้นทางอำนาจ ไม่ต่างอะไรกับสัตว์อื่น ๆ ในธรรมชาติ กล่าวอีกนัยหนึ่ง บทที่ 4 ได้ให้คำตอบทางทฤษฎีว่า ทำไมมนุษย์จึงพยายามหลีกหนีจากสงครามมาตลอด แต่ไม่เคยทำได้สำเร็จเลย บทนี้ปิดท้ายด้วยการอภิปรายว่า ภาวะชะงักงันทางยุทธศาสตร์ระดับโลกจากอาวุธนิวเคลียร์ ได้ต้อนให้สังคมมนุษย์ไปอยู่ในจุดที่เปราะบางอย่างยิ่งได้อย่างไร ซึ่งภาวะนี้อาจบรรเทาลงได้ด้วยการทำสงครามในรูปแบบที่ "อ่อน" หรือรูปแบบที่ไม่ใช่จลนศาสตร์ ทั้งนี้ เพื่อเป็นการเตรียมความพร้อมให้ผู้อ่านก้าวไปสู่การทำความเข้าใจนัยสำคัญทางสังคม-เทคโนโลยี และความมั่นคงเชิงยุทธศาสตร์แห่งชาติที่อาจเกิดขึ้นจากบิตคอยน์</p>
+
+          <p>วัตถุประสงค์ของบทที่ 4 คือการขับเน้นให้เห็นถึงสิ่งที่ต้องแลกมา (Trade-offs) และนัยสำคัญทางสังคม-เทคโนโลยีที่ซับซ้อน ซึ่งผูกติดอยู่กับยุทธวิธี เทคนิค และเทคโนโลยีการแผ่ขยายอำนาจรูปแบบต่าง ๆ ที่สังคมมนุษย์ใช้งาน บทนี้ทำการสำรวจการตัดสินใจทางศีลธรรม จริยธรรม อุดมการณ์ และการออกแบบ ที่ผู้คนสร้างขึ้นเมื่อพวกเขานำยุทธวิธีการแผ่ขยายอำนาจทั้งแบบนามธรรมและแบบกายภาพมาใช้อย่างเข้มงวด ตลอดความยาวของบันทึกในบทนี้ ผู้เขียนได้สรุปพฤติกรรมที่ปรากฏขึ้น (Emergent behavior) อันเกี่ยวข้องกับยุทธวิธีการแผ่ขยายอำนาจประเภทต่าง ๆ ผ่านการใช้วิธีการเปรียบเทียบอย่างต่อเนื่อง</p>
+
+          <p>จุดประสงค์ของการอภิปรายอย่างละเอียดเกี่ยวกับการแผ่ขยายอำนาจของมนุษย์ในบทนี้มีสองประการ ประการแรก เพื่อแสดงให้เห็นว่าประเด็นเรื่องความมั่นคงเชิงยุทธศาสตร์แห่งชาตินั้น เป็นปรากฏการณ์ทางสังคม-เทคโนโลยีที่ซับซ้อนและข้ามสาขาวิชา ซึ่งเต็มไปด้วยคำถามที่ยากจะประเมินค่าได้ในเรื่องของจริยธรรมและการออกแบบระบบ ประการที่สอง เพื่อเน้นย้ำให้เห็นถึงความเปราะบางอย่างร้ายแรง และข้อบกพร่องด้านความมั่นคงเชิงระบบ ที่แฝงอยู่ในระบบการกำกับดูแลและระบบควบคุมทรัพยากรที่เรามีอยู่ในปัจจุบัน แนวคิดหลักที่ถูกอภิปรายในบทนี้ มีความเกี่ยวข้องอย่างลึกซึ้งกับการอภิปรายเรื่องบิตคอยน์ในบทต่อ ๆ ไป เนื่องจากอันตรายต่อความมั่นคงเชิงระบบที่ระบุไว้ในบทนี้ ก็คือตัวแทนของภัยคุกคามด้านความมั่นคงทางไซเบอร์ด้วยเช่นกัน บทสรุปสำคัญที่ได้จากบทนี้ คือการชี้ให้เห็นว่า มนุษย์จำเป็นต้องค้นหา "เขากวาง" ในเวอร์ชันของตนเอง ที่จะเปิดทางให้เกิดการแข่งขันทางอำนาจทางกายภาพระหว่างกันได้ โดยลดทอนการสูญเสียและการบาดเจ็บถึงชีวิตลง</p>
+        </div>
+
+        <!-- 1.5.5 -->
+        <div id="s1-5-5" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.5.5 บทที่ 5 อธิบายว่าคอมพิวเตอร์เปลี่ยนแปลงยุทธวิธีการแผ่ขยายอำนาจอย่างไร ทั้งเชิงนามธรรมและทางกายภาพ
+          </h4>
+
+          <p>บทที่ 5 นำแนวคิดหลักจากบทที่ 3 และ 4 มาต่อยอด เพื่อนำเสนอคำอธิบายรูปแบบใหม่ที่แหวกแนว ว่าเหตุใดบิตคอยน์จึงอาจเป็นนวัตกรรมบุกเบิกในฐานะเทคโนโลยีการแผ่ขยายอำนาจทางกายภาพรูปแบบใหม่ มากกว่าที่จะเป็นเพียงเทคโนโลยีทางการเงิน บทนี้เริ่มต้นด้วยการวิเคราะห์เชิงลึกเกี่ยวกับวิทยาการคอมพิวเตอร์ และความท้าทายที่เกี่ยวเนื่องกับความมั่นคงของระบบซอฟต์แวร์ ผู้เขียนได้หยิบยกแนวคิดจากบทก่อนหน้า มาชี้ให้เห็นว่าการอุบัติขึ้นของระบบคอมพิวเตอร์สมัยใหม่ ได้มอบอำนาจให้วิศวกรซอฟต์แวร์สามารถสร้าง "อำนาจเชิงนามธรรม" ขึ้นมาได้อย่างไร และพวกเขาใช้มันเพื่อรวบอำนาจการควบคุมอย่างเบ็ดเสร็จและไม่สมดุล เหนือหนึ่งในทรัพยากรที่มีค่าที่สุดของสังคมในศตวรรษที่ 21 ซึ่งก็คือ "ชุดข้อมูลดิจิทัล" ได้อย่างไร</p>
+
+          <p>เนื้อหาครึ่งแรกของบทที่ 5 จะแสดงให้เห็นว่า สถาปัตยกรรมของอินเทอร์เน็ตในปัจจุบัน ทำให้สังคมมีความเปราะบางอย่างยิ่งต่อการทุจริตและการแทรกแซงเชิงระบบในระดับมหภาคจากฝีมือของนักเขียนโปรแกรมคอมพิวเตอร์ได้อย่างไร บทนี้ให้เหตุผลว่า สังคมจะต้องประดิษฐ์เทคโนโลยีการแผ่ขยายอำนาจทางกายภาพรูปแบบใหม่ขึ้นมา เพื่อปกป้องตนเองจากการทุจริตและการฉ้อฉลผ่านพื้นที่ไซเบอร์ หลังจากชี้ให้เห็นถึงความเปราะบางดังกล่าวแล้ว ผู้เขียนจึงนำพาผู้อ่านก้าวไปสู่คำอธิบายที่ร้อยเรียงกันหลายส่วน ว่าเทคโนโลยี Proof-of-Work อย่างบิตคอยน์ จะสามารถนำมาใช้บรรเทาภัยคุกคามอุบัติใหม่เหล่านี้ได้อย่างไร ผ่านการมอบอำนาจให้ผู้คนสามารถบังคับใช้ต้นทุนทางกายภาพอันหนักหน่วง ต่อผู้กระทำการอันเป็นปรปักษ์ในพื้นที่ไซเบอร์ได้</p>
+
+          <p>เนื้อหาครึ่งหลังของบทที่ 5 นำเสนอทฤษฎีใหม่เกี่ยวกับโปรโตคอล Proof-of-Work ในส่วนนี้ ผู้เขียนได้ทำการวิเคราะห์เชิงลึกว่า เหตุใดเขาจึงเชื่อว่าบิตคอยน์อาจเป็นตัวแทนของการค้นพบและการใช้ประโยชน์จาก กลไกสถานะ (State mechanism) รูปแบบใหม่โดยสมบูรณ์ ซึ่งเรียกว่า "กลไกสถานะระดับดาวเคราะห์" (Planetary state mechanism) เขาให้เหตุผลว่าบิตคอยน์อาจเป็นตัวแทนของการที่มนุษยชาติยอมรับระบบคอมพิวเตอร์ระดับโลก (Planetary-scale computer) ที่ถูกเจตนาย้อนกลับกลไกให้กลายเป็นระบบที่มีต้นทุนสูงที่สุดเท่าที่จะเป็นไปได้ในการควบคุม ซึ่งส่งผลให้มันก่อเกิดคุณสมบัติเชิงซ้อนที่ไม่อาจทำซ้ำได้ในทางกายภาพโดยคอมพิวเตอร์ทั่วไป</p>
+
+          <p>วัตถุประสงค์ของบทที่ 5 คือการนำเสนอมุมมองที่แตกต่างไปจากเดิมอย่างสิ้นเชิงเกี่ยวกับบิตคอยน์ โดยอาศัยกรอบทฤษฎีใหม่ที่แทบจะไม่มีส่วนเกี่ยวข้องกับเรื่องของเงิน การเงิน หรือเศรษฐศาสตร์เลย แต่มันเกี่ยวพันอย่างลึกซึ้งกับวิทยาการคอมพิวเตอร์และความมั่นคงเชิงยุทธศาสตร์แห่งชาติ ด้วยการประยุกต์ใช้ทฤษฎีการแผ่ขยายอำนาจ ผู้เขียนได้เน้นย้ำให้เห็นว่าเทคโนโลยีอย่างบิตคอยน์ อาจมีนัยสำคัญทางสังคม-เทคโนโลยีที่ก้าวล้ำเกินกว่าความเข้าใจที่เรามีอยู่ในปัจจุบัน ไม่ใช่เพียงแค่ในมิติของวิทยาการคอมพิวเตอร์และความมั่นคงไซเบอร์เท่านั้น แต่ยังครอบคลุมไปถึงความมั่นคงเชิงยุทธศาสตร์แห่งชาติแบบองค์รวมด้วย ผู้เขียนปิดท้ายบทนี้ด้วยการให้เหตุผลว่า บิตคอยน์อาจเป็นตัวแทนของวิธีการทำสงครามรูปแบบใหม่ที่เรียกว่า "ซอฟต์วอร์" ซึ่งมีศักยภาพที่จะเปลี่ยนแปลงพลวัตของอำนาจระหว่างประเทศไปตลอดกาล และอาจถึงขั้นช่วยผ่อนคลายภาวะชะงักงันทางยุทธศาสตร์ระหว่างมหาอำนาจนิวเคลียร์ได้ บทสรุปที่สำคัญที่สุดของบทนี้คือ การชี้ให้เห็นว่าบิตคอยน์อาจเป็นการค้นพบสิ่งที่ผู้เขียนนิยามไว้ว่าเป็น "เขากวางของมนุษยชาติ"</p>
+        </div>
+
+        <!-- 1.5.6 -->
+        <div id="s1-5-6" style="margin-top:40px;">
+          <h4 style="font-size:15px; font-weight:700; color:var(--text); margin:1.6em 0 1em; font-family:var(--font-ui); line-height:1.6;">
+            1.5.6 บทที่ 6 อภิปรายประเด็นสำคัญที่ได้เรียนรู้จากทฤษฎีการแผ่ขยายอำนาจ
+          </h4>
+
+          <p>บทที่ 6 ซึ่งเป็นบทส่งท้ายของวิทยานิพนธ์ ผู้เขียนได้ระบุถึงสมมติฐานใหม่หลายประการเกี่ยวกับบิตคอยน์ที่ต่อยอดมาจากทฤษฎีการแผ่ขยายอำนาจ พร้อมทั้งกระตุ้นให้ชุมชนนักวิจัยนำสมมติฐานเหล่านี้ไปพิจารณาและวิเคราะห์ต่อ ผู้เขียนได้ให้คำแนะนำเกี่ยวกับก้าวต่อไปสำหรับแวดวงนักวิจัย รวมถึงให้คำแนะนำโดยสังเขปแก่ผู้กำหนดนโยบายของสหรัฐฯ ท้ายที่สุด ผู้เขียนได้กล่าวปิดวิทยานิพนธ์ด้วยข้อคิดทิ้งท้าย เกี่ยวกับนัยสำคัญทางประวัติศาสตร์ เชิงยุทธศาสตร์ และจริยธรรมที่อาจเกิดขึ้นในอนาคตจากเทคโนโลยี Proof-of-Work</p>
+        </div>
+      </div>
+    </article>
+
+    <!-- ────────────────────────────────────────── -->
+    <!-- CHAPTER 2                                  -->
+    <!-- ────────────────────────────────────────── -->
+    <article class="chapter-section" id="chapter2">
+      <div class="section-header">
+        <span class="section-num">บทที่ 2</span>
+        <span class="status-badge todo">เร็วๆ นี้</span>
+      </div>
+      <h2 class="section-title">ระเบียบวิธีวิจัย</h2>
+      <p class="section-title-en">Chapter 2: Research Methodology</p>
+      <div class="section-rule"></div>
+      <div class="placeholder"><div class="icon">🔒</div><p><strong>ยังไม่เริ่มแปล</strong><br>จะเพิ่มเมื่อการแปลเสร็จสมบูรณ์</p></div>
+
+      <div class="subsection" id="s2-1" style="margin-top:32px;">
+        <div class="section-header"><span class="section-num">2.1</span><span class="status-badge todo">เร็วๆ นี้</span></div>
+        <h3 class="subsection-title">เหตุผลสี่ประการในการเลือกใช้ทฤษฎีฐานราก</h3>
+        <div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div>
+      </div>
+      <div class="subsection" id="s2-2">
+        <div class="section-header"><span class="section-num">2.2</span><span class="status-badge todo">เร็วๆ นี้</span></div>
+        <h3 class="subsection-title">ภาพรวม</h3>
+        <div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div>
+      </div>
+      <div class="subsection" id="s2-3">
+        <div class="section-header"><span class="section-num">2.3</span><span class="status-badge todo">เร็วๆ นี้</span></div>
+        <h3 class="subsection-title">กระบวนการวิจัย</h3>
+        <div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div>
+      </div>
+      <div class="subsection" id="s2-4">
+        <div class="section-header"><span class="section-num">2.4</span><span class="status-badge todo">เร็วๆ นี้</span></div>
+        <h3 class="subsection-title">ข้อเสียและข้อดี</h3>
+        <div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div>
+      </div>
+      <div class="subsection" id="s2-5">
+        <div class="section-header"><span class="section-num">2.5</span><span class="status-badge todo">เร็วๆ นี้</span></div>
+        <h3 class="subsection-title">บทเรียนที่ได้รับ</h3>
+        <div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div>
+      </div>
+    </article>
+
+    <!-- ────────────────────────────────────────── -->
+    <!-- CHAPTER 3                                  -->
+    <!-- ────────────────────────────────────────── -->
+    <article class="chapter-section" id="chapter3">
+      <div class="section-header">
+        <span class="section-num">บทที่ 3</span>
+        <span class="status-badge todo">เร็วๆ นี้</span>
+      </div>
+      <h2 class="section-title">ยุทธวิธีการแผ่ขยายอำนาจในธรรมชาติ</h2>
+      <p class="section-title-en">Chapter 3: Power Projection Tactics in Nature</p>
+      <div class="section-rule"></div>
+      <div class="placeholder"><div class="icon">🔒</div><p><strong>ยังไม่เริ่มแปล</strong><br>จะเพิ่มเมื่อการแปลเสร็จสมบูรณ์</p></div>
+
+      <div class="subsection" id="s3-1" style="margin-top:32px;"><div class="section-header"><span class="section-num">3.1</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">บทนำสู่ทฤษฎีการแผ่ขยายอำนาจ</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s3-2"><div class="section-header"><span class="section-num">3.2</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">อำนาจทางกายภาพและความเป็นเจ้าของทรัพยากร</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s3-3"><div class="section-header"><span class="section-num">3.3</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">สงครามของสิ่งมีชีวิตต่อเอนโทรปี</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s3-4"><div class="section-header"><span class="section-num">3.4</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">เศรษฐศาสตร์ดึกดำบรรพ์</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s3-5"><div class="section-header"><span class="section-num">3.5</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">พัฒนาหรือสูญพันธุ์</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s3-6"><div class="section-header"><span class="section-num">3.6</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ภาวะกลืนไม่เข้าคายไม่ออกของผู้รอดชีวิต</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s3-7"><div class="section-header"><span class="section-num">3.7</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">การไล่ตามความเจริญรุ่งเรืองอันไม่มีสิ้นสุด</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s3-8"><div class="section-header"><span class="section-num">3.8</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">การรวมกลุ่มกัน</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s3-9"><div class="section-header"><span class="section-num">3.9</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">สัตว์ฝูง</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s3-10"><div class="section-header"><span class="section-num">3.10</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">การถูกทำให้เชื่อง: อันตรายที่มองข้ามไม่ได้</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s3-11"><div class="section-header"><span class="section-num">3.11</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">การควบคุมทรัพยากรด้วยอำนาจทางกายภาพ</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s3-12"><div class="section-header"><span class="section-num">3.12</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ความงดงามของเขากวาง</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+    </article>
+
+    <!-- ────────────────────────────────────────── -->
+    <!-- CHAPTER 4                                  -->
+    <!-- ────────────────────────────────────────── -->
+    <article class="chapter-section" id="chapter4">
+      <div class="section-header">
+        <span class="section-num">บทที่ 4</span>
+        <span class="status-badge todo">เร็วๆ นี้</span>
+      </div>
+      <h2 class="section-title">ยุทธวิธีการแผ่ขยายอำนาจในสังคมมนุษย์</h2>
+      <p class="section-title-en">Chapter 4: Power Projection Tactics in Human Society</p>
+      <div class="section-rule"></div>
+      <div class="placeholder"><div class="icon">🔒</div><p><strong>ยังไม่เริ่มแปล</strong><br>จะเพิ่มเมื่อการแปลเสร็จสมบูรณ์</p></div>
+
+      <div class="subsection" id="s4-1" style="margin-top:32px;"><div class="section-header"><span class="section-num">4.1</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">บทนำ</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s4-2"><div class="section-header"><span class="section-num">4.2</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">โลกใบใหม่ที่แตกต่างโดยสิ้นเชิง</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s4-3"><div class="section-header"><span class="section-num">4.3</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">วิธีตรวจสอบว่าสิ่งใดเป็นจริง</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s4-4"><div class="section-header"><span class="section-num">4.4</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">วิวัฒนาการของการคิดเชิงนามธรรม</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s4-5"><div class="section-header"><span class="section-num">4.5</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ทำความเข้าใจอำนาจเชิงนามธรรม</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s4-6"><div class="section-header"><span class="section-num">4.6</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">การสร้างอำนาจเชิงนามธรรม</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s4-7"><div class="section-header"><span class="section-num">4.7</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ลำดับชั้นอำนาจเชิงนามธรรม</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s4-8"><div class="section-header"><span class="section-num">4.8</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ความผิดปกติของอำนาจเชิงนามธรรม</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s4-9"><div class="section-header"><span class="section-num">4.9</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ประโยชน์ที่เกิดขึ้นจากการทำสงคราม</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s4-10"><div class="section-header"><span class="section-num">4.10</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ความมั่นคงเชิงยุทธศาสตร์แห่งชาติ</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s4-11"><div class="section-header"><span class="section-num">4.11</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">หลักประกันการทำลายล้างซึ่งกันและกันอย่างแน่นอน</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s4-12"><div class="section-header"><span class="section-num">4.12</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">มนุษย์ต้องการเขากวาง</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+    </article>
+
+    <!-- ────────────────────────────────────────── -->
+    <!-- CHAPTER 5                                  -->
+    <!-- ────────────────────────────────────────── -->
+    <article class="chapter-section" id="chapter5">
+      <div class="section-header">
+        <span class="section-num">บทที่ 5</span>
+        <span class="status-badge todo">เร็วๆ นี้</span>
+      </div>
+      <h2 class="section-title">ยุทธวิธีการแผ่ขยายอำนาจในพื้นที่ไซเบอร์</h2>
+      <p class="section-title-en">Chapter 5: Power Projection Tactics in Cyberspace</p>
+      <div class="section-rule"></div>
+      <div class="placeholder"><div class="icon">🔒</div><p><strong>ยังไม่เริ่มแปล</strong><br>จะเพิ่มเมื่อการแปลเสร็จสมบูรณ์</p></div>
+
+      <div class="subsection" id="s5-1" style="margin-top:32px;"><div class="section-header"><span class="section-num">5.1</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">บทนำ</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s5-2"><div class="section-header"><span class="section-num">5.2</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">เครื่องจักรที่คิดได้</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s5-3"><div class="section-header"><span class="section-num">5.3</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ระบบความเชื่อใหม่ที่เปราะบางต่อการถูกแสวงประโยชน์</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s5-4"><div class="section-header"><span class="section-num">5.4</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ความท้าทายด้านความมั่นคงของซอฟต์แวร์</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s5-5"><div class="section-header"><span class="section-num">5.5</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">การสร้างลำดับชั้นอำนาจเชิงนามธรรมด้วยซอฟต์แวร์</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s5-6"><div class="section-header"><span class="section-num">5.6</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">การต่อต้านราชาเทพเจ้าแห่งเทคโนโลยียุคใหม่ด้วยอำนาจทางกายภาพ</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s5-7"><div class="section-header"><span class="section-num">5.7</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">การแผ่ขยายอำนาจทางกายภาพในพื้นที่ไซเบอร์</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s5-8"><div class="section-header"><span class="section-num">5.8</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">แนวคิดโดมป้องกันไซเบอร์เชิงพลังงานไฟฟ้า</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s5-9"><div class="section-header"><span class="section-num">5.9</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ทฤษฎีคอมพิวเตอร์ใหม่ว่าด้วยบิตคอยน์</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s5-10"><div class="section-header"><span class="section-num">5.10</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ไม่มีอันดับสอง</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s5-11"><div class="section-header"><span class="section-num">5.11</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ซอฟต์วอร์</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s5-12"><div class="section-header"><span class="section-num">5.12</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">หลักประกันการรักษาไว้ซึ่งกันและกันอย่างแน่นอน</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+    </article>
+
+    <!-- ────────────────────────────────────────── -->
+    <!-- CHAPTER 6                                  -->
+    <!-- ────────────────────────────────────────── -->
+    <article class="chapter-section" id="chapter6">
+      <div class="section-header">
+        <span class="section-num">บทที่ 6</span>
+        <span class="status-badge todo">เร็วๆ นี้</span>
+      </div>
+      <h2 class="section-title">ข้อเสนอแนะและบทสรุป</h2>
+      <p class="section-title-en">Chapter 6: Recommendations and Conclusion</p>
+      <div class="section-rule"></div>
+      <div class="placeholder"><div class="icon">🔒</div><p><strong>ยังไม่เริ่มแปล</strong><br>จะเพิ่มเมื่อการแปลเสร็จสมบูรณ์</p></div>
+
+      <div class="subsection" id="s6-1" style="margin-top:32px;"><div class="section-header"><span class="section-num">6.1</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ประเด็นสำคัญที่ได้เรียนรู้</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s6-2"><div class="section-header"><span class="section-num">6.2</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ข้อเสนอแนะสำหรับการวิจัยในอนาคต</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s6-3"><div class="section-header"><span class="section-num">6.3</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ข้อเสนอแนะสำหรับการกำหนดนโยบายในอนาคต</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+      <div class="subsection" id="s6-4"><div class="section-header"><span class="section-num">6.4</span><span class="status-badge todo">เร็วๆ นี้</span></div><h3 class="subsection-title">ความคิดสุดท้าย</h3><div class="placeholder"><div class="icon">🔒</div><p>ยังไม่เริ่มแปล</p></div></div>
+    </article>
+
+    <!-- ────────────────────────────────────────── -->
+    <!-- BIBLIOGRAPHY                               -->
+    <!-- ────────────────────────────────────────── -->
+    <article class="chapter-section" id="bibliography">
+      <div class="section-header">
+        <span class="section-num">Bibliography</span>
+        <span class="status-badge todo">เร็วๆ นี้</span>
+      </div>
+      <h2 class="section-title">บรรณานุกรม</h2>
+      <p class="section-title-en">Bibliography</p>
+      <div class="section-rule"></div>
+      <div class="placeholder"><div class="icon">🔒</div><p><strong>ยังไม่เริ่มแปล</strong><br>จะเพิ่มในอัปเดตถัดไป</p></div>
+    </article>
+
+    <!-- FOOTER -->
+    <footer>
+      <div class="footer-inner">
+        <div class="footer-block">
+          <strong>ต้นฉบับ</strong>
+          <a href="https://archive.org/details/lowery-jason-p.-major-softwar-a-novel-theory-on-power-projection-and-the-nationa" target="_blank" rel="noopener"><em>Softwar: A Novel Theory on Power Projection and the National Strategic Significance of Bitcoin</em></a><br>
+          Jason P. Lowery · MIT, 2023
+        </div>
+        <div class="footer-block">
+          <strong>ฉบับแปลภาษาไทย</strong>
+          แปลโดย Chollatis Bitcoiner<br>
+          ผู้ช่วยแปล: Claude AI (Anthropic) &amp; Gemini (Google)<br>
+          ไม่ใช่งานเชิงพาณิชย์ · เพื่อการศึกษาเท่านั้น
+        </div>
+        <div class="footer-block">
+          <strong>ความคืบหน้า</strong>
+          17% · 1 / 6 บท · บทที่ 1 เสร็จสมบูรณ์<br>
+          อัปเดตล่าสุด: มิถุนายน 2569
+        </div>
+      </div>
+      <div class="footer-copy">
+        © 2023 Jason P. Lowery — งานแปลภาษาไทยเผยแพร่เพื่อการศึกษาโดยไม่แสวงหาผลกำไร
+      </div>
+    </footer>
+
+  </main>
+</div>
+
+<script>
+  /* ─── THEME TOGGLE ─────────────────────────── */
+  const html = document.documentElement;
+  const themeBtn = document.getElementById('theme-toggle');
+
+  function lsGet(key) { try { return localStorage.getItem(key); } catch(e) { return null; } }
+  function lsSet(key, val) { try { localStorage.setItem(key, val); } catch(e) {} }
+
+  function applyTheme(theme) {
+    html.setAttribute('data-theme', theme);
+    themeBtn.textContent = theme === 'dark' ? '☀ Light' : '☽ Dark';
+    lsSet('softwar-theme', theme);
+  }
+  function toggleTheme() {
+    applyTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
+  }
+  (function() {
+    const saved = lsGet('softwar-theme');
+    if (saved) { applyTheme(saved); return; }
+    applyTheme(window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  })();
+
+  /* ─── FONT SIZE ────────────────────────────── */
+  var FONT_DEFAULT = 19;
+  var savedFont = parseInt(lsGet('softwar-font') || FONT_DEFAULT);
+
+  function changeFontSize(size) {
+    var px = parseInt(size);
+    document.documentElement.style.fontSize = px + 'px';
+    lsSet('softwar-font', px);
+    var sel = document.getElementById('font-select');
+    if (sel) sel.value = px;
+  }
+  changeFontSize(savedFont);
+
+  /* ─── SIDEBAR MOBILE ───────────────────────── */
+  const sidebar = document.getElementById('sidebar');
+  function toggleSidebar() { sidebar.classList.toggle('open'); }
+  function closeSidebarMobile() {
+    if (window.innerWidth <= 900) sidebar.classList.remove('open');
+  }
+  document.addEventListener('click', function(e) {
+    if (window.innerWidth > 900) return;
+    if (!sidebar.contains(e.target) && !document.getElementById('menu-toggle').contains(e.target)) {
+      sidebar.classList.remove('open');
+    }
+  });
+
+  /* ─── CHAPTER ACCORDION ────────────────────── */
+  // Restore open state from localStorage
+  var openChapters = JSON.parse(lsGet('softwar-open-chapters') || '[]');
+
+  function toggleChapter(id) {
+    var sub = document.getElementById('sub-' + id);
+    var chevron = document.getElementById('chevron-' + id);
+    var isOpen = sub.classList.toggle('open');
+    chevron.classList.toggle('open', isOpen);
+    // Persist
+    openChapters = isOpen
+      ? [...new Set([...openChapters, id])]
+      : openChapters.filter(function(c) { return c !== id; });
+    lsSet('softwar-open-chapters', JSON.stringify(openChapters));
+  }
+  // Restore on load
+  openChapters.forEach(function(id) {
+    var sub = document.getElementById('sub-' + id);
+    var chevron = document.getElementById('chevron-' + id);
+    if (sub) { sub.classList.add('open'); chevron.classList.add('open'); }
+  });
+
+  /* ─── READING PROGRESS BAR ─────────────────── */
+  const progressBar = document.getElementById('reading-progress');
+  function updateReadingProgress() {
+    var scrollTop = window.scrollY;
+    var docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    progressBar.style.width = (docHeight > 0 ? Math.min(100, (scrollTop / docHeight) * 100) : 0) + '%';
+  }
+  window.addEventListener('scroll', updateReadingProgress, { passive: true });
+
+  /* ─── ACTIVE NAV (IntersectionObserver) ────── */
+  const allNavLinks = document.querySelectorAll('.nav-item[href], .nav-sub-item[href]');
+  const sections = document.querySelectorAll('[id]');
+
+  const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var id = '#' + entry.target.id;
+        allNavLinks.forEach(function(a) {
+          a.classList.toggle('active', a.getAttribute('href') === id);
+                });
+      }
+    });
+  }, { rootMargin: '-15% 0px -80% 0px' });
+
+  sections.forEach(function(s) { if (s.id) observer.observe(s); });
+
+  /* ─── THAI WORD SEGMENTATION ───────────────── */
+  /* ใส่ zero-width space ระหว่างคำไทยเพื่อให้ browser ตัดบรรทัดถูกต้อง */
+  (function() {
+    if (typeof Intl === 'undefined' || typeof Intl.Segmenter === 'undefined') return;
+    var segmenter = new Intl.Segmenter('th', { granularity: 'word' });
+    var ZWS = '\u200B';
+    var thaiRange = /[\u0E00-\u0E7F]/;
+
+    function segmentNode(textNode) {
+      var text = textNode.textContent;
+      if (!thaiRange.test(text)) return;
+      var segs = Array.from(segmenter.segment(text));
+      var result = segs.map(function(s) { return s.segment; }).join(ZWS);
+      if (result !== text) textNode.textContent = result;
+    }
+
+    function walkAndSegment(root) {
+      var walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null);
+      var nodes = [];
+      var n;
+      while ((n = walker.nextNode())) nodes.push(n);
+      nodes.forEach(segmentNode);
+    }
+
+    document.querySelectorAll('.content p, .subsection p, .content h2, .content h3, .hero-title, .hero-subtitle')
+      .forEach(walkAndSegment);
+  })();
+  /* ─── END THAI WORD SEGMENTATION ─────────────── */
+  </script></body></html>
