@@ -15,6 +15,9 @@
 👉 **[คลิกเพื่ออ่าน Softwar ฉบับภาษาไทย](https://chontit.github.io/softwar-thai-translation/)**
 
 ## 📂 สารบัญและความคืบหน้า (Table of Contents & Progress)
+
+**ความคืบหน้ารวม: 61% (243 / 400 หน้า) — แปลสมบูรณ์แล้ว 4 จาก 6 บท**
+
 ✅ **บทคัดย่อ (Abstract)**  
 ✅ **กิตติกรรมประกาศ (Acknowledgements)**  
 ✅ **ประวัติผู้เขียน (Biography)**  
@@ -22,7 +25,7 @@
 ✅ **บทที่ 1:** บทนำ (Introduction)  
 ✅ **บทที่ 2:** นิยามและแนวคิดพื้นฐาน (Definitions & Core Concepts)  
 ✅ **บทที่ 3:** ยุทธวิธีการแผ่ขยายอำนาจในธรรมชาติ (Power Projection Tactics in Nature)  
-⏳ **บทที่ 4:** ยุทธวิธีการแผ่ขยายอำนาจในสังคมมนุษย์ (Power Projection Tactics in Society)  
+✅ **บทที่ 4:** ยุทธวิธีการแผ่ขยายอำนาจในสังคมมนุษย์ (Power Projection Tactics in Society)  
 ⏳ **บทที่ 5:** การแผ่ขยายอำนาจในไซเบอร์สเปซ (Power Projection in Cyberspace)  
 ⏳ **บทที่ 6:** บทสรุปและข้อเสนอแนะ (Conclusion & Recommendations)  
 
