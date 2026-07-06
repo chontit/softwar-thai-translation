@@ -14,6 +14,10 @@
 ผู้อ่านสามารถเข้าถึงบทความฉบับเต็มที่มีการจัดหน้าและโครงสร้างให้อ่านง่ายได้ที่:  
 👉 **[คลิกเพื่ออ่าน Softwar ฉบับภาษาไทย](https://chontit.github.io/softwar-thai-translation/)**
 
+## 📚 ต้นฉบับ (Original Source)
+ฉบับแปลนี้อ้างอิงจากวิทยานิพนธ์ต้นฉบับภาษาอังกฤษ *Softwar: A Novel Theory on Power Projection and the National Strategic Significance of Bitcoin* โดย Jason P. Lowery (MIT, 2023) สามารถอ่านต้นฉบับเต็มได้ที่:  
+👉 **[archive.org — Softwar (ต้นฉบับภาษาอังกฤษ)](https://archive.org/details/lowery-jason-p.-major-softwar-a-novel-theory-on-power-projection-and-the-nationa)**
+
 ## 📂 สารบัญและความคืบหน้า (Table of Contents & Progress)
 
 **ความคืบหน้ารวม: 61% (243 / 400 หน้า) — แปลสมบูรณ์แล้ว 4 จาก 6 บท**
