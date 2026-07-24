@@ -13,10 +13,13 @@ index.html            ← โครงเครื่อง: CSS + เมนู 
 index-full.html       ← สำเนาไฟล์เดียวเดิม (ไว้ rollback อย่างเดียว ไม่ต้องเสิร์ฟ)
 content/
   frontmatter.html    ← ภาพรวม, บทคัดย่อ, กิตติกรรมประกาศ, ประวัติ, คำย่อ, บทสรุปผู้บริหาร
-  chapter1.html … chapter3.html
+  ch1.html, ch2.html, ch3.html   ← บท 1–3 (บทละไฟล์)
   ch4-1.html … ch4-12.html   ← บท 4 ซอยเป็น 12 ตอน (เพราะบท 4 หนัก 1.9 MB)
-  chapter5.html, chapter6.html   ← โครงบท (ยังไม่แปล)
-  bibliography.html
+  ch5-1.html … ch5-12.html   ← บท 5 ซอยเป็น 12 ตอน (หัวบท+epigraph อยู่ inline ใน index.html)
+  ch6-1.html … ch6-4.html    ← บท 6 ซอยเป็น 4 ตอน (หัวบท+epigraph อยู่ inline ใน index.html)
+  bibliography.html          ← บรรณานุกรม 222 รายการ
+
+  ตั้งชื่อรูปแบบเดียวกัน: chN.html (บทเดียวไฟล์) หรือ chN-M.html (บทที่ซอยตอนย่อย)
 images/               ← รูป (เดิม) ใส่ loading="lazy" ให้ในเนื้อหาแล้ว
 MD/                   ← ต้นฉบับ markdown (ไม่ถูกเสิร์ฟ ใช้อ้างอิงตอนแก้)
 ```
