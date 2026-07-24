@@ -112,7 +112,7 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    #menu-toggle, #theme-toggle {
+    #menu-toggle, #theme-toggle, #resume-btn {
       background: none;
       border: 1px solid var(--border);
       color: var(--text-muted);
@@ -124,11 +124,12 @@
       font-family: var(--font-ui);
       white-space: nowrap;
     }
-    #menu-toggle:hover, #theme-toggle:hover, .font-btn:hover {
+    #menu-toggle:hover, #theme-toggle:hover, #resume-btn:hover, .font-btn:hover {
       background: var(--accent-glow);
       color: var(--accent);
       border-color: var(--accent);
     }
+    #resume-btn { border-color: var(--accent); color: var(--accent); }
     #font-select {
       background: var(--bg-card);
       border: 1px solid var(--border);
@@ -627,6 +628,7 @@
     <option value="23">ใหญ่มาก</option>
     <option value="26">ใหญ่ที่สุด</option>
   </select>
+  <button id="resume-btn" onclick="softwarResume()" aria-label="อ่านต่อจากจุดเดิม" title="อ่านต่อจากจุดเดิมครั้งที่แล้ว" style="display:none;">↩ อ่านต่อ</button>
   <button id="theme-toggle" onclick="toggleTheme()" aria-label="สลับธีม">☀ Light</button>
 </header>
 
@@ -1302,6 +1304,7 @@
   }
 
   /* boot: โหลด 2 ส่วนแรกทันที (first paint เร็ว) แล้วจัดการที่เหลือ */
+  window.__loaderEnsureVisible = ensureVisible;   /* ให้ฟีเจอร์ "อ่านต่อ" เรียกโหลดบทที่ต้องใช้ได้ */
   Promise.all(mounts.slice(0, 2).map(loadMount)).then(function () {
     if (location.hash) ensureVisible(location.hash.slice(1));
     idlePreload();
@@ -1309,4 +1312,91 @@
 })();
 </script>
 
+
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   RESUME READING — จำตำแหน่งที่อ่านล่าสุด แล้วกลับมาอ่านต่อจุดเดิมได้
+   • บันทึกอัตโนมัติลง localStorage ระหว่างเลื่อนอ่าน
+   • เปิดครั้งต่อไป → เด้งไปจุดเดิมอัตโนมัติ (ถ้าไม่ได้เปิดผ่านลิงก์ #)
+   • ปุ่ม "↩ อ่านต่อ" ข้างตัวเลือกขนาดตัวอักษร กดเพื่อกลับไปจุดเดิมได้
+   ═══════════════════════════════════════════════════════════════ */
+(function () {
+  var KEY = 'softwar-reading-pos';
+  function lget(k){ try { return localStorage.getItem(k); } catch(e){ return null; } }
+  function lset(k,v){ try { localStorage.setItem(k,v); } catch(e){} }
+  var btn = document.getElementById('resume-btn');
+
+  function currentMarker() {
+    var line = Math.min(140, window.innerHeight * 0.2);
+    var els = document.querySelectorAll('article.chapter-section[id], .subsection[id]');
+    var best = null, bestTop = -Infinity;
+    for (var i = 0; i < els.length; i++) {
+      var top = els[i].getBoundingClientRect().top;
+      if (top <= line && top > bestTop) { bestTop = top; best = els[i]; }
+    }
+    return best ? { el: best, offset: line - bestTop } : null;
+  }
+  function labelFor(el) {
+    var h = el.querySelector('.subsection-title, .section-title');
+    return ((h ? h.textContent : el.id) || '').replace(/\s+/g, ' ').trim().slice(0, 44);
+  }
+
+  var t = null;
+  function save() {
+    var m = currentMarker(); if (!m) return;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    lset(KEY, JSON.stringify({
+      id: m.el.id, offset: Math.round(m.offset),
+      pct: max > 0 ? window.scrollY / max : 0,
+      label: labelFor(m.el), ts: Date.now()
+    }));
+    updateBtn();
+  }
+  window.addEventListener('scroll', function () {
+    if (t) return;
+    t = setTimeout(function () { t = null; save(); }, 600);
+  }, { passive: true });
+  window.addEventListener('beforeunload', save);
+
+  function scrollToPos(pos, smooth) {
+    var el = document.getElementById(pos.id); if (!el) return false;
+    var y = el.getBoundingClientRect().top + window.scrollY - (pos.offset || 0);
+    window.scrollTo({ top: Math.max(0, y), behavior: smooth ? 'smooth' : 'auto' });
+    return true;
+  }
+  function doResume(smooth) {
+    var raw = lget(KEY); if (!raw) return;
+    var pos; try { pos = JSON.parse(raw); } catch(e) { return; }
+    if (scrollToPos(pos, smooth)) return;
+    /* บทที่ต้องการยังไม่ถูกโหลด (เวอร์ชันแยกไฟล์) → สั่ง loader โหลดก่อน แล้วรอ */
+    if (window.__loaderEnsureVisible) window.__loaderEnsureVisible(pos.id);
+    var tries = 0;
+    (function poll() {
+      if (scrollToPos(pos, smooth)) return;
+      if (tries++ < 40) setTimeout(poll, 150);
+    })();
+  }
+  window.softwarResume = function () { doResume(true); };
+
+  function updateBtn() {
+    if (!btn) return;
+    var raw = lget(KEY);
+    if (raw) {
+      var p = {}; try { p = JSON.parse(raw); } catch(e) {}
+      btn.style.display = '';
+      btn.title = 'อ่านต่อจากจุดเดิมครั้งที่แล้ว' + (p.label ? ' — ' + p.label : '');
+    } else { btn.style.display = 'none'; }
+  }
+
+  /* เปิดหน้า → เด้งไปจุดเดิมอัตโนมัติ (ยกเว้นเข้ามาทางลิงก์ #... หรืออ่านค้างแค่ต้น ๆ) */
+  window.addEventListener('load', function () {
+    updateBtn();
+    if (!location.hash) {
+      var raw = lget(KEY);
+      if (raw) { var p = {}; try { p = JSON.parse(raw); } catch(e) {}
+        if ((p.pct || 0) > 0.015) setTimeout(function () { doResume(false); }, 500); }
+    }
+  });
+})();
+</script>
 </body></html>                                                    
