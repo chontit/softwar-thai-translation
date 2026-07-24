@@ -564,6 +564,14 @@
       .hero-meta { gap: 10px 16px; font-size: 13px; }
     }
 
+    /* Mobile: topbar โล่งขึ้น — ซ่อนป้าย "ขนาดตัวอักษร" (เหลือ dropdown), ลดช่องไฟ */
+    @media (max-width: 720px) {
+      #topbar { padding: 0 12px; gap: 8px; }
+      #topbar label[for="font-select"] { display: none; }
+      #menu-toggle, #theme-toggle, #resume-btn { flex-shrink: 0; padding: 5px 8px; }
+      #font-select { flex-shrink: 0; }
+    }
+
     /* Mobile: ปิด justify เพราะหน้าจอแคบทำให้ช่องไฟถ่างผิดปกติ */
     @media (max-width: 900px) {
       .content p, .subsection p {
@@ -603,6 +611,18 @@
     @media (max-width: 900px) {
       #scroll-handle-track { display: block; }
     }
+
+    /* ─── กันข้อความยาว (เช่น URL ในบรรณานุกรม) ล้นขอบจอบนมือถือ ─── */
+    html, body { overflow-x: hidden; }
+    #main { overflow-x: hidden; max-width: 100%; }
+    .content p, .subsection p, .content li, #main figcaption {
+      overflow-wrap: break-word;
+    }
+    #bibliography p, #bibliography a {
+      overflow-wrap: anywhere;
+      word-break: break-all;
+    }
+    #main img { max-width: 100%; height: auto; }
   </style>
 </head>
 <body>
