@@ -614,7 +614,7 @@
 
     /* ─── กันข้อความยาว (เช่น URL ในบรรณานุกรม) ล้นขอบจอบนมือถือ ─── */
     html, body { overflow-x: hidden; }
-    #main { overflow-x: hidden; max-width: 100%; }
+    #main { overflow-x: hidden; }                 /* clip กันหน้าเลื่อนแนวนอน (คง max-width:820px เดิม) */
     .content p, .subsection p, .content li, #main figcaption {
       overflow-wrap: break-word;
     }
