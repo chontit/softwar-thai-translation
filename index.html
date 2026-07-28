@@ -153,12 +153,14 @@
       display: flex;
       min-height: 100vh;
       padding-top: 55px;
+      padding-left: var(--nav-w);   /* เผื่อพื้นที่ให้ sidebar ที่ fixed อยู่ซ้าย (desktop) */
     }
 
     /* ─── SIDEBAR ─────────────────────────────────────────── */
     #sidebar {
-      position: sticky;
+      position: fixed;
       top: 55px;
+      left: 0;
       width: var(--nav-w);
       height: calc(100vh - 55px);
       overflow-y: auto;
@@ -548,6 +550,7 @@
     @media (max-width: 900px) {
       :root { --fs-body: 16px; }
       #menu-toggle { display: block; }
+      #layout { padding-left: 0; }   /* มือถือ: ไม่เผื่อพื้นที่ sidebar (off-canvas) */
       #sidebar {
         position: fixed;
         top: 55px; left: 0;
